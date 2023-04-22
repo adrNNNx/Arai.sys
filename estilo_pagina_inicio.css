@@ -16,9 +16,6 @@ padding: 0px;
     height: 100vh;
 }
 
-
-
-
 .colordefondodiv
 {
     position: absolute;
@@ -30,20 +27,23 @@ padding: 0px;
 }
 .contenedor-imagen
 {
-    position:absolute;
+    position: absolute;
+    margin: 20px 0px 0px 60px;
     width: 716px;
     height: 861px;
-    left: 10%;
     z-index: 1;
 }
+
+logo
+
+
 
 .logo_Arai
 {
     position: absolute;
     width: 200px;
     height: 200px;
-    left: 30%;
-    top: 510px;
+    opacity: 70%;
 }
 
 .contenedor-inputs
@@ -60,11 +60,9 @@ padding: 0px;
 {
     position: absolute;
     margin-top: 150px;
-    left: 60%;
+    margin-left: 55%;
     width: 504px;
     height: 664px;
-
-    
 }
 
 .form_metod
@@ -85,13 +83,30 @@ padding: 0px;
 }
 .lb_controls
 {
+    position: relative;
     padding: 0px 0px 8px 0px;
 }
 
 .usr_nomb
 {
+    position: relative;
     height: 44px;
-    padding-left: 16px;
+    padding-left: 32px;
+    border-color: rgb(214, 214, 214);
+    border-style: solid;
+    border-radius: 3px;
+    outline: #FFF2E8;
+    box-shadow: 0px 2px 5px rgba(103, 110, 118, 0.08), 0px 0px 0px 1px rgba(103, 110, 118, 0.16), 0px 1px 1px rgba(0, 0, 0, 0.12);
+}
+
+form .usuario input::placeholder
+{
+    color: #9EA5AD
+}
+
+form .contra input::placeholder
+{
+    color: #9EA5AD
 }
 
 .contra
@@ -103,15 +118,30 @@ padding: 0px;
 
 .btn_ingresar
 {
+    position: relative;
     width: 122px;
     height: 44px;
+    padding-right: 35px;
+    border-radius: 8px;
+    background-color: #FFFFFF;
+    border-color: rgb(214, 214, 214);
+    border-style: double;
+    font-size: 14px;
+    font-weight: 600;
+    box-shadow: 0px 2px 5px rgba(103, 110, 118, 0.08), 0px 0px 0px 1px rgba(103, 110, 118, 0.16), 0px 1px 1px rgba(0, 0, 0, 0.12);
 }
 
 .usr_contra
 {
+    position: relative;
     height: 44px;
-    padding-left: 16px;
+    padding-left: 32px;
     margin-bottom: 56px;
+    border-color: rgb(214, 214, 214);
+    border-style: solid;
+    border-radius: 3px;
+    outline: #FFF2E8;
+    box-shadow: 0px 2px 5px rgba(103, 110, 118, 0.08), 0px 0px 0px 1px rgba(103, 110, 118, 0.16), 0px 1px 1px rgba(0, 0, 0, 0.12);
 }
 
 .Titulo
@@ -124,5 +154,32 @@ padding: 0px;
     mix-blend-mode: normal;
 }
 
+.candado_icon
+{
+    position: absolute;
+    margin-top: 38px;
+    margin-left: 5px;
+    height: 24px;
+    width: 24px;
+    z-index: 1;
+}
 
+.usr_icon
+{
+    position: absolute;
+    margin-top: 38px;
+    margin-left: 5px;
+    height: 24px;
+    width: 24px;
+    z-index: 1;
+}
+.ingrese_icon
+{
+    position: absolute;
+    margin-top: 275px;
+    margin-left: 60px;
+    height: 18px;
+    width: 18px;
+    z-index: 1;
+}
 
