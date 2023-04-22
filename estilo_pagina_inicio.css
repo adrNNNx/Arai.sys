@@ -34,14 +34,10 @@ padding: 0px;
     z-index: 1;
 }
 
-logo
-
-
-
 .logo_Arai
 {
-    position: absolute;
-    width: 200px;
+    display: flex;
+    width: 504px;
     height: 200px;
     opacity: 70%;
 }
@@ -59,6 +55,7 @@ logo
 .formulario
 {
     position: absolute;
+    justify-content: center;
     margin-top: 150px;
     margin-left: 55%;
     width: 504px;
