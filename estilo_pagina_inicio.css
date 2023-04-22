@@ -11,7 +11,6 @@ padding: 0px;
 }
 .contenedor
 {
-    position: relative;
     width: 100%;
     height: 100vh;
 }
@@ -25,6 +24,7 @@ padding: 0px;
     height: 100vh;
     background: #FFF2E8;
 }
+
 .contenedor-imagen
 {
     position: absolute;
@@ -33,13 +33,11 @@ padding: 0px;
     height: 861px;
     z-index: 1;
 }
-
-.logo_Arai
+.contenedorlogo
 {
     display: flex;
-    width: 504px;
+    justify-content: center;
     height: 200px;
-    opacity: 70%;
 }
 
 .contenedor-inputs
@@ -55,17 +53,15 @@ padding: 0px;
 .formulario
 {
     position: absolute;
-    justify-content: center;
-    margin-top: 150px;
-    margin-left: 55%;
-    width: 504px;
-    height: 664px;
+    align-items: center;
+    top: 0px;
+    right: 0px;
+    width: 50%;
+    height: 100vh;
 }
 
 .form_metod
 {
-    width: 504px;
-    height: 350px;
     display: flex;
     align-items: center;
     justify-content: space-around;
@@ -93,6 +89,7 @@ padding: 0px;
     border-style: solid;
     border-radius: 3px;
     outline: #FFF2E8;
+    margin-bottom: 56px;
     box-shadow: 0px 2px 5px rgba(103, 110, 118, 0.08), 0px 0px 0px 1px rgba(103, 110, 118, 0.16), 0px 1px 1px rgba(0, 0, 0, 0.12);
 }
 
@@ -141,14 +138,31 @@ form .contra input::placeholder
     box-shadow: 0px 2px 5px rgba(103, 110, 118, 0.08), 0px 0px 0px 1px rgba(103, 110, 118, 0.16), 0px 1px 1px rgba(0, 0, 0, 0.12);
 }
 
+.contenedor-titulos
+{
+    margin-top: 150px;
+    display: flex;
+    justify-content: center;
+    position: relative;
+    height: 200px;
+}
+
 .Titulo
 {
-    text-align: center;
+    position: absolute;
     font-size: 60px;
-    margin-bottom: 56px;
     font-weight: bold;
     color: #000000;
-    mix-blend-mode: normal;
+}
+
+.Subtitulo
+{
+    margin-top: 115px;
+    position: absolute;
+    font-size: 20px;
+    margin-bottom: 56px;
+    font-weight: 500;
+    color: #9EA5AD
 }
 
 .candado_icon
@@ -173,7 +187,7 @@ form .contra input::placeholder
 .ingrese_icon
 {
     position: absolute;
-    margin-top: 275px;
+    margin-top: 268px;
     margin-left: 60px;
     height: 18px;
     width: 18px;
