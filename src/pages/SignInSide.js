@@ -18,6 +18,7 @@ import axios from 'axios';
 import { apiUrl,apiUrlAuth,apiUrlSoloData } from '../services/Apirest';
 import { FormControl } from '@mui/material';
 import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 
 function Copyright(props) {
   return (
@@ -41,7 +42,7 @@ export function SignInSide() {
 
   const { register, handleSubmit, formState: { errors } } = useForm();
   const [usrdatos, setUsrDatos] = useState();
-
+  const navigate = useNavigate();
   const onError = (errors, e) => console.log(errors, e);
   const onSubmit = data => {
     axios({
@@ -63,11 +64,12 @@ export function SignInSide() {
       })
       DatUsuarios(usrdatos);
       alert('Usuario Logeado');
+      localStorage.setItem("token",true);
+      navigate("/home");
     }, (error) => {
       onError(error)
       alert('Usuario Incorrecto')
     });;
-    localStorage.setItem("token",true);
   }
 
   return (
