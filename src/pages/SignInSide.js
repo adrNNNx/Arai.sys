@@ -32,16 +32,16 @@ function Copyright(props) {
   );
 }
 
-export function DatosUsuarios() {
-  /* return(usrdatos); */
+export function DatUsuarios(usrData) {
+  console.log(usrData)
+  return (usrData);
 }
 
-export default function SignInSide() {
+export function SignInSide() {
 
   const { register, handleSubmit, formState: { errors } } = useForm();
-  const [usrdatos, setUsrDatos] = useState(null);
-  DatosUsuarios(usrdatos);
-  const logout = ()=> setUsrDatos(null);
+  const [usrdatos, setUsrDatos] = useState();
+
   const onError = (errors, e) => console.log(errors, e);
   const onSubmit = data => {
     axios({
@@ -61,12 +61,13 @@ export default function SignInSide() {
         token: response.data.token,
         email: response.data.email
       })
+      DatUsuarios(usrdatos);
       alert('Usuario Logeado');
     }, (error) => {
       onError(error)
       alert('Usuario Incorrecto')
     });;
-    /* console.log(usrdatos) */
+    localStorage.setItem("token",true);
   }
 
   return (
