@@ -16,8 +16,8 @@ import InputAdornment from '@mui/material/InputAdornment';
 import { useState } from 'react';
 import axios from 'axios';
 import { apiUrl,apiUrlAuth,apiUrlSoloData } from '../services/Apirest';
-import { FormControl } from '@mui/material';
-import { useForm } from 'react-hook-form';
+import { useFormik } from "formik";
+import * as Yup from "yup";
 import { useNavigate } from 'react-router-dom';
 
 function Copyright(props) {
@@ -40,37 +40,48 @@ export function DatUsuarios(usrData) {
 
 export function SignInSide() {
 
-  const { register, handleSubmit, formState: { errors } } = useForm();
-  const [usrdatos, setUsrDatos] = useState();
+  const [usrdatos, setUsrDatos] = useState({});
   const navigate = useNavigate();
-  const onError = (errors, e) => console.log(errors, e);
-  const onSubmit = data => {
-    axios({
-      method: 'post',
-      url: apiUrlAuth,
-      data: {
-        username: data.username,
-        password: data.password
-      }
-    })
-    .then((response) => {
-      console.log(response)
-      setUsrDatos({
-        id: response.data.id,
-        username: response.data.username,
-        name: response.data.firstName,
-        token: response.data.token,
-        email: response.data.email
+  const { handleSubmit, handleChange, values, errors, touched } =
+  useFormik({
+    initialValues: {
+      username: "",
+      password: "",
+    },
+
+    validationSchema: Yup.object({
+      username: Yup
+      .string("Ingrese su Nombre de Usuario")
+      .required("Este campo es Obligatorio"),
+      password: Yup
+      .string("Ingrese su Contraseña")
+      .required("Este campo es Obligatorio"),
+    }),
+
+    onSubmit: (data) => {
+      axios({
+        method: 'post',
+        url: apiUrlAuth,
+        data: {
+          username: data.username,
+          password: data.password
+        }
       })
-      DatUsuarios(usrdatos);
-      alert('Usuario Logeado');
-      localStorage.setItem("token",true);
-      navigate("/home");
-    }, (error) => {
-      onError(error)
-      alert('Usuario Incorrecto')
-    });;
-  }
+      .then((response) => {
+        console.log(response)
+        DatUsuarios(usrdatos);
+        alert('Usuario Logeado');
+        localStorage.setItem("token",true);
+        navigate("/home");
+      }, )  
+      .catch( (error) => {
+        console.log(error);
+        alert('Usuario Inconrrecto');
+      });
+    },
+  });
+
+  
 
   return (
     <Grid container component="main" sx={{ height: "100vh" }}>
@@ -126,7 +137,7 @@ export function SignInSide() {
 
           {/* Acá empieza el formulario  */}
 
-          <Box component="form" onSubmit={handleSubmit(onSubmit, onError)} sx={{ mt: 1 }}>
+          <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
             <TextField
               InputProps={{
                 startAdornment: (
@@ -138,15 +149,16 @@ export function SignInSide() {
               margin="normal"
               type="text"
               fullWidth
-              id="username"
               label="Usuario"
               name="username"
               autoComplete="off"
               autoFocus
               placeholder="Ingrese su Usuario"
-              {...register("username", { required: "Este campo es Obligatorio" })}
-              error= {Boolean(errors.username)}
-              helperText={errors.username?.message}
+              onChange={handleChange}
+              value={values.username}
+              /* el tocuhed es para cuando apenas se carga la pagina y registre un cambio no salga error enseguida */
+              error= {touched.username && Boolean(errors.username)}
+              helperText={touched.username && errors.username}
 
 
               /*  aca envio los datos que escribe el usuario a una funcion e, para controlar los datos escritos */
@@ -165,11 +177,11 @@ export function SignInSide() {
               name="password"
               label="Contraseña"
               type="password"
-              id="id_contraseña"
               placeholder="Ingrese su contraseña"
-              {...register("password", { required: "Este campo es Obligatorio" })}
-              error= {Boolean(errors.password)}
-              helperText={errors.password?.message}
+              onChange={handleChange}
+              value={values.password}
+              error={touched.password && Boolean(errors.password)}
+              helperText={touched.password && errors.password}
               /*  aca envio los datos que escribe el usuario a una funcion e, para controlar los datos escritos */
     /*           onChange={(e) => setDatos({ ...datos, password: e.target.value })} */
             />
