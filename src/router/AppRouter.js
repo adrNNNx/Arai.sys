@@ -8,7 +8,7 @@ const AppRouter = () => {
     return (
       <BrowserRouter>
         <Routes>
-          <Route exact path="/" element={<SignInSide />} />
+          <Route exact path="/Arai.sys" element={<SignInSide />} />
 
           <Route element={<ProtectedRouter />}>
             
