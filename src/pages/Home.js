@@ -2,7 +2,7 @@ import { Box, Button, Grid, Paper } from '@mui/material';
 import React from 'react'
 import { useNavigate } from 'react-router-dom';
 
-const PruebaHome = () => {
+const Home = () => {
     const navigate = useNavigate();
     const handleLogout = ()=>{
         localStorage.removeItem("token");
@@ -38,4 +38,4 @@ const PruebaHome = () => {
     </Grid>
   );
 } 
-export default PruebaHome;
+export default Home;

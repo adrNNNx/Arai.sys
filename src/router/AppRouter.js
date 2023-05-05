@@ -1,7 +1,7 @@
 import React from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import {SignInSide, DatUsuarios} from '../pages/SignInSide';
-import PruebaHome from '../pages/pruebarouterdom';
+import Home from '../pages/Home';
 import ProtectedRouter from '../router/ProtectedRouter';
 
 const AppRouter = () => {
@@ -12,7 +12,7 @@ const AppRouter = () => {
 
           <Route element={<ProtectedRouter />}>
             
-            <Route exact path="/home"element={<PruebaHome  />}/>
+            <Route exact path="/home"element={<Home  />}/>
 
           </Route>
 
