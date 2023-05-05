@@ -1,17 +1,17 @@
 {
   "files": {
     "main.css": "/Arai.sys/static/css/main.b69031e7.css",
-    "main.js": "/Arai.sys/static/js/main.87248ef5.js",
+    "main.js": "/Arai.sys/static/js/main.b0aaf346.js",
     "static/js/787.a2d27b04.chunk.js": "/Arai.sys/static/js/787.a2d27b04.chunk.js",
     "static/media/logo panaderia-color.png": "/Arai.sys/static/media/logo panaderia-color.077b880b2a553d474fcf.png",
     "static/media/AraySys.png": "/Arai.sys/static/media/AraySys.c3b23b88665bb2f894ff.png",
     "index.html": "/Arai.sys/index.html",
     "main.b69031e7.css.map": "/Arai.sys/static/css/main.b69031e7.css.map",
-    "main.87248ef5.js.map": "/Arai.sys/static/js/main.87248ef5.js.map",
+    "main.b0aaf346.js.map": "/Arai.sys/static/js/main.b0aaf346.js.map",
     "787.a2d27b04.chunk.js.map": "/Arai.sys/static/js/787.a2d27b04.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.b69031e7.css",
-    "static/js/main.87248ef5.js"
+    "static/js/main.b0aaf346.js"
   ]
 }
