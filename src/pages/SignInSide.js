@@ -6,8 +6,8 @@ import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
-import logo_pan from '../assets/img/logo panaderia-color.png';
-import logo_arai from '../assets/img/AraySys.png'
+import logo_pan from '../assets/images/logo panaderia-color.png';
+import logo_arai from '../assets/images/AraySys.png'
 import { LoginForm } from '../componentes/LoginForm';
 
 function Copyright(props) {
@@ -57,7 +57,7 @@ export function SignInSide() {
         >
           <Typography
             component="h1"
-            variant="h2"
+            variant="h3"
             mt={10}
             mb={3}
             fontWeight={"bolder"}

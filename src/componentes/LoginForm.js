@@ -11,10 +11,15 @@ import { apiUrl,apiUrlAuth,apiUrlSoloData } from '../services/Apirest';
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useNavigate } from 'react-router-dom';
+import { Alert } from '@mui/material';
+import { useSnackbar } from "notistack";
 
 export const LoginForm = () => {
   const [usrdatos, setUsrDatos] = useState([]);
+  const [estadoerror, setEstadoError] = useState(false);
   const navigate = useNavigate();
+  const { enqueueSnackbar } = useSnackbar();
+
   const { handleSubmit, handleChange, values, errors, touched } = useFormik({
     initialValues: {
       username: "",
@@ -29,26 +34,25 @@ export const LoginForm = () => {
         "Este campo es Obligatorio"
       ),
     }),
-
     onSubmit: (data) => {
-      axios({
-        method: "post",
-        url: apiUrlAuth,
-        data: {
-          username: data.username,
-          password: data.password,
-        },
-      })
-        .then((response) => {
-          console.log(response);
-          alert("Usuario Logeado");
-          localStorage.setItem("token", true);
-          navigate("/home");
+        axios({
+          method: "post",
+          url: apiUrlAuth,
+          data: {
+            username: data.username,
+            password: data.password,
+          },
         })
-        .catch((error) => {
-          console.log(error);
-          alert("Usuario Inconrrecto");
-        });
+          .then((response) => {
+            console.log(response);
+            alert("Usuario Logeado");
+            localStorage.setItem("token", true);
+            navigate("/home");
+          })
+          .catch((error) => {
+            console.log(error);
+            setEstadoError(true)
+          });
     },
   });
 
@@ -75,9 +79,6 @@ export const LoginForm = () => {
         /* el tocuhed es para cuando apenas se carga la pagina y registre un cambio no salga error enseguida */
         error={touched.username && Boolean(errors.username)}
         helperText={touched.username && errors.username}
-
-        /*  aca envio los datos que escribe el usuario a una funcion e, para controlar los datos escritos */
-        /* onChange={(e) => setDatos({ ...datos, username: e.target.value })} */
       />
       <TextField
         InputProps={{
@@ -97,8 +98,6 @@ export const LoginForm = () => {
         value={values.password}
         error={touched.password && Boolean(errors.password)}
         helperText={touched.password && errors.password}
-        /*  aca envio los datos que escribe el usuario a una funcion e, para controlar los datos escritos */
-        /*           onChange={(e) => setDatos({ ...datos, password: e.target.value })} */
       />
       <Button
         type="submit"
@@ -112,6 +111,11 @@ export const LoginForm = () => {
       >
         Ingresar
       </Button>
+      {estadoerror && (
+        <Alert variant="outlined" severity="error"  >
+          Usuario/Contraseña Incorrecto - Inténtelo de nuevo
+        </Alert>
+      )}
     </Box>
   );
 }

@@ -5,7 +5,6 @@ import reportWebVitals from './reportWebVitals';
 import AppRouter from './router/AppRouter';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { red } from '@mui/material/colors';
-
 const root = ReactDOM.createRoot(document.getElementById('root'));
 const theme = createTheme({
   palette: {
@@ -20,7 +19,7 @@ const theme = createTheme({
 root.render(
   <React.StrictMode>
     <ThemeProvider theme={theme}>
-      <AppRouter />
+        <AppRouter />
     </ThemeProvider>
   </React.StrictMode>
 );
