@@ -2,6 +2,7 @@ const express = require("express");
 const database = require ("../database");
 const morgan = require("morgan");
 const cors = require("cors");
+const methods  = require("../app/controllers/controlAutenticado");
 
 //Server
 const app = express();
@@ -11,10 +12,15 @@ console.log("Servidor corriendo en puerto",app.get("port"));
 
 //Middlewares
 app.use(cors({
-    origin: ["http://127.0.0.1:5501", "http://127.0.0.1:5500" ]
-
-}))
+    origin: ["http://127.0.0.1:5501", "http://127.0.0.1:5500", "http://localhost:3000"],
+    credentials: true, // Agregar si es necesario
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Métodos permitidos
+    optionsSuccessStatus: 204 // Código de éxito para solicitudes OPTIONS
+  }));
 app.use(morgan("dev"))
+
+//Configuracion
+app.use(express.json());
 
 //Rutas
 app.get("/usu", async (req,res) => {
@@ -23,3 +29,5 @@ app.get("/usu", async (req,res) => {
     res.json(result)
   
   })
+  app.post("/api/register", methods.register)
+  app.post("/api/login", methods.login)

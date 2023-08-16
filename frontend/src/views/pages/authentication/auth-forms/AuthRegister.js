@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-//import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 //import { useSelector } from 'react-redux';
 
 // material-ui
@@ -25,22 +25,26 @@ import {
 // third party
 import * as Yup from 'yup';
 import { Formik } from 'formik';
+import axios from 'axios';
 
 // project imports
-import useScriptRef from 'hooks/useScriptRef';
+//import useScriptRef from 'hooks/useScriptRef';
 //import Google from 'assets/images/icons/social-google.svg';
 import AnimateButton from 'ui-component/extended/AnimateButton';
 import { strengthColor, strengthIndicator } from 'utils/password-strength';
+import { apiUrlReg } from 'services/Apirest';
 
 // assets
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
+// Cosas sacadas del OnSubmit { setErrors, setStatus, setSubmitting }
 // ===========================|| FIREBASE - REGISTER ||=========================== //
 
 const RegistroUsuario = ({ ...others }) => {
+  const navigate = useNavigate();
   const theme = useTheme();
-  const scriptedRef = useScriptRef();
+  //const scriptedRef = useScriptRef();
   //const matchDownSM = useMediaQuery(theme.breakpoints.down('md'));
   // const customization = useSelector((state) => state.customization);
   const [showPassword, setShowPassword] = useState(false);
@@ -71,20 +75,46 @@ const RegistroUsuario = ({ ...others }) => {
     changePassword('123456');
   }, []);
 
+  
+  
+
   return (
     <>
       <Formik
         initialValues={{
-          usuario: '',
-          password: '',
+          nom_usu: '',
+          contr_usu: '',
           submit: null
         }}
         validationSchema={Yup.object().shape({
-          usuario: Yup.string().max(255).required('El Nombre del Usuario es Obligatorio'),
-          password: Yup.string().max(255).required('La contraseña es obligatoria')
+          nom_usu: Yup.string().max(255).required('El Nombre del Usuario es Obligatorio'),
+          contr_usu: Yup.string().max(255).required('La contraseña es obligatoria')
         })}
-        onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
-          try {
+        onSubmit={async (values ) => {
+          axios({
+            method: 'post',
+            url: apiUrlReg,
+            data: {
+              nom_usu: values.nom_usu,
+              contr_usu: values.contr_usu
+            },
+             maxRedirects: 0, //Evitar redirecciones automaticas
+            validateStatus: function (status){
+              return status>= 200 && status <300; // Acá se considera exitoso si este entre el rango de 200 y 299
+            } 
+          })
+            .then((response) => {
+              if(response.data.status === 'ok'){
+                navigate(response.data.redirect);
+              }
+
+            })
+            .catch((error) => {
+              console.log(error);
+              setEstadoError(true);
+            });
+
+/*            try {
             if (scriptedRef.current) {
               setStatus({ success: true });
               setSubmitting(false);
@@ -96,36 +126,36 @@ const RegistroUsuario = ({ ...others }) => {
               setErrors({ submit: err.message });
               setSubmitting(false);
             }
-          }
+          }  */
         }}
       >
         {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
           <form noValidate onSubmit={handleSubmit} {...others}>
-            <FormControl fullWidth error={Boolean(touched.usuario && errors.usuario)} sx={{ ...theme.typography.customInput }}>
-              <InputLabel htmlFor="outlined-adornment-usuario-register">Nombre de Usuario</InputLabel>
+            <FormControl fullWidth error={Boolean(touched.nom_usu && errors.nom_usu)} sx={{ ...theme.typography.customInput }}>
+              <InputLabel htmlFor="outlined-adornment-nom_usu-register">Nombre de Usuario</InputLabel>
               <OutlinedInput
-                id="outlined-adornment-usuario-register"
+                id="outlined-adornment-nom_usu-register"
                 type="text"
-                value={values.usuario}
-                name="usuario"
+                value={values.nom_usu}
+                name="nom_usu"
                 onBlur={handleBlur}
                 onChange={handleChange}
                 inputProps={{}}
               />
-              {touched.usuario && errors.usuario && (
+              {touched.nom_usu && errors.nom_usu && (
                 <FormHelperText error id="standard-weight-helper-text--register">
-                  {errors.usuario}
+                  {errors.nom_usu}
                 </FormHelperText>
               )}
             </FormControl>
 
-            <FormControl fullWidth error={Boolean(touched.password && errors.password)} sx={{ ...theme.typography.customInput }}>
+            <FormControl fullWidth error={Boolean(touched.contr_usu && errors.contr_usu)} sx={{ ...theme.typography.customInput }}>
               <InputLabel htmlFor="outlined-adornment-password-register">Contraseña</InputLabel>
               <OutlinedInput
                 id="outlined-adornment-password-register"
                 type={showPassword ? 'text' : 'password'}
-                value={values.password}
-                name="password"
+                value={values.contr_usu}
+                name="contr_usu"
                 label="Password"
                 onBlur={handleBlur}
                 onChange={(e) => {
@@ -147,9 +177,9 @@ const RegistroUsuario = ({ ...others }) => {
                 }
                 inputProps={{}}
               />
-              {touched.password && errors.password && (
+              {touched.contr_usu && errors.contr_usu && (
                 <FormHelperText error id="standard-weight-helper-text-password-register">
-                  {errors.password}
+                  {errors.contr_usu}
                 </FormHelperText>
               )}
             </FormControl>
