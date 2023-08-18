@@ -1,4 +1,6 @@
 const bcryptjs = require("bcryptjs");
+const jsonwebtoken = require("jsonwebtoken");
+const dotenv = require("dotenv");
 
 const usuarios = [
   {
@@ -7,7 +9,45 @@ const usuarios = [
   },
 ];
 
-async function login(req, res) {}
+async function login(req, res) {
+  console.log(req.body);
+  const user = req.body.nom_usu;
+  const password = req.body.contr_usu;
+
+  //Validacion por si se envia vacio
+  if (!user || !password) {
+    return res.status(400).json({ error: "Usuario o contraseña inválidos" });
+  }
+
+  //Comparacion de si existe un usuario
+  const usuarioArevisar = usuarios.find(
+    (usuarios) => usuarios.nom_usu === user
+  );
+
+  //Si no existe el usuario entonces
+  if (!usuarioArevisar) {
+    return res.status(400).json({
+      status: "Error",
+      message: "Error - Usuario o contraseña inválidos",
+    });
+  }
+
+  //Comparacion de la contraseña
+  const loginCorrecto = await bcryptjs.compare(
+    password,
+    usuarioArevisar.contr_usu
+  );
+  if (!loginCorrecto) {
+    return res.status(400).json({
+      status: "Error",
+      message: "Error - Usuario o contraseña inválidos",
+    });
+  }
+
+  const token = jsonwebtoken.sign({user: usuarioArevisar.nom_usu, })
+  console.log(loginCorrecto);
+}
+
 //Funcion de registro con validaciones
 async function register(req, res) {
   console.log(req.body);
@@ -16,7 +56,7 @@ async function register(req, res) {
 
   //Validacion por si se envia vacio
   if (!user || !password) {
-    return res.status(400).json({ error: 'Usuario o contraseña inválidos' });
+    return res.status(400).json({ error: "Usuario o contraseña inválidos" });
   }
   //Comparacion de si existe un usuario
   const usuarioArevisar = usuarios.find(
@@ -25,13 +65,13 @@ async function register(req, res) {
   if (usuarioArevisar) {
     return res
       .status(400)
-      .send({ status: "Error", message: "Este usuario ya existe" });
+      .json({ status: "Error", message: "Este usuario ya existe" });
   }
 
   //Contraseña salt y hash
-   const saltRounds = 10; 
+  const saltRounds = 10;
   const salt = await bcryptjs.genSalt(saltRounds); // Generar salt
-  const hashPassword = await bcryptjs.hash(password,salt); // Generar hash con el salt
+  const hashPassword = await bcryptjs.hash(password, salt); // Generar hash con el salt
 
   const nuevoUsuario = {
     user,
@@ -43,10 +83,10 @@ async function register(req, res) {
   console.log(usuarios);
   return res.status(201).json({
     status: "ok",
-    message: 'Usuario: '+ nuevoUsuario.nom_usu +' registrado en la base de datos',
-    redirect: '/menu',
+    message:
+      "Usuario: " + nuevoUsuario.nom_usu + " registrado en la base de datos",
+    redirect: "/menu",
   });
-    
 }
 
 module.exports = {

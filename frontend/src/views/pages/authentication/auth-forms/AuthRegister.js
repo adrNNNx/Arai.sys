@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 // material-ui
 import { useTheme } from '@mui/material/styles';
 import {
+  Alert,
   Box,
   Button,
   //Checkbox,
@@ -18,7 +19,7 @@ import {
   InputLabel,
   OutlinedInput,
   //TextField,
-  Typography,
+  Typography
   //useMediaQuery
 } from '@mui/material';
 
@@ -52,6 +53,7 @@ const RegistroUsuario = ({ ...others }) => {
 
   const [strength, setStrength] = useState(0);
   const [level, setLevel] = useState();
+  const [estadoerror, setEstadoError] = useState(false);
 
   // const googleHandler = async () => {
   //   console.error('Register');
@@ -75,9 +77,6 @@ const RegistroUsuario = ({ ...others }) => {
     changePassword('123456');
   }, []);
 
-  
-  
-
   return (
     <>
       <Formik
@@ -90,7 +89,8 @@ const RegistroUsuario = ({ ...others }) => {
           nom_usu: Yup.string().max(255).required('El Nombre del Usuario es Obligatorio'),
           contr_usu: Yup.string().max(255).required('La contraseña es obligatoria')
         })}
-        onSubmit={async (values ) => {
+        //Envio de datos al backend
+        onSubmit={async (values) => {
           axios({
             method: 'post',
             url: apiUrlReg,
@@ -98,23 +98,24 @@ const RegistroUsuario = ({ ...others }) => {
               nom_usu: values.nom_usu,
               contr_usu: values.contr_usu
             },
-             maxRedirects: 0, //Evitar redirecciones automaticas
-            validateStatus: function (status){
-              return status>= 200 && status <300; // Acá se considera exitoso si este entre el rango de 200 y 299
-            } 
+            maxRedirects: 0, //Evitar redirecciones automaticas
+            validateStatus: function (status) {
+              return status >= 200 && status < 300; // Acá se considera exitoso si este entre el rango de 200 y 299
+            }
           })
             .then((response) => {
-              if(response.data.status === 'ok'){
+              if (response.data.status === 'ok') {
                 navigate(response.data.redirect);
               }
-
             })
             .catch((error) => {
-              console.log(error);
-              setEstadoError(true);
+              if (error.response) {
+                console.log(error.response.data.message);
+                setEstadoError(true);
+              }
             });
 
-/*            try {
+          /*            try {
             if (scriptedRef.current) {
               setStatus({ success: true });
               setSubmitting(false);
@@ -201,20 +202,26 @@ const RegistroUsuario = ({ ...others }) => {
               </FormControl>
             )}
 
-            <Grid container alignItems="center" justifyContent="space-between">
-            </Grid>
+            <Grid container alignItems="center" justifyContent="space-between"></Grid>
             {errors.submit && (
               <Box sx={{ mt: 3 }}>
                 <FormHelperText error>{errors.submit}</FormHelperText>
               </Box>
             )}
 
-            <Box sx={{ mt: 2 }}>
+            <Box sx={{ mt: 2, mb: 2,  }}>
               <AnimateButton>
                 <Button disableElevation disabled={isSubmitting} fullWidth size="large" type="submit" variant="contained" color="secondary">
                   Registrar
                 </Button>
               </AnimateButton>
+              {estadoerror && (
+                <Box sx={{mt:2}}>
+                  <Alert variant="outlined" severity="error">
+                    Este usuario ya existe - Inténtelo de nuevo
+                  </Alert>
+                </Box>
+              )}
             </Box>
           </form>
         )}

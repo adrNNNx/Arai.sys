@@ -20,21 +20,21 @@ export const LoginForm = () => {
 
   const { handleSubmit, handleChange, values, errors, touched } = useFormik({
     initialValues: {
-      username: '',
-      password: ''
+      nom_usu: '',
+      contr_usu: ''
     },
 
     validationSchema: Yup.object({
-      username: Yup.string('Ingrese su Nombre de Usuario').required('Este campo es Obligatorio'),
-      password: Yup.string('Ingrese su Contraseña').required('Este campo es Obligatorio')
+      nom_usu: Yup.string('Ingrese su Nombre de Usuario').required('Este campo es Obligatorio'),
+      contr_usu: Yup.string('Ingrese su Contraseña').required('Este campo es Obligatorio')
     }),
     onSubmit: (data) => {
       axios({
         method: 'post',
         url: apiUrlAuth,
         data: {
-          username: data.username,
-          password: data.password
+          nom_usu: data.nom_usu,
+          contr_usu: data.contr_usu
         }
       })
         .then((response) => {
@@ -64,15 +64,15 @@ export const LoginForm = () => {
         type="text"
         fullWidth
         label="Usuario"
-        name="username"
+        name="nom_usu"
         autoComplete="off"
         autoFocus
         placeholder="Ingrese su Usuario"
         onChange={handleChange}
-        value={values.username}
+        value={values.nom_usu}
         /* el tocuhed es para cuando apenas se carga la pagina y registre un cambio no salga error enseguida */
-        error={touched.username && Boolean(errors.username)}
-        helperText={touched.username && errors.username}
+        error={touched.nom_usu && Boolean(errors.nom_usu)}
+        helperText={touched.nom_usu && errors.nom_usu}
       />
       <TextField
         InputProps={{
@@ -84,14 +84,14 @@ export const LoginForm = () => {
         }}
         margin="normal"
         fullWidth
-        name="password"
+        name="contr_usu"
         label="Contraseña"
         type="password"
         placeholder="Ingrese su contraseña"
         onChange={handleChange}
-        value={values.password}
-        error={touched.password && Boolean(errors.password)}
-        helperText={touched.password && errors.password}
+        value={values.contr_usu}
+        error={touched.contr_usu && Boolean(errors.contr_usu)}
+        helperText={touched.contr_usu && errors.contr_usu}
       />
       <AnimateButton>
         <Button
