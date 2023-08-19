@@ -2,7 +2,7 @@
   "name": "berry-free-material-react-cra",
   "version": "3.3.2",
   "private": true,
-  "homepage": "http://localhost:3000/Arai.sys/",
+  "homepage": "http://localhost:3000/Arai.sys/login",
   "dependencies": {
     "@emotion/cache": "^11.9.3",
     "@emotion/react": "^11.11.1",
@@ -12,6 +12,7 @@
     "@mui/material": "^5.14.4",
     "@mui/system": "^5.8.6",
     "@mui/utils": "^5.8.6",
+    "@reduxjs/toolkit": "^1.9.5",
     "@tabler/icons": "^1.72.0",
     "apexcharts": "^3.35.3",
     "axios": "^1.4.0",

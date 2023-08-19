@@ -51,6 +51,8 @@ const ProfileSection = () => {
    * */
   const anchorRef = useRef(null);
   const handleLogout = async () => {
+    document.cookie= 'jwt=; Path=/; Expires= Thu, 01 Jan 1970 00:00:01 GMT;';
+    navigate("/login")
     console.log('Logout');
   };
 

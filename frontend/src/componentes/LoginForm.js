@@ -35,13 +35,16 @@ export const LoginForm = () => {
         data: {
           nom_usu: data.nom_usu,
           contr_usu: data.contr_usu
-        }
+        },
+        withCredentials: true,
+        credentials: 'include',
       })
         .then((response) => {
-          console.log(response);
-          alert('Usuario Logeado');
-          localStorage.setItem('token', true);
-          navigate('/menu');
+          if (response.data.status === 'ok') {
+            navigate(response.data.redirect);
+            console.log(response);
+          }
+
         })
         .catch((error) => {
           console.log(error);
@@ -109,7 +112,7 @@ export const LoginForm = () => {
       </AnimateButton>
       {estadoerror && (
         <Alert variant="outlined" severity="error">
-          Usuario/Contraseña Incorrecto - Inténtelo de nuevo
+          Error - Usuario o contraseña inválidos
         </Alert>
       )}
     </Box>

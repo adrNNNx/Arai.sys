@@ -98,6 +98,8 @@ const RegistroUsuario = ({ ...others }) => {
               nom_usu: values.nom_usu,
               contr_usu: values.contr_usu
             },
+            withCredentials: true,
+            credentials: 'include',
             maxRedirects: 0, //Evitar redirecciones automaticas
             validateStatus: function (status) {
               return status >= 200 && status < 300; // Acá se considera exitoso si este entre el rango de 200 y 299

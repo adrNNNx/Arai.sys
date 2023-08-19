@@ -2,13 +2,15 @@ const bcryptjs = require("bcryptjs");
 const jsonwebtoken = require("jsonwebtoken");
 const dotenv = require("dotenv");
 
+dotenv.config();
+
 const usuarios = [
   {
     nom_usu: "a",
     contr_usu: "$2a$10$TzXcB8YURPEIwMzy/L5QK.sr3w/2wgypHYfLQ0IG4Kv0Jo.wV3iCO",
   },
 ];
-
+//Funcion de login con validacion de token
 async function login(req, res) {
   console.log(req.body);
   const user = req.body.nom_usu;
@@ -43,9 +45,27 @@ async function login(req, res) {
       message: "Error - Usuario o contraseña inválidos",
     });
   }
+  //Token de autorizacion de login
+  const token = jsonwebtoken.sign(
+    { user: usuarioArevisar.nom_usu },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: process.env.JWT_EXPIRATION,
+    }
+  );
 
-  const token = jsonwebtoken.sign({user: usuarioArevisar.nom_usu, })
-  console.log(loginCorrecto);
+  //Opciones de Cookie
+  const cookieOption = {
+    expires: new Date(
+      Date.now() + process.env.JWT_COOKIE_EXPIRES * 24 * 60 * 60 * 1000
+    ),
+    path: "/",
+    //sameSite: "none", // Para permitir que las cookies se compartan en diferentes sitios
+    //secure: false, // Para requerir conexiones seguras (HTTPS)
+  };
+
+  res.cookie("jwt", token, cookieOption);
+  res.send({ status: "ok", message: "Usuario Logeado", redirect: "/" });
 }
 
 //Funcion de registro con validaciones
@@ -85,11 +105,12 @@ async function register(req, res) {
     status: "ok",
     message:
       "Usuario: " + nuevoUsuario.nom_usu + " registrado en la base de datos",
-    redirect: "/menu",
+    redirect: "/",
   });
 }
 
 module.exports = {
   login,
   register,
+  usuarios,
 };
