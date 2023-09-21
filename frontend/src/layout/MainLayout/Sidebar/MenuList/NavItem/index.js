@@ -8,10 +8,13 @@ import { useTheme } from '@mui/material/styles';
 import { Avatar, Chip, ListItemButton, ListItemIcon, ListItemText, Typography, useMediaQuery } from '@mui/material';
 
 // project imports
-import { MENU_OPEN, SET_MENU } from 'store/actions';
+
+//import { MENU_OPEN, SET_MENU, } from 'store/actions';
+import { menuOpen,setMenu } from 'store/customizacionReducer';
 
 // assets
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
+
 
 // ==============================|| SIDEBAR MENU LIST ITEMS ||============================== //
 
@@ -48,8 +51,10 @@ const NavItem = ({ item, level }) => {
   }
 
   const itemHandler = (id) => {
-    dispatch({ type: MENU_OPEN, id });
-    if (matchesSM) dispatch({ type: SET_MENU, opened: false });
+    dispatch(menuOpen(id));
+    //dispatch({ type: MENU_OPEN, id });
+    if (matchesSM) dispatch(setMenu(false)); 
+    /* dispatch({ type: SET_MENU, opened: false }); */
   };
 
   // active menu item on page load
@@ -59,7 +64,8 @@ const NavItem = ({ item, level }) => {
       .split('/')
       .findIndex((id) => id === item.id);
     if (currentIndex > -1) {
-      dispatch({ type: MENU_OPEN, id: item.id });
+      dispatch(menuOpen(item.id));
+      //dispatch({ type: MENU_OPEN, id: item.id });
     }
     // eslint-disable-next-line
   }, [pathname]);

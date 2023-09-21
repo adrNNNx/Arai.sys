@@ -13,10 +13,13 @@ import * as Yup from 'yup';
 import AnimateButton from 'ui-component/extended/AnimateButton';
 import { useNavigate } from 'react-router-dom';
 import { Alert } from '@mui/material';
+import { useDispatch } from 'react-redux';
+import { createUser } from 'store/customizacionUser';
 
 export const LoginForm = () => {
   const [estadoerror, setEstadoError] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const { handleSubmit, handleChange, values, errors, touched } = useFormik({
     initialValues: {
@@ -41,6 +44,7 @@ export const LoginForm = () => {
       })
         .then((response) => {
           if (response.data.status === 'ok') {
+            dispatch(createUser(response.data.user))
             navigate(response.data.redirect);
             console.log(response);
           }

@@ -24,8 +24,9 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 // project imports
 import SubCard from 'ui-component/cards/SubCard';
 //import AnimateButton from 'ui-component/extended/AnimateButton';
-import { SET_BORDER_RADIUS, SET_FONT_FAMILY } from 'store/actions';
+//import { SET_BORDER_RADIUS, SET_FONT_FAMILY } from 'store/actions';
 import { gridSpacing } from 'store/constant';
+import { setBorderRadius,setFontFamily } from 'store/customizacionReducer';
 
 // concat 'px'
 function valueText(value) {
@@ -46,13 +47,14 @@ const Customization = () => {
   };
 
   // state - border radius
-  const [borderRadius, setBorderRadius] = useState(customization.borderRadius);
+  const [borderRadius, setBorderRadiusConst] = useState(customization.borderRadius);
   const handleBorderRadius = (event, newValue) => {
-    setBorderRadius(newValue);
+    setBorderRadiusConst(newValue);
   };
 
   useEffect(() => {
-    dispatch({ type: SET_BORDER_RADIUS, borderRadius });
+    dispatch(setBorderRadius(borderRadius));
+    //dispatch({ type: SET_BORDER_RADIUS, borderRadius });
   }, [dispatch, borderRadius]);
 
   let initialFont;
@@ -70,7 +72,7 @@ const Customization = () => {
   }
 
   // state - font family
-  const [fontFamily, setFontFamily] = useState(initialFont);
+  const [fontFamily, setFontFamilyConst] = useState(initialFont);
   useEffect(() => {
     let newFont;
     switch (fontFamily) {
@@ -85,7 +87,8 @@ const Customization = () => {
         newFont = `'Roboto', sans-serif`;
         break;
     }
-    dispatch({ type: SET_FONT_FAMILY, fontFamily: newFont });
+    dispatch(setFontFamily(newFont));
+    //dispatch({ type: SET_FONT_FAMILY, fontFamily: newFont });
   }, [dispatch, fontFamily]);
 
   return (
@@ -109,7 +112,7 @@ const Customization = () => {
                   <RadioGroup
                     aria-label="font-family"
                     value={fontFamily}
-                    onChange={(e) => setFontFamily(e.target.value)}
+                    onChange={(e) => setFontFamilyConst(e.target.value)}
                     name="row-radio-buttons-group"
                   >
                     <FormControlLabel

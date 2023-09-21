@@ -1,15 +1,34 @@
 const bcryptjs = require("bcryptjs");
 const jsonwebtoken = require("jsonwebtoken");
 const dotenv = require("dotenv");
+const database = require("../../database");
 
 dotenv.config();
 
-const usuarios = [
+async function usuarios_db() {
+  const connection = await database.getConnection();
+  const result = await connection.query("SELECT * FROM usu");
+  //res.json(result);
+  const usuariosJSON = JSON.stringify(result);
+  console.log(usuariosJSON);
+  return usuariosJSON;
+}
+
+usuarios_db();
+
+/*  const usuarios = [
   {
+    id: 1,
     nom_usu: "a",
     contr_usu: "$2a$10$TzXcB8YURPEIwMzy/L5QK.sr3w/2wgypHYfLQ0IG4Kv0Jo.wV3iCO",
   },
-];
+  {
+    id: 2,
+    nom_usu: "b",
+    contr_usu: "$2a$10$TzXcB8YURPEIwMzy/L5QK.sr3w/2wgypHYfLQ0IG4Kv0Jo.wV3iCO",
+  },
+];  */
+
 //Funcion de login con validacion de token
 async function login(req, res) {
   console.log(req.body);
@@ -21,51 +40,65 @@ async function login(req, res) {
     return res.status(400).json({ error: "Usuario o contraseña inválidos" });
   }
 
-  //Comparacion de si existe un usuario
-  const usuarioArevisar = usuarios.find(
-    (usuarios) => usuarios.nom_usu === user
-  );
+  //Obtener usuarios de la bd
+  try {
+    const usuariosJSON = await usuarios_db();
+    const usuarios = JSON.parse(usuariosJSON); // Parsear la cadena JSON
 
-  //Si no existe el usuario entonces
-  if (!usuarioArevisar) {
-    return res.status(400).json({
-      status: "Error",
-      message: "Error - Usuario o contraseña inválidos",
-    });
-  }
+    //Comparacion de si existe un usuario
+    const usuarioArevisar = usuarios.find(
+      (usuarios) => usuarios.nom_usu === user
+    );
 
-  //Comparacion de la contraseña
-  const loginCorrecto = await bcryptjs.compare(
-    password,
-    usuarioArevisar.contr_usu
-  );
-  if (!loginCorrecto) {
-    return res.status(400).json({
-      status: "Error",
-      message: "Error - Usuario o contraseña inválidos",
-    });
-  }
-  //Token de autorizacion de login
-  const token = jsonwebtoken.sign(
-    { user: usuarioArevisar.nom_usu },
-    process.env.JWT_SECRET,
-    {
-      expiresIn: process.env.JWT_EXPIRATION,
+    //Si no existe el usuario entonces
+    if (!usuarioArevisar) {
+      return res.status(400).json({
+        status: "Error",
+        message: "Error - Usuario o contraseña inválidos",
+      });
     }
-  );
 
-  //Opciones de Cookie
-  const cookieOption = {
-    expires: new Date(
-      Date.now() + process.env.JWT_COOKIE_EXPIRES * 24 * 60 * 60 * 1000
-    ),
-    path: "/",
-    //sameSite: "none", // Para permitir que las cookies se compartan en diferentes sitios
-    //secure: false, // Para requerir conexiones seguras (HTTPS)
-  };
+    //Comparacion de la contraseña
+    const loginCorrecto = await bcryptjs.compare(
+      password,
+      usuarioArevisar.contr_usu
+    );
+    if (!loginCorrecto) {
+      return res.status(400).json({
+        status: "Error",
+        message: "Error - Usuario o contraseña inválidos",
+      });
+    }
+    //Token de autorizacion de login
+    const token = jsonwebtoken.sign(
+      { user: usuarioArevisar.nom_usu },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: process.env.JWT_EXPIRATION,
+      }
+    );
 
-  res.cookie("jwt", token, cookieOption);
-  res.send({ status: "ok", message: "Usuario Logeado", redirect: "/" });
+    //Opciones de Cookie
+    const cookieOption = {
+      expires: new Date(
+        Date.now() + process.env.JWT_COOKIE_EXPIRES * 24 * 60 * 60 * 1000
+      ),
+      path: "/",
+      //sameSite: "none", // Para permitir que las cookies se compartan en diferentes sitios
+      //secure: false, // Para requerir conexiones seguras (HTTPS)
+    };
+
+    res.cookie("jwt", token, cookieOption);
+    res.send({
+      status: "ok",
+      message: "Usuario Logeado",
+      redirect: "/private/dashboard",
+      user: usuarioArevisar,
+    });
+  } catch (error) {
+    console.error("Error al obtener usuarios de la base de datos:", error);
+    return res.status(500).json({ error: "Error interno del servidor" });
+  }
 }
 
 //Funcion de registro con validaciones
@@ -112,5 +145,5 @@ async function register(req, res) {
 module.exports = {
   login,
   register,
-  usuarios,
+  //usuarios,
 };
