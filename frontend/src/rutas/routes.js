@@ -4,8 +4,8 @@ export const PublicRoutes = {
 }
 
 export const PrivatesRoutes = {
-    PRIVATE: '/',
-    DASHBOARD: 'dashboard',
+    PRIVATE: 'home',
+    DASHBOARD: '/dashboard',
     DEFAULT: '/',
 }
 

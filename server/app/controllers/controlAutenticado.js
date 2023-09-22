@@ -76,7 +76,7 @@ async function login(req, res) {
     res.send({
       status: "ok",
       message: "Usuario Logeado",
-      redirect: "/dashboard",
+      redirect: "/home/dashboard",
       user: usuarioArevisar,
     });
   } catch (error) {
