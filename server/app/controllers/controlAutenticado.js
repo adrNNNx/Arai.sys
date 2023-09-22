@@ -10,24 +10,8 @@ async function usuarios_db() {
   const result = await connection.query("SELECT * FROM usu");
   //res.json(result);
   const usuariosJSON = JSON.stringify(result);
-  console.log(usuariosJSON);
   return usuariosJSON;
 }
-
-usuarios_db();
-
-/*  const usuarios = [
-  {
-    id: 1,
-    nom_usu: "a",
-    contr_usu: "$2a$10$TzXcB8YURPEIwMzy/L5QK.sr3w/2wgypHYfLQ0IG4Kv0Jo.wV3iCO",
-  },
-  {
-    id: 2,
-    nom_usu: "b",
-    contr_usu: "$2a$10$TzXcB8YURPEIwMzy/L5QK.sr3w/2wgypHYfLQ0IG4Kv0Jo.wV3iCO",
-  },
-];  */
 
 //Funcion de login con validacion de token
 async function login(req, res) {
@@ -92,7 +76,7 @@ async function login(req, res) {
     res.send({
       status: "ok",
       message: "Usuario Logeado",
-      redirect: "/private/dashboard",
+      redirect: "/dashboard",
       user: usuarioArevisar,
     });
   } catch (error) {
@@ -112,38 +96,45 @@ async function register(req, res) {
     return res.status(400).json({ error: "Usuario o contraseña inválidos" });
   }
   //Comparacion de si existe un usuario
-  const usuarioArevisar = usuarios.find(
-    (usuarios) => usuarios.nom_usu === user
-  );
-  if (usuarioArevisar) {
-    return res
-      .status(400)
-      .json({ status: "Error", message: "Este usuario ya existe" });
+  try {
+    const usuariosJSON = await usuarios_db();
+    const usuarios = JSON.parse(usuariosJSON); // Parsear la cadena JSON
+    const usuarioArevisar = usuarios.find(
+      (usuarios) => usuarios.nom_usu === user
+    );
+    if (usuarioArevisar) {
+      return res
+        .status(400)
+        .json({ status: "Error", message: "Este usuario ya existe" });
+    }
+
+    //Contraseña salt y hash
+    const saltRounds = 10;
+    const salt = await bcryptjs.genSalt(saltRounds); // Generar salt
+    const hashPassword = await bcryptjs.hash(password, salt); // Generar hash con el salt
+
+    const nuevoUsuario = {
+      user,
+      password: hashPassword,
+    };
+
+    //respuesta
+    usuarios.push(nuevoUsuario);
+    console.log(usuarios);
+    return res.status(201).json({
+      status: "ok",
+      message:
+        "Usuario: " + nuevoUsuario.nom_usu + " registrado en la base de datos",
+      redirect: "/",
+    });
+  } catch (error) {
+    console.error("Error al obtener usuarios de la base de datos:", error);
+    return res.status(500).json({ error: "Error interno del servidor" });
   }
-
-  //Contraseña salt y hash
-  const saltRounds = 10;
-  const salt = await bcryptjs.genSalt(saltRounds); // Generar salt
-  const hashPassword = await bcryptjs.hash(password, salt); // Generar hash con el salt
-
-  const nuevoUsuario = {
-    user,
-    password: hashPassword,
-  };
-
-  //respuesta
-  usuarios.push(nuevoUsuario);
-  console.log(usuarios);
-  return res.status(201).json({
-    status: "ok",
-    message:
-      "Usuario: " + nuevoUsuario.nom_usu + " registrado en la base de datos",
-    redirect: "/",
-  });
 }
 
 module.exports = {
   login,
   register,
-  //usuarios,
+  usuarios_db,
 };

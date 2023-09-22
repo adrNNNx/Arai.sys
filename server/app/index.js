@@ -32,6 +32,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 //Rutas
+app.get("/usuarios", methods.usuarios_db);
 app.get("/usu", async (req, res) => {
   const connection = await database.getConnection();
   const result = await connection.query("SELECT * FROM usu");

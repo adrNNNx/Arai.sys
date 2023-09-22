@@ -5,7 +5,9 @@ import { PublicRoutes } from "../rutas/routes";
 
 export const AuthGuard = () =>{
     const userState = useSelector((state)=> state.user);
-    return userState.name ? <Outlet/> : <Navigate replace to ={PublicRoutes.LOGIN}/>;
+    console.log('AuthGuard - userState:', userState);
+    return userState.nom_usu ? <Outlet/> : <Navigate replace to ={PublicRoutes.LOGIN}/>;
+    
 }
 
 export default AuthGuard;
