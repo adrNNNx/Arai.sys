@@ -6,7 +6,7 @@ import { lazy } from 'react';
 import Loadable from 'ui-component/Loadable';
 import { RoutesWithNotFound } from 'utils';
 import { AuthGuard } from 'guards';
-import MainLayout from 'layout/MainLayout';
+//import MainLayout from 'layout/MainLayout';
 
 //Rutas
 //const Dashboard = Loadable(lazy(() => import('views/dashboard/Default')));

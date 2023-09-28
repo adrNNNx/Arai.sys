@@ -3,6 +3,7 @@ const database = require("../database");
 const morgan = require("morgan");
 const cors = require("cors");
 const methods = require("../app/controllers/controlAutenticado");
+const crudBD = require("./controllers/crudBasedeDatos");
 const middlewares = require("../app/middleware/authorization");
 const cookieParser = require("cookie-parser");
 
@@ -31,12 +32,15 @@ app.use(morgan("dev"));
 app.use(express.json());
 app.use(cookieParser());
 
-//Rutas
+//Rutas de las Apis
 app.get("/usuarios", methods.usuarios_db);
 app.get("/usu", async (req, res) => {
   const connection = await database.getConnection();
   const result = await connection.query("SELECT * FROM usu");
   res.json(result);
 });
+app.get("/categorias",crudBD.get_categ );
 app.post("/api/register", middlewares.soloAdmin, methods.register);
 app.post("/api/login", methods.login);
+app.post("/api/create_cat", crudBD.crear_categoria );
+
