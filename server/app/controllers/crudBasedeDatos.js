@@ -20,10 +20,10 @@ async function get_categ(req, res) {
   const connection = await database.getConnection();
   try {
     const result = await connection.query("SELECT * FROM categoria");
-    res.send(result);
+    return res.send(result);
   } catch (err) {
     console.log(err);
-  }
+  } 
 }
 async function update_cat(req, res) {
   const id_cat = req.body.id_cat;

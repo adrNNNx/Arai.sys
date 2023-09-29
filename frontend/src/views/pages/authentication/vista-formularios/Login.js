@@ -7,8 +7,12 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import logo_pan from '../../../../assets/images/logo panaderia-color.png';
-import logo_arai from '../../../../assets/images/AraySys.png'
+import logo_arai from '../../../../assets/images/AraySys.png';
 import { LoginForm } from '../../../../componentes/LoginForm';
+import { useDispatch } from 'react-redux';
+import { useEffect } from 'react';
+import { ClearLocalStorage } from 'utils/localStorageUtilities';
+import { UserKey, resetUser } from 'store/customizacionUser';
 
 function Copyright(props) {
   return (
@@ -24,10 +28,16 @@ function Copyright(props) {
 }
 
 export function Login() {
+  const dispatch = useDispatch();
 
+  useEffect(() => {
+    ClearLocalStorage(UserKey);
+    dispatch(resetUser());
+    console.log('Limpieza desde app');
+  }, []);
 
   return (
-    <Grid container component="main" sx={{ height: "100vh" }}>
+    <Grid container component="main" sx={{ height: '100vh' }}>
       <CssBaseline />
       <Grid
         item
@@ -36,13 +46,10 @@ export function Login() {
         md={7}
         sx={{
           backgroundImage: `url("${logo_pan}")`,
-          backgroundRepeat: "no-repeat",
-          backgroundColor: (t) =>
-            t.palette.mode === "light"
-              ? t.palette.grey[50]
-              : t.palette.grey[900],
-          backgroundSize: "cover",
-          backgroundPosition: "center",
+          backgroundRepeat: 'no-repeat',
+          backgroundColor: (t) => (t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900]),
+          backgroundSize: 'cover',
+          backgroundPosition: 'center'
         }}
       />
       <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
@@ -50,29 +57,18 @@ export function Login() {
           sx={{
             my: 8,
             mx: 4,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center'
           }}
         >
-          <Typography
-            component="h1"
-            variant="h1"
-            mt={10}
-            mb={3}
-            fontWeight={"bolder"}
-          >
+          <Typography component="h1" variant="h1" mt={10} mb={3} fontWeight={'bolder'}>
             Iniciar sesión
           </Typography>
           <Typography component="h1" variant="h3">
             Bienvenido de vuelta!
           </Typography>
-          <Typography
-            component="h1"
-            variant="h5"
-            color={"#9EA5AD"}
-            fontStyle={"normal"}
-          >
+          <Typography component="h1" variant="h5" color={'#9EA5AD'} fontStyle={'normal'}>
             Ingrese sus credenciales para poder acceder al sistema.
           </Typography>
 
@@ -81,11 +77,7 @@ export function Login() {
           {/* Logo y Copyright */}
           <Grid container></Grid>
           <Copyright sx={{ mt: 5 }} />
-          <Avatar
-            src={logo_arai}
-            sx={{ width: 100, height: 100, bgcolor: 'inherit' }}
-            variant="rounded"
-          />
+          <Avatar src={logo_arai} sx={{ width: 100, height: 100, bgcolor: 'inherit' }} variant="rounded" />
         </Box>
       </Grid>
     </Grid>

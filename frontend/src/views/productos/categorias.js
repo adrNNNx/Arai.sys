@@ -65,10 +65,10 @@ function CategoriasView() {
         getCategorias();
         limpiarCampos();
         Swal.fire({
-          title: '<strong>Registro exitoso!!!</strong>',
-          html: `<i>La categoría <strong>${values.nom_cat}</strong> fue registrada con éxito!!!</i>`,
+          title: '<strong>Registro exitoso</strong>',
+          html: `<i>La categoría <strong>${values.nom_cat}</strong> fue registrada con éxito.</i>`,
           icon: 'success',
-          timer: 3000
+          timer: 2500
         });
       })
       .catch(function (error) {
@@ -91,8 +91,8 @@ function CategoriasView() {
         getCategorias();
         limpiarCampos();
         Swal.fire({
-          title: '<strong>Actualización exitosa!!!</strong>',
-          html: `<i>La categoría <strong>${values.nom_cat}</strong> fue actualizada con éxito!!!</i>`,
+          title: '<strong>Actualización exitosa</strong>',
+          html: `<i>La categoría <strong>${values.nom_cat}</strong> fue actualizada con éxito</i>`,
           icon: 'success',
           timer: 3000
         });
@@ -159,13 +159,15 @@ function CategoriasView() {
           setSubmitting(false);
         }}
       >
-        {({ isSubmitting }) => (
+        {({ isSubmitting, }) => (
           <Form>
             <Paper style={{ padding: '20px', marginBottom: '20px' }}>
               <h3>{editar ? 'Actualizar Categoría' : 'Añadir Categoría'}</h3>
               <Field as={TextField} name="nom_cat" label="Nombre de la Categoría" fullWidth margin="normal" />
+
+              <ErrorMessage name="nom_cat">{(msg) => <FormHelperText error>{msg}</FormHelperText>}</ErrorMessage>
               <Field as={TextField} name="desc_cat" label="Descripción de la Categoría" fullWidth margin="normal" />
-              <ErrorMessage name="desc_cat" component="div" />
+              <ErrorMessage name="desc_cat">{(msg) => <FormHelperText error>{msg}</FormHelperText>}</ErrorMessage>
               <Button type="submit" variant="contained" color="primary" disabled={isSubmitting} style={{ marginTop: '20px' }}>
                 {editar ? 'Actualizar' : 'Agregar'}
               </Button>

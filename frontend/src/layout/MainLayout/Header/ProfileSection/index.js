@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 
 import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -34,11 +34,16 @@ import Transitions from 'ui-component/extended/Transitions';
 // assets
 import { IconLogout, IconSettings } from '@tabler/icons';
 import PersonIcon from '@mui/icons-material/Person';
+import { ClearLocalStorage } from 'utils/localStorageUtilities';
+import { UserKey } from '../../../../store/customizacionUser';
+import { PublicRoutes } from 'rutas';
+import { resetUser } from 'redux/state/user';
 // ==============================|| PROFILE MENU ||============================== //
 
 const ProfileSection = () => {
   const theme = useTheme();
   const customization = useSelector((state) => state.customization);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   //const [sdm, setSdm] = useState(true);
@@ -50,10 +55,13 @@ const ProfileSection = () => {
    * anchorRef is used on different componets and specifying one type leads to other components throwing an error
    * */
   const anchorRef = useRef(null);
+
+  //Funcion para cerrar sesión borrando los cookies y el localstorage del navegador
   const handleLogout = async () => {
     document.cookie= 'jwt=; Path=/; Expires= Thu, 01 Jan 1970 00:00:01 GMT;';
-    navigate("/login")
-    console.log('Logout');
+    ClearLocalStorage(UserKey);
+    dispatch(resetUser());
+    navigate(PublicRoutes.LOGIN);
   };
 
   const handleClose = (event) => {

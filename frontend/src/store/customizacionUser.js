@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { ClearLocalStorage, PersitLocalStorage } from '../utils/localStorageUtilities';
 
 export const EmptyUserState = {
   id: 0,
@@ -6,29 +7,25 @@ export const EmptyUserState = {
   password: ''
 };
 
-export const PersitLocalStorageUser = (userInfo) => {
-  localStorage.setItem('user', JSON.stringify({ ...userInfo }));
-};
 
-export const ClearLocalStorageUser = () => {
-  localStorage.removeItem('user');
-};
+
+export const UserKey= 'user';
 
 export const userSlice = createSlice({
   name: 'user',
   initialState: localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : EmptyUserState,
   reducers: {
     createUser: (state, action) => {
-      PersitLocalStorageUser(action.payload);
+      PersitLocalStorage(UserKey, action.payload);
       return action.payload;
     },
     modifyUser: (state, action) => {
       const result = { ...state, ...action.payload };
-      PersitLocalStorageUser(result);
+      PersitLocalStorage(UserKey, result);
       return result;
     },
     resetUser: () => {
-      ClearLocalStorageUser();
+      ClearLocalStorage(UserKey);
       return EmptyUserState;
     }
   }
