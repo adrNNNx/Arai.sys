@@ -11,7 +11,7 @@ import { RoutesWithNotFound } from 'utils';
 import { Navigate, Route } from 'react-router';
 
 const DashboardDefault = Loadable(lazy(() => import('views/dashboard/Default')));
-
+const CategoriaVista = Loadable(lazy(() => import('views/productos/categorias')));
 const UtilsTypography = Loadable(lazy(() => import('views/utilities/Typography')));
 const UtilsColor = Loadable(lazy(() => import('views/utilities/Color')));
 const UtilsShadow = Loadable(lazy(() => import('views/utilities/Shadow')));
@@ -25,6 +25,8 @@ function RutasPrivadas() {
       <Route path="/" element={<Navigate to={PrivatesRoutes.DASHBOARD} />} />
       <Route path="/" element={<MainLayout />}>
         <Route path={PrivatesRoutes.DASHBOARD} element={<DashboardDefault />} />
+        <Route path={PrivatesRoutes.CATEG} element={<CategoriaVista />} />
+
         <Route path="/utils/util-typography" element={<UtilsTypography />} />
         <Route path="/utils/util-color" element={<UtilsColor />} />
         <Route path="/utils/util-shadow" element={<UtilsShadow />} />

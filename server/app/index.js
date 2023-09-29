@@ -39,8 +39,9 @@ app.get("/usu", async (req, res) => {
   const result = await connection.query("SELECT * FROM usu");
   res.json(result);
 });
-app.get("/categorias",crudBD.get_categ );
+app.get("/api/categorias",crudBD.get_categ );
 app.post("/api/register", middlewares.soloAdmin, methods.register);
 app.post("/api/login", methods.login);
 app.post("/api/create_cat", crudBD.crear_categoria );
+app.put("/api/update_cat",crudBD.update_cat);
 

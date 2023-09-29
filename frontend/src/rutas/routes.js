@@ -6,6 +6,8 @@ export const PublicRoutes = {
 export const PrivatesRoutes = {
   PRIVATE: '/',
   DASHBOARD: '/dashboard',
+  CATEG: '/productos/categorias',
+  PROD_ALM: '/productos/almacen',
   DEFAULT: '/',
   UTILS: {
     base: 'utils',
