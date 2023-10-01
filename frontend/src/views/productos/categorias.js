@@ -39,13 +39,17 @@ function CategoriasView() {
   const limpiarCampos = () => {
     setId_cat('');
     setEditar(false);
+    setInitialFormValues({ nom_cat: '', desc_cat: '' });
   };
+
+  const [initialFormValues, setInitialFormValues] = useState({ nom_cat: '', desc_cat: '' });
 
   const editarCategoria = (val) => {
     setEditar(true);
     setId_cat(val.id_cat);
+    setInitialFormValues({ nom_cat: val.nom_cat, desc_cat: val.desc_cat }); // Añade esta línea
   };
-
+  
   const getCategorias = () => {
     Axios.get(apiUrlGetCat).then((response) => {
       setCategorias(response.data);
@@ -81,7 +85,7 @@ function CategoriasView() {
       });
   };
 
-  const updateCategoria = (values) => {
+  const updateCategoria = (values, resetForm) => {
     Axios.put(apiUrlUpdateCat, {
       id_cat: id_cat,
       nom_cat: values.nom_cat,
@@ -90,6 +94,7 @@ function CategoriasView() {
       .then(() => {
         getCategorias();
         limpiarCampos();
+        resetForm();
         Swal.fire({
           title: '<strong>Actualización exitosa</strong>',
           html: `<i>La categoría <strong>${values.nom_cat}</strong> fue actualizada con éxito</i>`,
@@ -147,19 +152,19 @@ function CategoriasView() {
   return (
     <div style={{ padding: '20px' }}>
       <Formik
-        initialValues={{ nom_cat: '', desc_cat: '' }}
-        validationSchema={validationSchema}
-        onSubmit={(values, { setSubmitting, resetForm }) => {
-          if (editar) {
-            updateCategoria(values);
-          } else {
-            addCategoria(values);
-          }
-          resetForm();
-          setSubmitting(false);
-        }}
+         initialValues={initialFormValues} // Usa el estado aquí
+         enableReinitialize  // Añade esta línea para permitir que Formik reinicialice los valores cuando cambien
+         validationSchema={validationSchema}
+         onSubmit={(values, { setSubmitting, resetForm }) => {
+           if (editar) {
+             updateCategoria(values, resetForm);
+           } else {
+             addCategoria(values);
+           }
+           setSubmitting(false);
+         }}
       >
-        {({ isSubmitting, }) => (
+        {({ isSubmitting,}) => (
           <Form>
             <Paper style={{ padding: '20px', marginBottom: '20px' }}>
               <h3>{editar ? 'Actualizar Categoría' : 'Añadir Categoría'}</h3>
