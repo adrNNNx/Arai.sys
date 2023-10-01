@@ -9,7 +9,7 @@ import * as Yup from 'yup';
 
 //Validaciones al formulario
 const validationSchema = Yup.object({
-  nom_cat: Yup.string().required('El nombre de la categoría es requerido'),
+  nom_cat: Yup.string().required('El nombre de la categoríavhgjg es requerido'),
   desc_cat: Yup.string().required('La descripción de la categoría es requerida')
 });
 
@@ -19,13 +19,17 @@ function categoriasForm() {
   const [categoriasList, setCategorias] = useState([]);
 
   const limpiarCampos = () => {
-    setId_cat('');
+    setId_cat("");
     setEditar(false);
+    setInitialFormValues({ nom_cat: '', desc_cat: '' });
   };
+
+  const [initialFormValues, setInitialFormValues] = useState({ nom_cat: '', desc_cat: '' });
 
   const editarCategoria = (val) => {
     setEditar(true);
     setId_cat(val.id_cat);
+    setInitialFormValues({ nom_cat: val.nom_cat, desc_cat: val.desc_cat }); // Añade esta línea
   };
 
   const getCategorias = () => {
@@ -63,7 +67,7 @@ function categoriasForm() {
       });
   };
 
-  const updateCategoria = (values) => {
+  const updateCategoria = (values, resetForm) => {
     Axios.put(apiUrlUpdateCat, {
       id_cat: id_cat,
       nom_cat: values.nom_cat,
@@ -72,6 +76,7 @@ function categoriasForm() {
       .then(() => {
         getCategorias();
         limpiarCampos();
+        resetForm();
         Swal.fire({
           title: '<strong>Actualización exitosa!!!</strong>',
           html: `<i>La categoría <strong>${values.nom_cat}</strong> fue actualizada con éxito!!!</i>`,
@@ -127,19 +132,19 @@ function categoriasForm() {
   };
   return (<div style={{ padding: '20px' }}>
   <Formik
-    initialValues={{ nom_cat: '', desc_cat: '' }}
-    validationSchema={validationSchema}
-    onSubmit={(values, { setSubmitting, resetForm }) => {
-      if (editar) {
-        updateCategoria(values);
-      } else {
-        addCategoria(values);
-      }
-      resetForm();
-      setSubmitting(false);
-    }}
+      initialValues={initialFormValues} // Tus valores iniciales
+      enableReinitialize={true}  // Permite reinicializar los valores del formulario
+      validationSchema={validationSchema}
+      onSubmit={(values, { setSubmitting, resetForm }) => {
+        if (editar) {
+          updateCategoria(values, resetForm);
+        } else {
+          addCategoria(values);
+        }
+        setSubmitting(false);
+      }}
   >
-    {({ isSubmitting }) => (
+    {({ isSubmitting,  setValues }) => (
       <Form>
         <Paper style={{ padding: '20px', marginBottom: '20px' }}>
           <h3>{editar ? 'Actualizar Categoría' : 'Añadir Categoría'}</h3>
@@ -159,6 +164,34 @@ function categoriasForm() {
       </Form>
     )}
   </Formik>
+  
+  <TableContainer component={Paper}>
+      <Table>
+        <TableHead>
+        <TableRow>
+              <TableCell>Nombre de Categoría</TableCell>
+              <TableCell>Descripción</TableCell>
+              <TableCell>Acciones</TableCell>
+            </TableRow>
+        </TableHead>
+        <TableBody>
+          {categoriasList.map(categoria => (
+            <TableRow key={categoria.id_cat}>
+              <TableCell>{categoria.nom_cat}</TableCell>
+              <TableCell>{categoria.desc_cat}</TableCell>
+              <TableCell>
+                  <IconButton onClick={() => editarCategoria(categoria)} color="primary">
+                    <Edit />
+                  </IconButton>
+                  <IconButton onClick={() => deleteCategoria(categoria)} color="secondary">
+                    <Delete />
+                  </IconButton>
+                </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
 </div>);
 }
 

@@ -24,18 +24,24 @@ const validationSchema = Yup.object({
 });
 
 function App() {
+  const [nom_cat, setNom_cat] = useState(""); // Nombre de la categoría
+  const [desc_cat, setDesc_cat] = useState(""); // Descripción de la categoría
   const [id_cat, setId_cat] = useState(); // ID de la categoría
   const [editar, setEditar] = useState(false);
   const [categoriasList, setCategorias] = useState([]);
 
   const limpiarCampos = () => {
+    setNom_cat("");
+    setDesc_cat("");
     setId_cat("");
     setEditar(false);
   };
 
   const editarCategoria = (val) => {
     setEditar(true);
-    setId_cat(val.id_cat);
+      setNom_cat(val.nom_cat);
+      setDesc_cat(val.desc_cat);
+      setId_cat(val.id_cat);
   };
 
   const getCategorias = () => {
