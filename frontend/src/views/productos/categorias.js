@@ -5,7 +5,7 @@
 //import MainCard from 'ui-component/cards/MainCard';
 import { useState, useEffect } from 'react';
 import Axios from 'axios';
-import { apiUrlGetCat, apiUrlCreaCat, apiUrlUpdateCat } from '../../services/Apirest';
+import { apiUrlGetCat, apiUrlCreaCat, apiUrlUpdateCat, apiUrlDeleteCat } from '../../services/Apirest';
 import Swal from 'sweetalert2';
 import {
   Button,
@@ -112,24 +112,24 @@ function CategoriasView() {
       });
   };
 
-  const deleteCategoria = (val) => {
+  const softDeleteCategoria = (val) => {
     Swal.fire({
-      title: '¿Confirmar eliminación?',
-      html: `<i>¿Realmente desea eliminar la categoría <strong>${val.nom_cat}</strong>?</i>`,
+      title: '¿Confirmar borrado lógico?',
+      html: `<i>¿Realmente desea eliminarla? <strong>${val.nom_cat}</strong>?</i>`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
-      confirmButtonText: 'Sí, ¡eliminarla!'
+      confirmButtonText: 'Sí'
     }).then((result) => {
       if (result.isConfirmed) {
-        Axios.delete(`http://localhost:3001/delete/${val.id_cat}`)
+        Axios.put(apiUrlDeleteCat, { id_cat: val.id_cat })
           .then(() => {
             getCategorias();
             limpiarCampos();
             Swal.fire({
               icon: 'success',
-              title: `${val.nom_cat} fue eliminada.`,
+              title: `${val.nom_cat} Fue eliminada.`,
               showConfirmButton: false,
               timer: 2000
             });
@@ -148,6 +148,7 @@ function CategoriasView() {
       }
     });
   };
+  
 
   return (
     <div style={{ padding: '20px' }}>
@@ -196,21 +197,22 @@ function CategoriasView() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {categoriasList.map((categoria) => (
-              <TableRow key={categoria.id_cat}>
-                <TableCell>{categoria.nom_cat}</TableCell>
-                <TableCell>{categoria.desc_cat}</TableCell>
-                <TableCell>
-                  <IconButton onClick={() => editarCategoria(categoria)} color="primary">
-                    <Edit />
-                  </IconButton>
-                  <IconButton onClick={() => deleteCategoria(categoria)} color="secondary">
-                    <Delete />
-                  </IconButton>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
+  {categoriasList.map((categoria) => (
+    <TableRow key={categoria.id_cat}>
+      <TableCell>{categoria.nom_cat}</TableCell>
+      <TableCell>{categoria.desc_cat}</TableCell>
+      <TableCell>
+        <IconButton onClick={() => editarCategoria(categoria)} color="primary">
+          <Edit />
+        </IconButton>
+        <IconButton onClick={() => softDeleteCategoria(categoria)} color="secondary">
+          <Delete />
+        </IconButton>
+      </TableCell>
+    </TableRow>
+  ))}
+</TableBody>
+
         </Table>
       </TableContainer>
     </div>

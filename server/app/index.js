@@ -44,4 +44,6 @@ app.post("/api/register", middlewares.soloAdmin, methods.register);
 app.post("/api/login", methods.login);
 app.post("/api/create_cat", crudBD.crear_categoria );
 app.put("/api/update_cat",crudBD.update_cat);
+app.put("/api/delete_cat", crudBD.delete_cat);
+
 

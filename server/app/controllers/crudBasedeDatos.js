@@ -19,12 +19,13 @@ async function crear_categoria(req, res) {
 async function get_categ(req, res) {
   const connection = await database.getConnection();
   try {
-    const result = await connection.query("SELECT * FROM categoria");
+    const result = await connection.query("SELECT * FROM categoria WHERE estado = 1");
     return res.send(result);
   } catch (err) {
     console.log(err);
   } 
 }
+
 async function update_cat(req, res) {
   const id_cat = req.body.id_cat;
   const nom_cat = req.body.nom_cat;
@@ -43,8 +44,26 @@ async function update_cat(req, res) {
   );
 }
 
+async function delete_cat(req, res) {
+  const id_cat = req.body.id_cat;
+  const connection = await database.getConnection();
+  connection.query(
+    "UPDATE categoria SET estado=0 WHERE id_cat=?",
+    [id_cat],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    }
+  );
+}
+
+
 module.exports = {
   crear_categoria,
   get_categ,
   update_cat,
+  delete_cat
 };
