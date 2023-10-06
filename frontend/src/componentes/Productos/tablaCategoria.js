@@ -15,10 +15,11 @@ import FirstPageIcon from '@mui/icons-material/FirstPage';
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import LastPageIcon from '@mui/icons-material/LastPage';
-import { TableHead } from '@mui/material';
+import { Divider, Grid, InputAdornment, TableHead, TextField, Tooltip, Typography } from '@mui/material';
 import { getCategorias } from 'services';
 import { useEffect, useState } from 'react';
 import { Edit, Delete } from '@mui/icons-material';
+import { IconSearch } from '@tabler/icons';
 import { useAraiContext } from 'context/arai.context';
 
 function TablePaginationActions(props) {
@@ -68,9 +69,8 @@ TablePaginationActions.propTypes = {
 
 export default function TablaCategoria() {
   const [categoriasLista, setCategorias] = useState([]);
-  const { araiContextValue, setAraiContextValue, dataupdatecontext, setDataUpdateContext } =
-    useAraiContext();
-
+  const { araiContextValue, setAraiContextValue, dataupdatecontext, setDataUpdateContext } = useAraiContext();
+  const theme = useTheme();
   // UseEffect que carga los primeros datos
   useEffect(() => {
     // Llama a la función getCategorias de api.js
@@ -103,7 +103,7 @@ export default function TablaCategoria() {
   const editarCategoria = (val) => {
     setAraiContextValue({
       ...val,
-      action: "editar",
+      action: 'editar'
     });
     console.log('desde tabla categoria valores editar: ', araiContextValue.nom_cat);
   };
@@ -111,7 +111,7 @@ export default function TablaCategoria() {
   const deleteCategoria = (val) => {
     setAraiContextValue({
       ...val,
-      action: "eliminar",
+      action: 'eliminar'
     });
     console.log('desde tabla categoria valores eliminar: ', araiContextValue.nom_cat);
   };
@@ -133,62 +133,93 @@ export default function TablaCategoria() {
 
   return (
     <>
-      <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 500 }} aria-label="tabla de categoria de productos">
-          <TableHead>
-            <TableRow>
-              <TableCell>Nombre de Categoría</TableCell>
-              <TableCell>Descripción</TableCell>
-              <TableCell>Acciones</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {(rowsPerPage > 0 ? categoriasLista.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) : categoriasLista).map(
-              (categoria) => (
-                <TableRow key={categoria.id_cat}>
-                  <TableCell component="th" scope="row">
-                    {categoria.nom_cat}
-                  </TableCell>
-                  <TableCell>{categoria.desc_cat}</TableCell>
-                  <TableCell>
-                    <IconButton onClick={() => editarCategoria(categoria)} color="primary">
-                      <Edit />
-                    </IconButton>
-                    <IconButton onClick={() => deleteCategoria(categoria)} color="secondary">
-                      <Delete />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
-              )
-            )}
-            {emptyRows > 0 && (
-              <TableRow style={{ height: 53 * emptyRows }}>
-                <TableCell colSpan={6} />
-              </TableRow>
-            )}
-          </TableBody>
-          <TableFooter>
-            <TableRow>
-              <TablePagination
-                rowsPerPageOptions={[5, 10, 25, { label: 'Todas', value: -1 }]}
-                colSpan={3}
-                count={categoriasLista.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                SelectProps={{
-                  inputProps: {
-                    'aria-label': 'rows per page'
-                  },
-                  native: true
-                }}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-                ActionsComponent={TablePaginationActions}
-              />
-            </TableRow>
-          </TableFooter>
-        </Table>
-      </TableContainer>
+      <Grid container component={Paper}>
+        <Grid item xs={false} sm={12}>
+            <Grid container direction="row" spacing={2} sx={{ p: 2, alignItems: 'flex-start' }}>
+              <Grid item>
+                <Typography sx={{ mt:2 }} variant="h3" id="tableTitle" component="div">
+                  Tabla Categoria
+                </Typography>
+              </Grid>
+              <Grid item sx={{ flexGrow: 1, display: 'flex', justifyContent: 'flex-end' }}>
+                <TextField
+                  type="search"
+                  variant="outlined"
+                  placeholder="Buscar Categoria..."
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <IconSearch stroke={1.5} size="1rem" color={theme.palette.grey[500]} />
+                      </InputAdornment>
+                    )
+                  }}
+                  //sx={{ p: 2 }}
+                />
+              </Grid>
+            </Grid>
+            <Divider />
+            <TableContainer>
+              <Table sx={{ minWidth: 500 }} aria-label="tabla de categoria de productos">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Nombre de Categoría</TableCell>
+                    <TableCell>Descripción</TableCell>
+                    <TableCell>Acciones</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {(rowsPerPage > 0 ? categoriasLista.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) : categoriasLista).map(
+                    (categoria) => (
+                      <TableRow key={categoria.id_cat}>
+                        <TableCell component="th" scope="row">
+                          {categoria.nom_cat}
+                        </TableCell>
+                        <TableCell>{categoria.desc_cat}</TableCell>
+                        <TableCell>
+                          <Tooltip title="Editar Categoría">
+                            <IconButton onClick={() => editarCategoria(categoria)} color="primary">
+                              <Edit />
+                            </IconButton>
+                          </Tooltip>
+                          <Tooltip title="Eliminar">
+                            <IconButton onClick={() => deleteCategoria(categoria)} color="secondary">
+                              <Delete />
+                            </IconButton>
+                          </Tooltip>
+                        </TableCell>
+                      </TableRow>
+                    )
+                  )}
+                  {emptyRows > 0 && (
+                    <TableRow style={{ height: 53 * emptyRows }}>
+                      <TableCell colSpan={6} />
+                    </TableRow>
+                  )}
+                </TableBody>
+                <TableFooter>
+                  <TableRow>
+                    <TablePagination
+                      rowsPerPageOptions={[5, 10, 25, { label: 'Todas', value: -1 }]}
+                      colSpan={3}
+                      count={categoriasLista.length}
+                      rowsPerPage={rowsPerPage}
+                      page={page}
+                      SelectProps={{
+                        inputProps: {
+                          'aria-label': 'rows per page'
+                        },
+                        native: true
+                      }}
+                      onPageChange={handleChangePage}
+                      onRowsPerPageChange={handleChangeRowsPerPage}
+                      ActionsComponent={TablePaginationActions}
+                    />
+                  </TableRow>
+                </TableFooter>
+              </Table>
+            </TableContainer>
+        </Grid>
+      </Grid>
     </>
   );
 }

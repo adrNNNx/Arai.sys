@@ -12,11 +12,18 @@ import ProfileSection from './ProfileSection';
 
 // assets
 import { IconMenu2 } from '@tabler/icons';
+import { useDispatch } from 'react-redux';
+import { toggleMenu } from 'store/customizacionReducer';
 
 // ==============================|| MAIN NAVBAR / HEADER ||============================== //
 
-const Header = ({ handleLeftDrawerToggle }) => {
+const Header = () => {
   const theme = useTheme();
+  const dispatch = useDispatch();
+
+  const handleMenuToggle = () => {
+    dispatch(toggleMenu()); // Cambia el estado de abierto/cerrado
+  };
 
   return (
     <>
@@ -47,7 +54,7 @@ const Header = ({ handleLeftDrawerToggle }) => {
                 color: theme.palette.secondary.light
               }
             }}
-            onClick={handleLeftDrawerToggle}
+            onClick={handleMenuToggle}
             color="inherit"
           >
             <IconMenu2 stroke={1.5} size="1.3rem" />

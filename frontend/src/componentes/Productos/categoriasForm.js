@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import Axios from 'axios';
-import {apiUrlCreaCat, apiUrlUpdateCat, apiUrlDeleteCat } from '../../services/Apirest';
+import { apiUrlCreaCat, apiUrlUpdateCat, apiUrlDeleteCat } from '../../services/Apirest';
 import Swal from 'sweetalert2';
 import { Button, TextField, Paper, FormHelperText } from '@mui/material';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { useAraiContext } from 'context/arai.context';
+import 'animate.css';
 //Valores iniciales del formulario
 const initialValues = { nom_cat: '', desc_cat: '' };
 
@@ -18,33 +19,31 @@ const validationSchema = Yup.object({
 function CategoriasForm() {
   const [id_cat, setId_cat] = useState(); // ID de la categoría
   const [editar, setEditar] = useState(false);
-  const {setAraiContextValue, araiContextValue, setDataUpdateContext, dataupdatecontext} = useAraiContext();
+  const { setAraiContextValue, araiContextValue, setDataUpdateContext, dataupdatecontext } = useAraiContext();
   const [initialFormValues, setInitialFormValues] = useState(initialValues);
 
-    // El useEffect para cuando el contexto cambie entonces los valores se actualizan de los useState (Funciona como editarCategoria)
-    //(El contexto es intercomunicacion entre componentes en este caso la tabla le pasa los datos al FORM)
-    useEffect(() => {
-      if (araiContextValue.action === "editar") {
-        setId_cat(araiContextValue.id_cat);
-        setInitialFormValues({ nom_cat: araiContextValue.nom_cat, desc_cat: araiContextValue.desc_cat });
-        setEditar(true);
-        console.log("valores del contexto desde cateogirasForm: ",araiContextValue.nom_cat, "valor del usetate de editar: ", editar);
-      } else if (araiContextValue.action === "eliminar") {
-        deleteCategoria(araiContextValue);
-      }
-    }, [araiContextValue]);
- //Funciones de Utilidad para el form
+  // El useEffect para cuando el contexto cambie entonces los valores se actualizan de los useState (Funciona como editarCategoria)
+  //(El contexto es intercomunicacion entre componentes en este caso la tabla le pasa los datos al FORM)
+  useEffect(() => {
+    if (araiContextValue.action === 'editar') {
+      setId_cat(araiContextValue.id_cat);
+      setInitialFormValues({ nom_cat: araiContextValue.nom_cat, desc_cat: araiContextValue.desc_cat });
+      setEditar(true);
+      console.log('valores del contexto desde cateogirasForm: ', araiContextValue.nom_cat, 'valor del usetate de editar: ', editar);
+    } else if (araiContextValue.action === 'eliminar') {
+      deleteCategoria(araiContextValue);
+    }
+  }, [araiContextValue]);
+  //Funciones de Utilidad para el form
   const limpiarCampos = () => {
     setId_cat('');
     setEditar(false);
     setInitialFormValues(initialValues);
     setAraiContextValue('');
-    console.log("Limpieza de los campos valores actuales: ", id_cat, "editar: ", editar, "valores iniciales: ", initialFormValues);
+    console.log('Limpieza de los campos valores actuales: ', id_cat, 'editar: ', editar, 'valores iniciales: ', initialFormValues);
   };
 
-
-
- //Acá comienzan las funciones de CRUD para el formulario
+  //Acá comienzan las funciones de CRUD para el formulario
   const addCategoria = (values) => {
     Axios.post(apiUrlCreaCat, {
       nom_cat: values.nom_cat,
@@ -53,18 +52,27 @@ function CategoriasForm() {
       .then(() => {
         limpiarCampos();
         setDataUpdateContext(true);
-        console.log("Desde categoria: ", dataupdatecontext);
+        console.log('Desde categoria: ', dataupdatecontext);
         Swal.fire({
+          position: 'bottom',
+          toast: true,
           title: '<strong>Registro exitoso</strong>',
           html: `<i>La categoría <strong>${values.nom_cat}</strong> fue registrada con éxito</i>`,
           icon: 'success',
-          timer: 3000
+          showConfirmButton: false,
+          showClass: {
+            popup: 'animate__animated animate__fadeInLeft animate__faster'
+          },
+          hideClass: {
+            popup: 'animate__animated animate__fadeOutUp animate__faster'
+          },
+          timer: 2500
         });
       })
       .catch(function (error) {
         Swal.fire({
           icon: 'error',
-          title: 'Oops...',
+          title: 'Oops...ocurrio un error inesperado',
           text:
             JSON.parse(JSON.stringify(error)).message === 'Network Error' ? 'Intente más tarde' : JSON.parse(JSON.stringify(error)).message
         });
@@ -81,12 +89,21 @@ function CategoriasForm() {
         limpiarCampos();
         setDataUpdateContext(true);
         resetForm();
-        console.log("Desde update: ", dataupdatecontext);
+        console.log('Desde update: ', dataupdatecontext);
         Swal.fire({
+          position: 'bottom',
+          toast: true,
           title: '<strong>Actualización exitosa</strong>',
           html: `<i>La categoría <strong>${values.nom_cat}</strong> fue actualizada con éxito</i>`,
           icon: 'success',
-          timer: 3000
+          showConfirmButton: false,
+          showClass: {
+            popup: 'animate__animated animate__fadeInLeft animate__faster'
+          },
+          hideClass: {
+            popup: 'animate__animated animate__fadeOutUp animate__faster'
+          },
+          timer: 2500,
         });
       })
       .catch(function (error) {
@@ -107,19 +124,28 @@ function CategoriasForm() {
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
-      confirmButtonText: 'Sí'
+      confirmButtonText: 'Sí',
+      cancelButtonText: 'Cancelar'
     }).then((result) => {
       if (result.isConfirmed) {
         Axios.put(apiUrlDeleteCat, { id_cat: val.id_cat })
           .then(() => {
             limpiarCampos();
             setDataUpdateContext(true);
-            console.log("Desde delete: ", dataupdatecontext);
+            console.log('Desde delete: ', dataupdatecontext);
             Swal.fire({
+              position: 'bottom',
+              toast: true,
               icon: 'success',
-              title: `${val.nom_cat} Fue eliminada.`,
+              title: `La categoria ${val.nom_cat} fue eliminada.`,
               showConfirmButton: false,
-              timer: 2000
+              showClass: {
+                popup: 'animate__animated animate__fadeInLeft animate__faster'
+              },
+              hideClass: {
+                popup: 'animate__animated animate__fadeOutUp animate__faster'
+              },
+              timer: 2500
             });
           })
           .catch(function (error) {
@@ -142,7 +168,7 @@ function CategoriasForm() {
     <div>
       <Formik
         initialValues={initialFormValues} //Valores iniciales predefinidos
-        enableReinitialize={true}  // Permite reinicializar los valores 
+        enableReinitialize={true} // Permite reinicializar los valores
         validationSchema={validationSchema}
         onSubmit={(values, { setSubmitting, resetForm }) => {
           if (editar) {
@@ -153,7 +179,7 @@ function CategoriasForm() {
           setSubmitting(false);
         }}
       >
-        {({ isSubmitting}) => (
+        {({ isSubmitting }) => (
           <Form>
             <Paper style={{ padding: '20px', marginBottom: '20px' }}>
               <h3>{editar ? 'Actualizar Categoría' : 'Añadir Categoría'}</h3>
