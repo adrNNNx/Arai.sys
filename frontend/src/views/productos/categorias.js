@@ -49,7 +49,7 @@ function CategoriasView() {
     setId_cat(val.id_cat);
     setInitialFormValues({ nom_cat: val.nom_cat, desc_cat: val.desc_cat }); // Añade esta línea
   };
-  
+
   const getCategorias = () => {
     Axios.get(apiUrlGetCat).then((response) => {
       setCategorias(response.data);
@@ -60,7 +60,7 @@ function CategoriasView() {
     getCategorias();
   }, []);
 
-  const addCategoria = (values) => {
+  const addCategoria = (values, resetForm) => {
     Axios.post(apiUrlCreaCat, {
       nom_cat: values.nom_cat,
       desc_cat: values.desc_cat
@@ -68,6 +68,7 @@ function CategoriasView() {
       .then(() => {
         getCategorias();
         limpiarCampos();
+        resetForm(); 
         Swal.fire({
           title: '<strong>Registro exitoso</strong>',
           html: `<i>La categoría <strong>${values.nom_cat}</strong> fue registrada con éxito.</i>`,
@@ -154,13 +155,13 @@ function CategoriasView() {
     <div style={{ padding: '20px' }}>
       <Formik
          initialValues={initialFormValues} // Usa el estado aquí
-         enableReinitialize  // Añade esta línea para permitir que Formik reinicialice los valores cuando cambien
+         enableReinitialize={true} // Esta línea es para permitir que Formik reinicialice los valores cuando cambien
          validationSchema={validationSchema}
          onSubmit={(values, { setSubmitting, resetForm }) => {
            if (editar) {
              updateCategoria(values, resetForm);
            } else {
-             addCategoria(values);
+             addCategoria(values, resetForm);
            }
            setSubmitting(false);
          }}
@@ -212,7 +213,6 @@ function CategoriasView() {
     </TableRow>
   ))}
 </TableBody>
-
         </Table>
       </TableContainer>
     </div>

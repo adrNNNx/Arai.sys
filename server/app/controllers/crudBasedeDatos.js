@@ -59,11 +59,72 @@ async function delete_cat(req, res) {
     }
   );
 }
+ //Para Productos
+ async function crear_producto(req, res) {
+  const { preven_pro, exitencia, nom_pro, prec_pro, fec_pro, categoria_id_cat, estado } = req.body;
+  const connection = await database.getConnection();
+  connection.query(
+    "INSERT INTO producto(preven_pro, exitencia, nom_pro, prec_pro, fec_pro, categoria_id_cat, estado) VALUES(?, ?, ?, ?, ?, ?, ?)",
+    [preven_pro, exitencia, nom_pro, prec_pro, fec_pro, categoria_id_cat, estado],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    }
+  );
+}
 
+async function get_productos(req, res) {
+  const connection = await database.getConnection();
+  try {
+    const result = await connection.query("SELECT * FROM producto WHERE estado = 1");
+    return res.send(result);
+  } catch (err) {
+    console.log(err);
+  } 
+}
+
+async function update_producto(req, res) {
+  const { id_pro, preven_pro, exitencia, nom_pro, prec_pro, fec_pro, categoria_id_cat } = req.body;
+  const connection = await database.getConnection();
+  connection.query(
+    "UPDATE producto SET preven_pro=?, exitencia=?, nom_pro=?, prec_pro=?, fec_pro=?, categoria_id_cat=? WHERE id_pro=?",
+    [preven_pro, exitencia, nom_pro, prec_pro, fec_pro, categoria_id_cat, id_pro],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    }
+  );
+}
+
+async function delete_producto(req, res) {
+  const id_pro = req.body.id_pro;
+  const connection = await database.getConnection();
+  connection.query(
+    "UPDATE producto SET estado=0 WHERE id_pro=?",
+    [id_pro],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    }
+  );
+}
 
 module.exports = {
   crear_categoria,
   get_categ,
   update_cat,
-  delete_cat
+  delete_cat,
+  crear_producto,
+  get_productos,
+  update_producto,
+  delete_producto
 };
