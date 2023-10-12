@@ -16,11 +16,14 @@ const customizationSlice = createSlice({
   initialState: initialState,
   reducers: {
     menuOpen: (state, action) => {
-      state.isOpen = [action.payload];
-    },
-    setMenu: (state, action) => {
       const id = action.payload;
       state.isOpen = [id];
+    },
+    setMenu: (state, action) => {
+      state.opened = action.payload;
+    },
+    toggleMenu: (state) => {
+      state.opened = !state.opened; // Cambia el estado de abierto/cerrado
     },
     setFontFamily: (state, action) => {
       state.fontFamily = action.payload;
@@ -31,11 +34,6 @@ const customizationSlice = createSlice({
   }
 });
 
-export const {
-  menuOpen,
-  setMenu,
-  setFontFamily,
-  setBorderRadius
-} = customizationSlice.actions;
+export const { menuOpen, setMenu, setFontFamily, setBorderRadius, toggleMenu } = customizationSlice.actions;
 
 export default customizationSlice.reducer;

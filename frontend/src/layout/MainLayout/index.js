@@ -13,7 +13,7 @@ import Customization from '../Customization';
 import navigation from 'menu-items';
 import { drawerWidth } from 'store/constant';
 //import { SET_MENU } from 'store/actions';
-import { setMenu } from 'store/customizacionReducer';
+import { toggleMenu } from 'store/customizacionReducer';
 
 // assets
 import { IconChevronRight } from '@tabler/icons';
@@ -62,8 +62,10 @@ const MainLayout = () => {
   const leftDrawerOpened = useSelector((state) => state.customization.opened);
   const dispatch = useDispatch();
   const handleLeftDrawerToggle = () => {
-    dispatch(setMenu(!leftDrawerOpened));
+    dispatch(toggleMenu());
+    //dispatch(setMenu(!leftDrawerOpened));
     //dispatch({ type: SET_MENU, opened: !leftDrawerOpened });
+    //dispatch(setMenu({id: 'default', opened:!leftDrawerOpened }));
   };
 
   return (
@@ -81,7 +83,7 @@ const MainLayout = () => {
         }}
       >
         <Toolbar>
-          <Header handleLeftDrawerToggle={handleLeftDrawerToggle} />
+          <Header />
         </Toolbar>
       </AppBar>
 

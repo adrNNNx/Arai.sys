@@ -46,9 +46,3 @@ app.post("/api/create_cat", crudBD.crear_categoria );
 app.put("/api/update_cat",crudBD.update_cat);
 app.put("/api/delete_cat", crudBD.delete_cat);
 
-// Rutas de las Apis para Productos
-app.post("/api/create_pro", crudBD.crear_producto);  // Crear producto
-app.get("/api/productos", crudBD.get_productos);  // Leer productos
-app.put("/api/update_pro", crudBD.update_producto);  // Actualizar producto
-app.put("/api/delete_pro", crudBD.delete_producto);  // Borrar producto
-
