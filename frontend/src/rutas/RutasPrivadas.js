@@ -12,12 +12,13 @@ import { Navigate, Route } from 'react-router';
 
 const DashboardDefault = Loadable(lazy(() => import('views/dashboard/Default')));
 const CategoriaVista = Loadable(lazy(() => import('views/productos/categorias')));
+const ProveedoresVista = Loadable(lazy(() => import('views/proveedores/prov_vista')));
 const UtilsTypography = Loadable(lazy(() => import('views/utilities/Typography')));
 const UtilsColor = Loadable(lazy(() => import('views/utilities/Color')));
 const UtilsShadow = Loadable(lazy(() => import('views/utilities/Shadow')));
-//const UtilsMaterialIcons = Loadable(lazy(() => import('views/utilities/MaterialIcons')));
 const UtilsTablerIcons = Loadable(lazy(() => import('views/utilities/TablerIcons')));
 const SamplePage = Loadable(lazy(() => import('views/sample-page')));
+
 
 function RutasPrivadas() {
   return (
@@ -26,6 +27,7 @@ function RutasPrivadas() {
       <Route path="/" element={<MainLayout />}>
         <Route path={PrivatesRoutes.DASHBOARD} element={<DashboardDefault />} />
         <Route path={PrivatesRoutes.CATEG} element={<CategoriaVista />} />
+        <Route path={PrivatesRoutes.PROVEEDORES} element={<ProveedoresVista />} />
 
         <Route path="/utils/util-typography" element={<UtilsTypography />} />
         <Route path="/utils/util-color" element={<UtilsColor />} />
