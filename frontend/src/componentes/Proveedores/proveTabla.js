@@ -16,7 +16,7 @@ import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import LastPageIcon from '@mui/icons-material/LastPage';
 import { Button, Divider, Grid, InputAdornment, TableHead, TextField, Tooltip, Typography } from '@mui/material';
-import { getCategorias } from 'services';
+import { getProveedores } from 'services';
 import { useEffect, useState } from 'react';
 import { Edit, Delete, DescriptionOutlined } from '@mui/icons-material';
 import { IconSearch } from '@tabler/icons';
@@ -72,19 +72,19 @@ TablePaginationActions.propTypes = {
   rowsPerPage: PropTypes.number.isRequired
 };
 
-export default function TablaCategoria() {
-  const [categoriasLista, setCategorias] = useState([]);
+export default function TablaProveedores() {
+  const [proveedoresLista, setProveedores] = useState([]);
   const [query, setQuery] = useState('');
-  const { araiContextValue, setAraiContextValue, dataupdatecontext, setDataUpdateContext } = useAraiContext();
-  const filteredCategories = categoriasLista.filter((categoria) => categoria.nom_cat.toLowerCase().includes(query.toLowerCase())); // Funcion de filtrado de la categoria por nombre
+  const { setAraiContextValue, dataupdatecontext, setDataUpdateContext } = useAraiContext();
+  const filteresProveedores = proveedoresLista.filter((proveedores) => proveedores.nom_per.toLowerCase().includes(query.toLowerCase())); // Funcion de filtrado de los proveedores por nombre
   const doc = new jsPDF(); //Con esto generamos nuestro pdf
   const theme = useTheme();
   // UseEffect que carga los primeros datos
   useEffect(() => {
-    // Llama a la función getCategorias de api.js
-    getCategorias()
+    // Llama a la función getProveedores de api.js
+    getProveedores()
       .then((response) => {
-        setCategorias(response.data);
+        setProveedores(response.data);
       })
       .catch((error) => {
         console.error(error);
@@ -98,9 +98,9 @@ export default function TablaCategoria() {
       return;
     }
 
-    getCategorias()
+    getProveedores()
       .then((response) => {
-        setCategorias(response.data);
+        setProveedores(response.data);
         setDataUpdateContext(false);
       })
       .catch((error) => {
@@ -108,20 +108,18 @@ export default function TablaCategoria() {
       });
   }, [dataupdatecontext]);
 
-  const editarCategoria = (val) => {
+  const editarProveedor = (val) => {
     setAraiContextValue({
       ...val,
       action: 'editar'
     });
-    console.log('desde tabla categoria valores editar: ', araiContextValue.nom_cat);
   };
 
-  const deleteCategoria = (val) => {
+  const deleteProveedor = (val) => {
     setAraiContextValue({
       ...val,
       action: 'eliminar'
     });
-    console.log('desde tabla categoria valores eliminar: ', araiContextValue.nom_cat);
   };
 
   const generarPDF = () => {
@@ -129,15 +127,22 @@ export default function TablaCategoria() {
     doc.setFillColor(193, 18, 31); //Color del rectangulo
     doc.rect(14.3, 15, 181.1, 20, 'F'); //El rectangulo
     doc.setTextColor(255); //Color del texto del encabezado
-    doc.setFont("helvetica", "bold");
+    doc.setFont('helvetica', 'bold');
     doc.setFontSize(22);
-    doc.text('Tabla Categoria', 87, 27); //Encabezado
+    doc.text('Tabla Proveedores', 87, 27); //Encabezado
     doc.addImage(logo_arai, 'PNG', 175, 10, 20, 20); //Logo
-    
+
     //Acá estan las columnas de la tabla junto con los datos
-    const columns = ['Id', 'Categoría', 'Descripción'];
-    const dataT = categoriasLista.map((categoria) => [categoria.id_cat, categoria.nom_cat, categoria.desc_cat]);
-    
+    const columns = ['Id', 'Proveedor', 'RUC', 'Teléfono', 'Correo', 'Dirección'];
+    const dataT = proveedoresLista.map((proveedores) => [
+      proveedores.id_per,
+      proveedores.nom_per,
+      proveedores.ruc,
+      proveedores.tel_per,
+      proveedores.correo_per,
+      proveedores.dire_per
+    ]);
+
     //Acá se imprime la tabla
     autoTable(doc, {
       startY: 40,
@@ -147,14 +152,14 @@ export default function TablaCategoria() {
       bodyStyles: { minCellHeight: 15 }
     });
 
-    doc.save('table.pdf');
+    doc.save('tableProveedores.pdf');
   };
 
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
   // Avoid a layout jump when reaching the last page with empty rows.
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - categoriasLista.length) : 0;
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - proveedoresLista.length) : 0;
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -172,14 +177,14 @@ export default function TablaCategoria() {
           <Grid container direction="row" spacing={2} sx={{ p: 2, alignItems: 'flex-start' }}>
             <Grid item>
               <Typography sx={{ mt: 2 }} variant="h3" id="tableTitle" component="div">
-                Tabla Categoria
+                Tabla Proveedores
               </Typography>
             </Grid>
             <Grid item sx={{ flexGrow: 1, display: 'flex', justifyContent: 'flex-end' }}>
               <TextField
                 type="search"
                 variant="outlined"
-                placeholder="Buscar Categoria..."
+                placeholder="Buscar Proveedor..."
                 onChange={(e) => setQuery(e.target.value)} //establecemos el valor de la busqueda
                 InputProps={{
                   startAdornment: (
@@ -199,30 +204,36 @@ export default function TablaCategoria() {
           </Grid>
           <Divider />
           <TableContainer>
-            <Table sx={{ minWidth: 500 }} aria-label="tabla de categoria de productos">
+            <Table sx={{ minWidth: 500 }} aria-label="tabla de proveedores">
               <TableHead>
                 <TableRow>
-                  <TableCell>Nombre de Categoría</TableCell>
-                  <TableCell>Descripción</TableCell>
+                  <TableCell>Proveedor</TableCell>
+                  <TableCell>RUC</TableCell>
+                  <TableCell>Teléfono</TableCell>
+                  <TableCell>Correo</TableCell>
+                  <TableCell>Dirección</TableCell>
                   <TableCell>Acciones</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {(rowsPerPage > 0 ? filteredCategories.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) : filteredCategories) //Aca filtramos la tabla median nuestro filtro de busqueda por nombre de la categoria
-                  .map((categoria) => (
-                    <TableRow key={categoria.id_cat}>
+                {(rowsPerPage > 0 ? filteresProveedores.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) : filteresProveedores) //Aca filtramos la tabla median nuestro filtro de busqueda por nombre de la proveedores
+                  .map((proveedores) => (
+                    <TableRow key={proveedores.id_per}>
                       <TableCell component="th" scope="row">
-                        {categoria.nom_cat}
+                        {proveedores.nom_per}
                       </TableCell>
-                      <TableCell>{categoria.desc_cat}</TableCell>
+                      <TableCell>{proveedores.ruc}</TableCell>
+                      <TableCell>{proveedores.tel_per}</TableCell>
+                      <TableCell>{proveedores.correo_per}</TableCell>
+                      <TableCell>{proveedores.dire_per}</TableCell>
                       <TableCell>
-                        <Tooltip title="Editar Categoría">
-                          <IconButton onClick={() => editarCategoria(categoria)} color="primary">
+                        <Tooltip title="Editar Proveedor">
+                          <IconButton onClick={() => editarProveedor(proveedores)} color="primary">
                             <Edit />
                           </IconButton>
                         </Tooltip>
                         <Tooltip title="Eliminar">
-                          <IconButton onClick={() => deleteCategoria(categoria)} color="secondary">
+                          <IconButton onClick={() => deleteProveedor(proveedores)} color="secondary">
                             <Delete />
                           </IconButton>
                         </Tooltip>
@@ -240,7 +251,7 @@ export default function TablaCategoria() {
                   <TablePagination
                     rowsPerPageOptions={[5, 10, 25, { label: 'Todas', value: -1 }]}
                     colSpan={3}
-                    count={categoriasLista.length}
+                    count={proveedoresLista.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     SelectProps={{

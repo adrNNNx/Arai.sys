@@ -39,10 +39,20 @@ app.get("/usu", async (req, res) => {
   const result = await connection.query("SELECT * FROM usu");
   res.json(result);
 });
-app.get("/api/categorias",crudBD.get_categ );
+
+//Apis CRUD
+
+
 app.post("/api/register", middlewares.soloAdmin, methods.register);
 app.post("/api/login", methods.login);
+
+app.get("/api/categorias",crudBD.get_categ );
 app.post("/api/create_cat", crudBD.crear_categoria );
 app.put("/api/update_cat",crudBD.update_cat);
 app.put("/api/delete_cat", crudBD.delete_cat);
+
+app.post("/api/create_prov", crudBD.crear_prov);
+app.get("/api/get_prov",crudBD.get_prov );
+app.put("/api/update_prov",crudBD.update_prov);
+app.put("/api/delete_prov", crudBD.delete_prov);
 

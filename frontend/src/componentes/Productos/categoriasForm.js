@@ -34,17 +34,17 @@ function CategoriasForm() {
       deleteCategoria(araiContextValue);
     }
   }, [araiContextValue]);
+
   //Funciones de Utilidad para el form
   const limpiarCampos = () => {
     setId_cat('');
     setEditar(false);
     setInitialFormValues(initialValues);
     setAraiContextValue('');
-    console.log('Limpieza de los campos valores actuales: ', id_cat, 'editar: ', editar, 'valores iniciales: ', initialFormValues);
   };
 
   //Acá comienzan las funciones de CRUD para el formulario
-  const addCategoria = (values) => {
+  const addCategoria = (values, resetForm) => {
     Axios.post(apiUrlCreaCat, {
       nom_cat: values.nom_cat,
       desc_cat: values.desc_cat
@@ -52,6 +52,7 @@ function CategoriasForm() {
       .then(() => {
         limpiarCampos();
         setDataUpdateContext(true);
+        resetForm(); 
         console.log('Desde categoria: ', dataupdatecontext);
         Swal.fire({
           position: 'bottom',
@@ -137,7 +138,7 @@ function CategoriasForm() {
               position: 'bottom',
               toast: true,
               icon: 'success',
-              title: `La categoria ${val.nom_cat} fue eliminada.`,
+              title: `<i>La categoria <strong>${val.nom_cat}</strong> fue eliminada.</i>`,
               showConfirmButton: false,
               showClass: {
                 popup: 'animate__animated animate__fadeInLeft animate__faster'
@@ -174,7 +175,7 @@ function CategoriasForm() {
           if (editar) {
             updateCategoria(values, resetForm);
           } else {
-            addCategoria(values);
+            addCategoria(values, resetForm);
           }
           setSubmitting(false);
         }}

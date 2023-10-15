@@ -1,5 +1,6 @@
 const database = require("../../database");
 
+//Funciones de categoria
 async function crear_categoria(req, res) {
   const nom_cat = req.body.nom_cat;
   const desc_cat = req.body.desc_cat;
@@ -19,11 +20,13 @@ async function crear_categoria(req, res) {
 async function get_categ(req, res) {
   const connection = await database.getConnection();
   try {
-    const result = await connection.query("SELECT * FROM categoria WHERE estado = 1");
+    const result = await connection.query(
+      "SELECT * FROM categoria WHERE estado = 1"
+    );
     return res.send(result);
   } catch (err) {
     console.log(err);
-  } 
+  }
 }
 
 async function update_cat(req, res) {
@@ -118,6 +121,120 @@ async function delete_producto(req, res) {
   );
 }
 
+//Funciones de proveedores
+async function crear_prov(req, res) {
+  const nom_per = req.body.nom_per;
+  const tel_per = req.body.tel_per;
+  const dire_per = req.body.dire_per;
+  const correo_per = req.body.correo_per;
+  const ruc = req.body.ruc;
+
+  const connection = await database.getConnection();
+  connection.query(
+    "INSERT INTO persona(nom_per, tel_per, dire_per, correo_per) VALUES (?, ?, ?, ?)",
+    [nom_per, tel_per, dire_per, correo_per],
+    function (error, results) {
+      if (error) {
+        console.error("Error al insertar datos en persona:", error);
+      } else {
+        const personaId = results.insertId; // Obtenemos el ID de persona recién insertada
+        connection.query(
+          // Luego, insertamos el RUC y la clave foránea en la tabla "proveedores"
+          "INSERT INTO proveedor(ruc, persona_id_per) VALUES (?, ?)",
+          [ruc, personaId],
+          function (error, results) {
+            if (error) {
+              console.error("Error al insertar datos en proveedor:", error);
+            } else {
+              res.send(results);
+            }
+          }
+        );
+      }
+    }
+  );
+}
+
+async function get_prov(req, res) {
+  const connection = await database.getConnection();
+  try {
+    const query = `
+      SELECT
+        p.id_per,
+        p.nom_per,
+        p.tel_per,
+        p.correo_per,
+        p.dire_per,
+        pr.ruc
+      FROM
+        persona AS p
+      INNER JOIN
+        proveedor AS pr
+      ON
+        p.id_per = pr.persona_id_per
+      WHERE
+        pr.estado_prov = 1;
+    `;
+
+    const result = await connection.query(query);
+    return res.send(result);
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+async function update_prov(req, res) {
+  const personaId = req.body.id_per;
+  const nom_per = req.body.nom_per;
+  const tel_per = req.body.tel_per;
+  const dire_per = req.body.dire_per;
+  const correo_per = req.body.correo_per;
+  const ruc = req.body.ruc;
+
+  const connection = await database.getConnection();
+
+  try {
+    await connection.beginTransaction(); // Inicia la transacción
+
+    // Actualiza los datos en la tabla "persona"
+    await connection.query(
+      "UPDATE persona SET nom_per = ?, tel_per = ?, dire_per = ?, correo_per = ? WHERE id_per = ?",
+      [nom_per, tel_per, dire_per, correo_per, personaId]
+    );
+
+    // Actualiza los datos en la tabla "proveedor"
+    await connection.query(
+      "UPDATE proveedor SET ruc = ? WHERE persona_id_per = ?",
+      [ruc, personaId]
+    );
+
+    await connection.commit(); // Confirma la transacción
+    res.send("Actualización exitosa");
+  } catch (err) {
+    await connection.rollback(); // En caso de error, realiza un rollback para deshacer los cambios
+    console.log(err);
+    res.status(500).send("Error en la actualización");
+  } /* finally {
+    connection.end(); // Se Libera la conexión
+  } */
+}
+
+async function delete_prov(req, res) {
+  const id_per = req.body.id_per;
+  const connection = await database.getConnection();
+  connection.query(
+    "UPDATE proveedor SET estado_prov=0 WHERE persona_id_per=?",
+    [id_per],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    }
+  );
+}
+
 module.exports = {
   crear_categoria,
   get_categ,
@@ -126,5 +243,10 @@ module.exports = {
   crear_producto,
   get_productos,
   update_producto,
-  delete_producto
+  delete_producto,
+
+  crear_prov,
+  get_prov,
+  update_prov,
+  delete_prov,
 };

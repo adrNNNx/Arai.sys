@@ -9,6 +9,7 @@ export const PrivatesRoutes = {
   CATEG: '/productos/categorias',
   PROD_ALM: '/productos/almacen',
   DEFAULT: '/',
+  PROVEEDORES: '/proveedores',
   UTILS: {
     base: 'utils',
     typography: 'util-typography'
