@@ -12,6 +12,7 @@ import { Navigate, Route } from 'react-router';
 
 const DashboardDefault = Loadable(lazy(() => import('views/dashboard/Default')));
 const CategoriaVista = Loadable(lazy(() => import('views/productos/categorias')));
+const ProduVista = Loadable(lazy(() => import('views/productos/produ_vista')));
 const ProveedoresVista = Loadable(lazy(() => import('views/proveedores/prov_vista')));
 const UtilsTypography = Loadable(lazy(() => import('views/utilities/Typography')));
 const UtilsColor = Loadable(lazy(() => import('views/utilities/Color')));
@@ -28,6 +29,7 @@ function RutasPrivadas() {
         <Route path={PrivatesRoutes.DASHBOARD} element={<DashboardDefault />} />
         <Route path={PrivatesRoutes.CATEG} element={<CategoriaVista />} />
         <Route path={PrivatesRoutes.PROVEEDORES} element={<ProveedoresVista />} />
+        <Route path={PrivatesRoutes.PROD_ALM} element={<ProduVista />} />
 
         <Route path="/utils/util-typography" element={<UtilsTypography />} />
         <Route path="/utils/util-color" element={<UtilsColor />} />
