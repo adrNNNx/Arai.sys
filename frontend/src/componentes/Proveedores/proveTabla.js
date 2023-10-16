@@ -16,7 +16,7 @@ import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import LastPageIcon from '@mui/icons-material/LastPage';
 import { Button, Divider, Grid, InputAdornment, TableHead, TextField, Tooltip, Typography } from '@mui/material';
-import { getProveedores } from 'services';
+import { apiUrlGetProv, getRequest } from 'services';
 import { useEffect, useState } from 'react';
 import { Edit, Delete, DescriptionOutlined } from '@mui/icons-material';
 import { IconSearch } from '@tabler/icons';
@@ -82,7 +82,7 @@ export default function TablaProveedores() {
   // UseEffect que carga los primeros datos
   useEffect(() => {
     // Llama a la función getProveedores de api.js
-    getProveedores()
+    getRequest(apiUrlGetProv)
       .then((response) => {
         setProveedores(response.data);
       })
@@ -98,7 +98,7 @@ export default function TablaProveedores() {
       return;
     }
 
-    getProveedores()
+    getRequest(apiUrlGetProv)
       .then((response) => {
         setProveedores(response.data);
         setDataUpdateContext(false);

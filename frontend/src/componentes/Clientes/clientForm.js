@@ -9,7 +9,7 @@ import * as Yup from 'yup';
 import Swal from "sweetalert2";
 
 //Importaciones del proyecto junto con apis
-import { sendDeleteRequest, sendPostRequest, sendPutRequest } from 'services/ApiCRUD';
+import { sendDeleteRequest, sendPostRequest, sendPutRequest } from 'services/ApiPro';
 import { apiUrlCreaProv, apiUrlDeleteProv, apiUrlUpdateProv } from '../../services/Apirest';
 import { useAraiContext } from 'context/arai.context';
 

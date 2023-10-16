@@ -62,6 +62,65 @@ async function delete_cat(req, res) {
   );
 }
 
+// Funciones de producto
+ async function crear_producto(req, res) {
+  const { preven_pro, existencia, nom_pro, prec_pro, categoria_id_cat } = req.body;
+  const connection = await database.getConnection();
+  connection.query(
+    "INSERT INTO prod(preven_pro, existencia, nom_pro, prec_pro, categoria_id_cat) VALUES(?, ?, ?, ?, ?)",
+    [preven_pro, existencia, nom_pro, prec_pro, categoria_id_cat],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    }
+  );
+}
+
+async function get_productos(req, res) {
+  const connection = await database.getConnection();
+  try {
+    const result = await connection.query("SELECT * FROM prod WHERE estado_prod = 1");
+    return res.send(result);
+  } catch (err) {
+    console.log(err);
+  } 
+}
+
+async function update_producto(req, res) {
+  const { id_pro, preven_pro, exitencia, nom_pro, prec_pro, categoria_id_cat } = req.body;
+  const connection = await database.getConnection();
+  connection.query(
+    "UPDATE prod SET preven_pro=?, existencia=?, nom_pro=?, prec_pro=?, categoria_id_cat=? WHERE id_pro=?",
+    [preven_pro, exitencia, nom_pro, prec_pro, categoria_id_cat, id_pro],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    }
+  );
+}
+
+async function delete_producto(req, res) {
+  const id_pro = req.body.id_pro;
+  const connection = await database.getConnection();
+  connection.query(
+    "UPDATE prod SET estado_prod=0 WHERE id_pro=?",
+    [id_pro],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    }
+  );
+}
+
 //Funciones de proveedores
 async function crear_prov(req, res) {
   const nom_per = req.body.nom_per;
@@ -181,6 +240,11 @@ module.exports = {
   get_categ,
   update_cat,
   delete_cat,
+
+  crear_producto,
+  get_productos,
+  update_producto,
+  delete_producto,
 
   crear_prov,
   get_prov,

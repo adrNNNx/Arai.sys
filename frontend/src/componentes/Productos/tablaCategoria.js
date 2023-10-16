@@ -16,7 +16,7 @@ import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import LastPageIcon from '@mui/icons-material/LastPage';
 import { Button, Divider, Grid, InputAdornment, TableHead, TextField, Tooltip, Typography } from '@mui/material';
-import { getCategorias } from 'services';
+import { apiUrlGetCat, getRequest } from 'services';
 import { useEffect, useState } from 'react';
 import { Edit, Delete, DescriptionOutlined } from '@mui/icons-material';
 import { IconSearch } from '@tabler/icons';
@@ -82,7 +82,7 @@ export default function TablaCategoria() {
   // UseEffect que carga los primeros datos
   useEffect(() => {
     // Llama a la función getCategorias de api.js
-    getCategorias()
+    getRequest(apiUrlGetCat)
       .then((response) => {
         setCategorias(response.data);
       })
@@ -98,7 +98,7 @@ export default function TablaCategoria() {
       return;
     }
 
-    getCategorias()
+    getRequest(apiUrlGetCat)
       .then((response) => {
         setCategorias(response.data);
         setDataUpdateContext(false);

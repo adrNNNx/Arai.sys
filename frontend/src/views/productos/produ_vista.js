@@ -1,7 +1,13 @@
+import ProductosForm from 'componentes/Productos/productosForm';
+
+import { AraiProvider } from 'context/arai.context';
+
 
 const ProductosVista = () => {
   return (
-    <div>productos</div>
+    <AraiProvider>
+      <ProductosForm />
+    </AraiProvider>
   )
 }
 

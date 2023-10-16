@@ -51,6 +51,11 @@ app.post("/api/create_cat", crudBD.crear_categoria );
 app.put("/api/update_cat",crudBD.update_cat);
 app.put("/api/delete_cat", crudBD.delete_cat);
 
+app.get("/api/productos",crudBD.get_productos );
+app.post("/api/create_produ", crudBD.crear_producto );
+app.put("/api/update_produ",crudBD.update_producto);
+app.put("/api/delete_produ", crudBD.delete_producto);
+
 app.post("/api/create_prov", crudBD.crear_prov);
 app.get("/api/get_prov",crudBD.get_prov );
 app.put("/api/update_prov",crudBD.update_prov);
