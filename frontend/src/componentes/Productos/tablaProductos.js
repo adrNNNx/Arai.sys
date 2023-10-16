@@ -31,7 +31,7 @@ import {
   DescriptionOutlined
 } from '@mui/icons-material';
 import { IconSearch } from '@tabler/icons';
-import { apiUrlGetProv, getRequest } from 'services';
+import { apiUrlGetProdu, getRequest } from 'services';
 
 import { useAraiContext } from 'context/arai.context';
 import jsPDF from 'jspdf';
@@ -85,19 +85,20 @@ TablePaginationActions.propTypes = {
   rowsPerPage: PropTypes.number.isRequired
 };
 
-export default function TablaProveedores() {
-  const [proveedoresLista, setProveedores] = useState([]);
+export default function TablaProductos() {
+  const [productosLista, setProductos] = useState([]);
   const [query, setQuery] = useState('');
   const { setAraiContextValue, dataupdatecontext, setDataUpdateContext } = useAraiContext();
-  const filteresProveedores = proveedoresLista.filter((proveedores) => proveedores.nom_per.toLowerCase().includes(query.toLowerCase())); // Funcion de filtrado de los proveedores por nombre
+  const filteredProductos = productosLista.filter((productos) => productos.nom_pro.toLowerCase().includes(query.toLowerCase())); // Funcion de filtrado de los productos por nombre
+
   const doc = new jsPDF(); //Con esto generamos nuestro pdf
   const theme = useTheme();
   // UseEffect que carga los primeros datos
   useEffect(() => {
     // Llama a la función getProveedores de api.js
-    getRequest(apiUrlGetProv)
+    getRequest(apiUrlGetProdu)
       .then((response) => {
-        setProveedores(response.data);
+        setProductos(response.data);
       })
       .catch((error) => {
         console.error(error);
@@ -111,9 +112,9 @@ export default function TablaProveedores() {
       return;
     }
 
-    getRequest(apiUrlGetProv)
+    getRequest(apiUrlGetProdu)
       .then((response) => {
-        setProveedores(response.data);
+        setProductos(response.data);
         setDataUpdateContext(false);
       })
       .catch((error) => {
@@ -121,14 +122,15 @@ export default function TablaProveedores() {
       });
   }, [dataupdatecontext]);
 
-  const editarProveedor = (val) => {
+
+  const editarProducto = (val) => {
     setAraiContextValue({
       ...val,
       action: 'editar'
     });
   };
 
-  const deleteProveedor = (val) => {
+  const deleteProducto = (val) => {
     setAraiContextValue({
       ...val,
       action: 'eliminar'
@@ -142,18 +144,17 @@ export default function TablaProveedores() {
     doc.setTextColor(255); //Color del texto del encabezado
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(22);
-    doc.text('Tabla Proveedores', 87, 27); //Encabezado
+    doc.text('Tabla Productos', 87, 27); //Encabezado
     doc.addImage(logo_arai, 'PNG', 175, 10, 20, 20); //Logo
 
     //Acá estan las columnas de la tabla junto con los datos
     const columns = ['Id', 'Proveedor', 'RUC', 'Teléfono', 'Correo', 'Dirección'];
-    const dataT = proveedoresLista.map((proveedores) => [
-      proveedores.id_per,
-      proveedores.nom_per,
-      proveedores.ruc,
-      proveedores.tel_per,
-      proveedores.correo_per,
-      proveedores.dire_per
+    const dataT = productosLista.map((productos) => [
+      productos.id_pro,
+      productos.nom_pro,
+      productos.prec_pro,
+      productos.preven_pro,
+      productos.existencia,
     ]);
 
     //Acá se imprime la tabla
@@ -172,7 +173,7 @@ export default function TablaProveedores() {
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
   // Avoid a layout jump when reaching the last page with empty rows.
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - proveedoresLista.length) : 0;
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - productosLista.length) : 0;
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -190,14 +191,14 @@ export default function TablaProveedores() {
           <Grid container direction="row" spacing={2} sx={{ p: 2, alignItems: 'flex-start' }}>
             <Grid item>
               <Typography sx={{ mt: 2 }} variant="h3" id="tableTitle" component="div">
-                Tabla Proveedores
+                Tabla de Productos
               </Typography>
             </Grid>
             <Grid item sx={{ flexGrow: 1, display: 'flex', justifyContent: 'flex-end' }}>
               <TextField
                 type="search"
                 variant="outlined"
-                placeholder="Buscar Proveedor..."
+                placeholder="Buscar Producto..."
                 onChange={(e) => setQuery(e.target.value)} //establecemos el valor de la busqueda
                 InputProps={{
                   startAdornment: (
@@ -217,36 +218,36 @@ export default function TablaProveedores() {
           </Grid>
           <Divider />
           <TableContainer>
-            <Table sx={{ minWidth: 500 }} aria-label="tabla de proveedores">
+            <Table sx={{ minWidth: 500 }} aria-label="tabla de productos">
               <TableHead>
                 <TableRow>
-                  <TableCell>Proveedor</TableCell>
-                  <TableCell>RUC</TableCell>
-                  <TableCell>Teléfono</TableCell>
-                  <TableCell>Correo</TableCell>
-                  <TableCell>Dirección</TableCell>
+                  <TableCell>Nombre</TableCell>
+                  <TableCell>Precio Venta</TableCell>
+                  <TableCell>Precio Compra</TableCell>
+                  <TableCell>Existencia</TableCell>
+                  <TableCell>Categoria</TableCell>
                   <TableCell>Acciones</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {(rowsPerPage > 0 ? filteresProveedores.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) : filteresProveedores) //Aca filtramos la tabla median nuestro filtro de busqueda por nombre de la proveedores
-                  .map((proveedores) => (
-                    <TableRow key={proveedores.id_per}>
+                {(rowsPerPage > 0 ? filteredProductos.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) : filteredProductos) //Aca filtramos la tabla median nuestro filtro de busqueda por nombre de los productos
+                  .map((productos) => (
+                    <TableRow key={productos.id_pro}>
                       <TableCell component="th" scope="row">
-                        {proveedores.nom_per}
+                        {productos.nom_pro}
                       </TableCell>
-                      <TableCell>{proveedores.ruc}</TableCell>
-                      <TableCell>{proveedores.tel_per}</TableCell>
-                      <TableCell>{proveedores.correo_per}</TableCell>
-                      <TableCell>{proveedores.dire_per}</TableCell>
+                      <TableCell>GS {productos.preven_pro.toLocaleString()}</TableCell>
+                      <TableCell>GS {productos.prec_pro.toLocaleString()}</TableCell>
+                      <TableCell>{productos.existencia}</TableCell>
+                      <TableCell>{productos.categoria}</TableCell>
                       <TableCell>
-                        <Tooltip title="Editar Proveedor">
-                          <IconButton onClick={() => editarProveedor(proveedores)} color="primary">
+                        <Tooltip title="Editar Producto">
+                          <IconButton onClick={() => editarProducto(productos)} color="primary">
                             <Edit />
                           </IconButton>
                         </Tooltip>
                         <Tooltip title="Eliminar">
-                          <IconButton onClick={() => deleteProveedor(proveedores)} color="secondary">
+                          <IconButton onClick={() => deleteProducto(productos)} color="secondary">
                             <Delete />
                           </IconButton>
                         </Tooltip>
@@ -264,7 +265,7 @@ export default function TablaProveedores() {
                   <TablePagination
                     rowsPerPageOptions={[5, 10, 25, { label: 'Todas', value: -1 }]}
                     colSpan={3}
-                    count={proveedoresLista.length}
+                    count={productosLista.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     SelectProps={{

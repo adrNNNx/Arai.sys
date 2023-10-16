@@ -11,7 +11,7 @@ import Swal from 'sweetalert2';
 //Importaciones del proyecto junto con apis
 import { apiUrlCreaProdu, apiUrlUpdateProdu, apiUrlDeleteProdu } from '../../services/Apirest';
 import { useAraiContext } from 'context/arai.context';
-import { sendPostRequest} from 'services/ApiCRUD';
+import { sendDeleteRequest, sendPostRequest, sendPutRequest} from 'services/ApiCRUD';
 import { getCategorias } from 'services';
 
 //Valores Iniciales del Formulario
@@ -37,7 +37,7 @@ function ProductosForm() {
 
   const [categoriasLista, setCategorias] = useState([]);
 
-  const { setAraiContextValue, araiContextValue, setDataUpdateContext, dataupdatecontext } = useAraiContext();
+  const { setAraiContextValue, araiContextValue, setDataUpdateContext} = useAraiContext();
   const [initialFormValues, setInitialFormValues] = useState(initialValues);
 
   // El useEffect para cuando el contexto cambie entonces los valores se actualizan de los useState (Funciona como editarProducto)
@@ -92,50 +92,32 @@ function ProductosForm() {
     });
   };
 
-  const updateProducto = (values) => {
-    Axios.put(apiUrlUpdateProdu, {
+  const updateProducto = (values, resetForm) => {
+    const data = {
       id_pro: id_pro,
-      preven_pro: values.preven_pro,
-      existencia: values.existencia,
       nom_pro: values.nom_pro,
+      preven_pro: values.preven_pro,
       prec_pro: values.prec_pro,
+      existencia: values.existencia,
       categoria_id_cat: values.categoria_id_cat
-    })
-      .then(() => {
+    };
+  
+    sendPutRequest(
+      apiUrlUpdateProdu,
+      data,
+      `<i>El Producto <strong>${values.nom_pro}</strong> fue actualizado con éxito</i>`,
+      () => {
         limpiarCampos();
         setDataUpdateContext(true);
         resetForm();
-        console.log('Desde update: ', dataupdatecontext);
-        Swal.fire({
-          position: 'bottom',
-          toast: true,
-          title: '<strong>Actualización exitosa</strong>',
-          html: `<i>El producto <strong>${values.nom_cat}</strong> fue actualizada con éxito</i>`,
-          icon: 'success',
-          showConfirmButton: false,
-          showClass: {
-            popup: 'animate__animated animate__fadeInLeft animate__faster'
-          },
-          hideClass: {
-            popup: 'animate__animated animate__fadeOutUp animate__faster'
-          },
-          timer: 2500
-        });
-      })
-      .catch(function (error) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Oops...',
-          text:
-            JSON.parse(JSON.stringify(error)).message === 'Network Error' ? 'Intente más tarde' : JSON.parse(JSON.stringify(error)).message
-        });
-      });
+      }
+    );
   };
 
-  const deleteProducto = () => {
+  const deleteProducto = (val) => {
     Swal.fire({
       title: '¿Confirmar eliminación?',
-      html: '<i>¿Realmente desea eliminar este producto?</i>',
+      html: `<i>¿Realmente desea eliminar el producto <strong>${val.nom_pro}</strong>?</i>`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
@@ -144,39 +126,19 @@ function ProductosForm() {
       cancelButtonText: 'Cancelar'
     }).then((result) => {
       if (result.isConfirmed) {
-        Axios.delete(apiUrlDeleteProdu, {
-          data: { id_pro: id_pro } // Asegúrate de pasar el ID del producto que deseas eliminar
-        })
-          .then(() => {
+        const data = {
+          id_pro: val.id_pro
+        };
+  
+        sendDeleteRequest(
+          apiUrlDeleteProdu,
+          data,
+          `<i>El producto <strong>${val.nom_pro}</strong> fue eliminado.</i>`,
+          () => {
             limpiarCampos();
             setDataUpdateContext(true);
-            console.log('Desde delete: ', dataupdatecontext);
-            Swal.fire({
-              position: 'bottom',
-              toast: true,
-              icon: 'success',
-              title: `El producto ${val.nom_cat} fue eliminado.`,
-              showConfirmButton: false,
-              showClass: {
-                popup: 'animate__animated animate__fadeInLeft animate__faster'
-              },
-              hideClass: {
-                popup: 'animate__animated animate__fadeOutUp animate__faster'
-              },
-              timer: 2500
-            });
-          })
-          .catch(function (error) {
-            Swal.fire({
-              icon: 'error',
-              title: 'Oops...',
-              text: 'No se logró eliminar la categoría.',
-              footer:
-                JSON.parse(JSON.stringify(error)).message === 'Network Error'
-                  ? 'Intente más tarde'
-                  : JSON.parse(JSON.stringify(error)).message
-            });
-          });
+          }
+        );
       }
     });
   };
@@ -263,7 +225,7 @@ function ProductosForm() {
                   <ErrorMessage name="existencia">{(msg) => <FormHelperText error>{msg}</FormHelperText>}</ErrorMessage>
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                  <InputLabel id="categoria_label">Categoría</InputLabel>
+                  <InputLabel id="categoria_label">Categoría *</InputLabel>
                   <Field
                     as={Select}
                     name="categoria_id_cat"
@@ -280,6 +242,7 @@ function ProductosForm() {
                       </MenuItem>
                     ))}
                   </Field>
+                  <ErrorMessage name="categoria_id_cat">{(msg) => <FormHelperText error>{msg}</FormHelperText>}</ErrorMessage>
                 </Grid>
               </Grid>
 

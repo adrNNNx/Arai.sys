@@ -63,8 +63,9 @@ async function delete_cat(req, res) {
 }
 
 // Funciones de producto
- async function crear_producto(req, res) {
-  const { preven_pro, existencia, nom_pro, prec_pro, categoria_id_cat } = req.body;
+async function crear_producto(req, res) {
+  const { preven_pro, existencia, nom_pro, prec_pro, categoria_id_cat } =
+    req.body;
   const connection = await database.getConnection();
   connection.query(
     "INSERT INTO prod(preven_pro, existencia, nom_pro, prec_pro, categoria_id_cat) VALUES(?, ?, ?, ?, ?)",
@@ -82,19 +83,39 @@ async function delete_cat(req, res) {
 async function get_productos(req, res) {
   const connection = await database.getConnection();
   try {
-    const result = await connection.query("SELECT * FROM prod WHERE estado_prod = 1");
+    const query = `
+    SELECT
+    p.id_pro,
+    p.nom_pro,
+    p.preven_pro,
+    p.prec_pro,
+    p.existencia,
+    p.categoria_id_cat,
+    c.nom_cat AS categoria
+FROM
+    prod AS p
+INNER JOIN
+    categoria AS c
+ON
+    p.categoria_id_cat = c.id_cat
+      WHERE
+        p.estado_prod = 1;
+    `;
+
+    const result = await connection.query(query);
     return res.send(result);
   } catch (err) {
     console.log(err);
-  } 
+  }
 }
 
 async function update_producto(req, res) {
-  const { id_pro, preven_pro, exitencia, nom_pro, prec_pro, categoria_id_cat } = req.body;
+  const { id_pro, preven_pro, existencia, nom_pro, prec_pro, categoria_id_cat } =
+    req.body;
   const connection = await database.getConnection();
   connection.query(
     "UPDATE prod SET preven_pro=?, existencia=?, nom_pro=?, prec_pro=?, categoria_id_cat=? WHERE id_pro=?",
-    [preven_pro, exitencia, nom_pro, prec_pro, categoria_id_cat, id_pro],
+    [preven_pro, existencia, nom_pro, prec_pro, categoria_id_cat, id_pro],
     (err, result) => {
       if (err) {
         console.log(err);
