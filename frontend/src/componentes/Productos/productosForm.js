@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 
 //Importaciones de MUI y formularios
-import { Button, TextField, Paper, FormHelperText, Grid, MenuItem, Select, InputLabel, InputAdornment } from '@mui/material';
+import { Button, TextField, Paper, FormHelperText, Grid, MenuItem, Select, InputLabel, InputAdornment, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
@@ -11,7 +11,7 @@ import Swal from 'sweetalert2';
 //Importaciones del proyecto junto con apis
 import { apiUrlCreaProdu, apiUrlUpdateProdu, apiUrlDeleteProdu } from '../../services/Apirest';
 import { useAraiContext } from 'context/arai.context';
-import { sendDeleteRequest, sendPostRequest, sendPutRequest} from 'services/ApiCRUD';
+import { sendDeleteRequest, sendPostRequest, sendPutRequest } from 'services/ApiCRUD';
 import { getCategorias } from 'services';
 
 //Valores Iniciales del Formulario
@@ -25,7 +25,7 @@ const initialValues = {
 
 const validationSchema = Yup.object({
   preven_pro: Yup.number().required('El precio de venta es requerido'),
-  existencia: Yup.number().required('La cantidad del producto es requerida'),
+  //existencia: Yup.number().required('La cantidad del producto es requerida'),
   nom_pro: Yup.string().required('El nombre del producto es requerido'),
   prec_pro: Yup.number().required('El precio de compra es requerido'),
   categoria_id_cat: Yup.number().required('La categoría para el producto es requerida')
@@ -37,7 +37,7 @@ function ProductosForm() {
 
   const [categoriasLista, setCategorias] = useState([]);
 
-  const { setAraiContextValue, araiContextValue, setDataUpdateContext} = useAraiContext();
+  const { setAraiContextValue, araiContextValue, setDataUpdateContext } = useAraiContext();
   const [initialFormValues, setInitialFormValues] = useState(initialValues);
 
   // El useEffect para cuando el contexto cambie entonces los valores se actualizan de los useState (Funciona como editarProducto)
@@ -101,17 +101,12 @@ function ProductosForm() {
       existencia: values.existencia,
       categoria_id_cat: values.categoria_id_cat
     };
-  
-    sendPutRequest(
-      apiUrlUpdateProdu,
-      data,
-      `<i>El Producto <strong>${values.nom_pro}</strong> fue actualizado con éxito</i>`,
-      () => {
-        limpiarCampos();
-        setDataUpdateContext(true);
-        resetForm();
-      }
-    );
+
+    sendPutRequest(apiUrlUpdateProdu, data, `<i>El Producto <strong>${values.nom_pro}</strong> fue actualizado con éxito</i>`, () => {
+      limpiarCampos();
+      setDataUpdateContext(true);
+      resetForm();
+    });
   };
 
   const deleteProducto = (val) => {
@@ -129,16 +124,11 @@ function ProductosForm() {
         const data = {
           id_pro: val.id_pro
         };
-  
-        sendDeleteRequest(
-          apiUrlDeleteProdu,
-          data,
-          `<i>El producto <strong>${val.nom_pro}</strong> fue eliminado.</i>`,
-          () => {
-            limpiarCampos();
-            setDataUpdateContext(true);
-          }
-        );
+
+        sendDeleteRequest(apiUrlDeleteProdu, data, `<i>El producto <strong>${val.nom_pro}</strong> fue eliminado.</i>`, () => {
+          limpiarCampos();
+          setDataUpdateContext(true);
+        });
       }
     });
   };
@@ -167,7 +157,9 @@ function ProductosForm() {
         {({ isSubmitting }) => (
           <Form>
             <Paper style={{ padding: '20px', marginBottom: '20px' }}>
-              <h3>{editar ? 'Editar Producto' : 'Agregar Producto'}</h3>
+              <Typography sx={{ mt: 2 }} variant="h3" id="formTitle" component="div">
+                {editar ? 'Actualizar Producto' : 'Añadir Producto'}
+              </Typography>
               <Grid container spacing={2}>
                 <Grid item xs={12}>
                   <Field as={TextField} name="nom_pro" label="Nombre del Producto *" fullWidth margin="normal" />

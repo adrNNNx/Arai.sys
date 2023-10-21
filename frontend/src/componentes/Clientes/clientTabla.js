@@ -31,7 +31,7 @@ import {
   DescriptionOutlined
 } from '@mui/icons-material';
 import { IconSearch } from '@tabler/icons';
-import { apiUrlGetProv, getRequest } from 'services';
+import { apiUrlGetClient, getRequest } from 'services';
 
 import { useAraiContext } from 'context/arai.context';
 import jsPDF from 'jspdf';
@@ -85,19 +85,19 @@ TablePaginationActions.propTypes = {
   rowsPerPage: PropTypes.number.isRequired
 };
 
-export default function TablaProveedores() {
-  const [proveedoresLista, setProveedores] = useState([]);
+export default function TablaClientes() {
+  const [clientesLista, setClientes] = useState([]);
   const [query, setQuery] = useState('');
   const { setAraiContextValue, dataupdatecontext, setDataUpdateContext } = useAraiContext();
-  const filteresProveedores = proveedoresLista.filter((proveedores) => proveedores.nom_per.toLowerCase().includes(query.toLowerCase())); // Funcion de filtrado de los proveedores por nombre
+  const filteredClientes = clientesLista.filter((clientes) => clientes.nom_per.toLowerCase().includes(query.toLowerCase())); // Funcion de filtrado de los clientes por nombre
   const doc = new jsPDF(); //Con esto generamos nuestro pdf
   const theme = useTheme();
   // UseEffect que carga los primeros datos
   useEffect(() => {
-    // Llama a la función getProveedores de api.js
-    getRequest(apiUrlGetProv)
+    // Llama a la función getClientes de api.js
+    getRequest(apiUrlGetClient)
       .then((response) => {
-        setProveedores(response.data);
+        setClientes(response.data);
       })
       .catch((error) => {
         console.error(error);
@@ -111,9 +111,9 @@ export default function TablaProveedores() {
       return;
     }
 
-    getRequest(apiUrlGetProv)
+    getRequest(apiUrlGetClient)
       .then((response) => {
-        setProveedores(response.data);
+        setClientes(response.data);
         setDataUpdateContext(false);
       })
       .catch((error) => {
@@ -121,14 +121,14 @@ export default function TablaProveedores() {
       });
   }, [dataupdatecontext]);
 
-  const editarProveedor = (val) => {
+  const editarCliente = (val) => {
     setAraiContextValue({
       ...val,
       action: 'editar'
     });
   };
 
-  const deleteProveedor = (val) => {
+  const deleteClient = (val) => {
     setAraiContextValue({
       ...val,
       action: 'eliminar'
@@ -147,13 +147,13 @@ export default function TablaProveedores() {
 
     //Acá estan las columnas de la tabla junto con los datos
     const columns = ['Id', 'Proveedor', 'RUC', 'Teléfono', 'Correo', 'Dirección'];
-    const dataT = proveedoresLista.map((proveedores) => [
-      proveedores.id_per,
-      proveedores.nom_per,
-      proveedores.ruc,
-      proveedores.tel_per,
-      proveedores.correo_per,
-      proveedores.dire_per
+    const dataT = clientesLista.map((clientes) => [
+      clientes.id_per,
+      clientes.nom_per,
+      clientes.ruc,
+      clientes.tel_per,
+      clientes.correo_per,
+      clientes.dire_per
     ]);
 
     //Acá se imprime la tabla
@@ -172,7 +172,7 @@ export default function TablaProveedores() {
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
   // Avoid a layout jump when reaching the last page with empty rows.
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - proveedoresLista.length) : 0;
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - clientesLista.length) : 0;
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -190,14 +190,14 @@ export default function TablaProveedores() {
           <Grid container direction="row" spacing={2} sx={{ p: 2, alignItems: 'flex-start' }}>
             <Grid item>
               <Typography sx={{ mt: 2 }} variant="h3" id="tableTitle" component="div">
-                Proveedores Registrados
+                Clientes Registrados
               </Typography>
             </Grid>
             <Grid item sx={{ flexGrow: 1, display: 'flex', justifyContent: 'flex-end' }}>
               <TextField
                 type="search"
                 variant="outlined"
-                placeholder="Buscar Proveedor..."
+                placeholder="Buscar Cliente..."
                 onChange={(e) => setQuery(e.target.value)} //establecemos el valor de la busqueda
                 InputProps={{
                   startAdornment: (
@@ -217,11 +217,11 @@ export default function TablaProveedores() {
           </Grid>
           <Divider />
           <TableContainer>
-            <Table sx={{ minWidth: 500 }} aria-label="tabla de proveedores">
+            <Table sx={{ minWidth: 500 }} aria-label="tabla de clientes">
               <TableHead>
                 <TableRow>
-                  <TableCell>Proveedor</TableCell>
-                  <TableCell>RUC</TableCell>
+                  <TableCell>Cliente</TableCell>
+                  <TableCell>CI</TableCell>
                   <TableCell>Teléfono</TableCell>
                   <TableCell>Correo</TableCell>
                   <TableCell>Dirección</TableCell>
@@ -229,24 +229,24 @@ export default function TablaProveedores() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {(rowsPerPage > 0 ? filteresProveedores.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) : filteresProveedores) //Aca filtramos la tabla median nuestro filtro de busqueda por nombre de la proveedores
-                  .map((proveedores) => (
-                    <TableRow key={proveedores.id_per}>
+                {(rowsPerPage > 0 ? filteredClientes.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) : filteredClientes) //Aca filtramos la tabla median nuestro filtro de busqueda por nombre de la clientes
+                  .map((clientes) => (
+                    <TableRow key={clientes.id_per}>
                       <TableCell component="th" scope="row">
-                        {proveedores.nom_per}
+                        {clientes.nom_per}
                       </TableCell>
-                      <TableCell>{proveedores.ruc}</TableCell>
-                      <TableCell>{proveedores.tel_per}</TableCell>
-                      <TableCell>{proveedores.correo_per}</TableCell>
-                      <TableCell>{proveedores.dire_per}</TableCell>
+                      <TableCell>{clientes.ci_cli.toLocaleString()}</TableCell>
+                      <TableCell>{clientes.tel_per}</TableCell>
+                      <TableCell>{clientes.correo_per}</TableCell>
+                      <TableCell>{clientes.dire_per}</TableCell>
                       <TableCell align='center'>
-                        <Tooltip title="Editar Proveedor">
-                          <IconButton onClick={() => editarProveedor(proveedores)} color="primary">
+                        <Tooltip title="Editar Cliente">
+                          <IconButton onClick={() => editarCliente(clientes)} color="primary">
                             <Edit />
                           </IconButton>
                         </Tooltip>
                         <Tooltip title="Eliminar">
-                          <IconButton onClick={() => deleteProveedor(proveedores)} color="secondary">
+                          <IconButton onClick={() => deleteClient(clientes)} color="secondary">
                             <Delete />
                           </IconButton>
                         </Tooltip>
@@ -264,7 +264,7 @@ export default function TablaProveedores() {
                   <TablePagination
                     rowsPerPageOptions={[5, 10, 25, { label: 'Todas', value: -1 }]}
                     colSpan={3}
-                    count={proveedoresLista.length}
+                    count={clientesLista.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     SelectProps={{

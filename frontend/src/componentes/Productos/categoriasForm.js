@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import Axios from 'axios';
 import { apiUrlCreaCat, apiUrlUpdateCat, apiUrlDeleteCat } from '../../services/Apirest';
 import Swal from 'sweetalert2';
-import { Button, TextField, Paper, FormHelperText } from '@mui/material';
+import { Button, TextField, Paper, FormHelperText, Typography } from '@mui/material';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { useAraiContext } from 'context/arai.context';
@@ -52,7 +52,7 @@ function CategoriasForm() {
       .then(() => {
         limpiarCampos();
         setDataUpdateContext(true);
-        resetForm(); 
+        resetForm();
         console.log('Desde categoria: ', dataupdatecontext);
         Swal.fire({
           position: 'bottom',
@@ -104,7 +104,7 @@ function CategoriasForm() {
           hideClass: {
             popup: 'animate__animated animate__fadeOutUp animate__faster'
           },
-          timer: 2500,
+          timer: 2500
         });
       })
       .catch(function (error) {
@@ -183,7 +183,9 @@ function CategoriasForm() {
         {({ isSubmitting }) => (
           <Form>
             <Paper style={{ padding: '20px', marginBottom: '20px' }}>
-              <h3>{editar ? 'Actualizar Categoría' : 'Añadir Categoría'}</h3>
+              <Typography sx={{ mt: 2 }} variant="h3" id="formTitle" component="div">
+                {editar ? 'Actualizar Categoría' : 'Añadir Categoría'}
+              </Typography>
               <Field as={TextField} name="nom_cat" label="Nombre de Categoría *" fullWidth margin="normal" />
               <ErrorMessage name="nom_cat">{(msg) => <FormHelperText error>{msg}</FormHelperText>}</ErrorMessage>
               <Field as={TextField} name="desc_cat" label="Descripción de Categoría *" fullWidth margin="normal" />

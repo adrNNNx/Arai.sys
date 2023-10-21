@@ -10,8 +10,6 @@ export const PrivatesRoutes = {
   PROD_ALM: '/productos/almacen',
   DEFAULT: '/',
   PROVEEDORES: '/proveedores',
-  UTILS: {
-    base: 'utils',
-    typography: 'util-typography'
-  }
+  CLIENT: '/clientes',
+  COTIZ: '/cotizaciones'
 };
