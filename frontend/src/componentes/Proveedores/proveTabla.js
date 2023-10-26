@@ -1,25 +1,38 @@
-import * as React from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useTheme } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableFooter from '@mui/material/TableFooter';
-import TablePagination from '@mui/material/TablePagination';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import IconButton from '@mui/material/IconButton';
-import FirstPageIcon from '@mui/icons-material/FirstPage';
-import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
-import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
-import LastPageIcon from '@mui/icons-material/LastPage';
-import { Button, Divider, Grid, InputAdornment, TableHead, TextField, Tooltip, Typography } from '@mui/material';
-import { getProveedores } from 'services';
-import { useEffect, useState } from 'react';
-import { Edit, Delete, DescriptionOutlined } from '@mui/icons-material';
+import {
+  Box,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableFooter,
+  TablePagination,
+  TableRow,
+  Paper,
+  IconButton,
+  Button,
+  Divider,
+  Grid,
+  InputAdornment,
+  TableHead,
+  TextField,
+  Tooltip,
+  Typography
+} from '@mui/material';
+import {
+  FirstPage as FirstPageIcon,
+  KeyboardArrowLeft,
+  KeyboardArrowRight,
+  LastPage as LastPageIcon,
+  Edit,
+  Delete,
+  DescriptionOutlined
+} from '@mui/icons-material';
 import { IconSearch } from '@tabler/icons';
+import { apiUrlGetProv, getRequest } from 'services';
+
 import { useAraiContext } from 'context/arai.context';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -82,7 +95,7 @@ export default function TablaProveedores() {
   // UseEffect que carga los primeros datos
   useEffect(() => {
     // Llama a la función getProveedores de api.js
-    getProveedores()
+    getRequest(apiUrlGetProv)
       .then((response) => {
         setProveedores(response.data);
       })
@@ -98,7 +111,7 @@ export default function TablaProveedores() {
       return;
     }
 
-    getProveedores()
+    getRequest(apiUrlGetProv)
       .then((response) => {
         setProveedores(response.data);
         setDataUpdateContext(false);

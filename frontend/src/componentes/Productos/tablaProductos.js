@@ -1,25 +1,38 @@
-import * as React from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useTheme } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableFooter from '@mui/material/TableFooter';
-import TablePagination from '@mui/material/TablePagination';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import IconButton from '@mui/material/IconButton';
-import FirstPageIcon from '@mui/icons-material/FirstPage';
-import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
-import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
-import LastPageIcon from '@mui/icons-material/LastPage';
-import { Button, Divider, Grid, InputAdornment, TableHead, TextField, Tooltip, Typography } from '@mui/material';
-import { apiUrlGetCat, getRequest } from 'services';
-import { useEffect, useState } from 'react';
-import { Edit, Delete, DescriptionOutlined } from '@mui/icons-material';
+import {
+  Box,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableFooter,
+  TablePagination,
+  TableRow,
+  Paper,
+  IconButton,
+  Button,
+  Divider,
+  Grid,
+  InputAdornment,
+  TableHead,
+  TextField,
+  Tooltip,
+  Typography
+} from '@mui/material';
+import {
+  FirstPage as FirstPageIcon,
+  KeyboardArrowLeft,
+  KeyboardArrowRight,
+  LastPage as LastPageIcon,
+  Edit,
+  Delete,
+  DescriptionOutlined
+} from '@mui/icons-material';
 import { IconSearch } from '@tabler/icons';
+import { apiUrlGetProdu, getRequest } from 'services';
+
 import { useAraiContext } from 'context/arai.context';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -72,19 +85,20 @@ TablePaginationActions.propTypes = {
   rowsPerPage: PropTypes.number.isRequired
 };
 
-export default function TablaCategoria() {
-  const [categoriasLista, setCategorias] = useState([]);
+export default function TablaProductos() {
+  const [productosLista, setProductos] = useState([]);
   const [query, setQuery] = useState('');
-  const { araiContextValue, setAraiContextValue, dataupdatecontext, setDataUpdateContext } = useAraiContext();
-  const filteredCategories = categoriasLista.filter((categoria) => categoria.nom_cat.toLowerCase().includes(query.toLowerCase())); // Funcion de filtrado de la categoria por nombre
+  const { setAraiContextValue, dataupdatecontext, setDataUpdateContext } = useAraiContext();
+  const filteredProductos = productosLista.filter((productos) => productos.nom_pro.toLowerCase().includes(query.toLowerCase())); // Funcion de filtrado de los productos por nombre
+
   const doc = new jsPDF(); //Con esto generamos nuestro pdf
   const theme = useTheme();
   // UseEffect que carga los primeros datos
   useEffect(() => {
-    // Llama a la función getCategorias de api.js
-    getRequest(apiUrlGetCat)
+    // Llama a la función getProveedores de api.js
+    getRequest(apiUrlGetProdu)
       .then((response) => {
-        setCategorias(response.data);
+        setProductos(response.data);
       })
       .catch((error) => {
         console.error(error);
@@ -98,9 +112,9 @@ export default function TablaCategoria() {
       return;
     }
 
-    getRequest(apiUrlGetCat)
+    getRequest(apiUrlGetProdu)
       .then((response) => {
-        setCategorias(response.data);
+        setProductos(response.data);
         setDataUpdateContext(false);
       })
       .catch((error) => {
@@ -108,20 +122,19 @@ export default function TablaCategoria() {
       });
   }, [dataupdatecontext]);
 
-  const editarCategoria = (val) => {
+
+  const editarProducto = (val) => {
     setAraiContextValue({
       ...val,
       action: 'editar'
     });
-    console.log('desde tabla categoria valores editar: ', araiContextValue.nom_cat);
   };
 
-  const deleteCategoria = (val) => {
+  const deleteProducto = (val) => {
     setAraiContextValue({
       ...val,
       action: 'eliminar'
     });
-    console.log('desde tabla categoria valores eliminar: ', araiContextValue.nom_cat);
   };
 
   const generarPDF = () => {
@@ -129,15 +142,21 @@ export default function TablaCategoria() {
     doc.setFillColor(193, 18, 31); //Color del rectangulo
     doc.rect(14.3, 15, 181.1, 20, 'F'); //El rectangulo
     doc.setTextColor(255); //Color del texto del encabezado
-    doc.setFont("helvetica", "bold");
+    doc.setFont('helvetica', 'bold');
     doc.setFontSize(22);
-    doc.text('Tabla Categoria', 87, 27); //Encabezado
+    doc.text('Tabla Productos', 87, 27); //Encabezado
     doc.addImage(logo_arai, 'PNG', 175, 10, 20, 20); //Logo
-    
+
     //Acá estan las columnas de la tabla junto con los datos
-    const columns = ['Id', 'Categoría', 'Descripción'];
-    const dataT = categoriasLista.map((categoria) => [categoria.id_cat, categoria.nom_cat, categoria.desc_cat]);
-    
+    const columns = ['Id', 'Proveedor', 'RUC', 'Teléfono', 'Correo', 'Dirección'];
+    const dataT = productosLista.map((productos) => [
+      productos.id_pro,
+      productos.nom_pro,
+      productos.prec_pro,
+      productos.preven_pro,
+      productos.existencia,
+    ]);
+
     //Acá se imprime la tabla
     autoTable(doc, {
       startY: 40,
@@ -147,14 +166,14 @@ export default function TablaCategoria() {
       bodyStyles: { minCellHeight: 15 }
     });
 
-    doc.save('table.pdf');
+    doc.save('tableProveedores.pdf');
   };
 
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
   // Avoid a layout jump when reaching the last page with empty rows.
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - categoriasLista.length) : 0;
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - productosLista.length) : 0;
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -172,14 +191,14 @@ export default function TablaCategoria() {
           <Grid container direction="row" spacing={2} sx={{ p: 2, alignItems: 'flex-start' }}>
             <Grid item>
               <Typography sx={{ mt: 2 }} variant="h3" id="tableTitle" component="div">
-                Tabla Categoria
+                Tabla de Productos
               </Typography>
             </Grid>
             <Grid item sx={{ flexGrow: 1, display: 'flex', justifyContent: 'flex-end' }}>
               <TextField
                 type="search"
                 variant="outlined"
-                placeholder="Buscar Categoria..."
+                placeholder="Buscar Producto..."
                 onChange={(e) => setQuery(e.target.value)} //establecemos el valor de la busqueda
                 InputProps={{
                   startAdornment: (
@@ -199,30 +218,36 @@ export default function TablaCategoria() {
           </Grid>
           <Divider />
           <TableContainer>
-            <Table sx={{ minWidth: 500 }} aria-label="tabla de categoria de productos">
+            <Table sx={{ minWidth: 500 }} aria-label="tabla de productos">
               <TableHead>
                 <TableRow>
-                  <TableCell>Nombre de Categoría</TableCell>
-                  <TableCell>Descripción</TableCell>
+                  <TableCell>Nombre</TableCell>
+                  <TableCell>Precio Venta</TableCell>
+                  <TableCell>Precio Compra</TableCell>
+                  <TableCell>Existencia</TableCell>
+                  <TableCell>Categoria</TableCell>
                   <TableCell>Acciones</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {(rowsPerPage > 0 ? filteredCategories.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) : filteredCategories) //Aca filtramos la tabla median nuestro filtro de busqueda por nombre de la categoria
-                  .map((categoria) => (
-                    <TableRow key={categoria.id_cat}>
+                {(rowsPerPage > 0 ? filteredProductos.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) : filteredProductos) //Aca filtramos la tabla median nuestro filtro de busqueda por nombre de los productos
+                  .map((productos) => (
+                    <TableRow key={productos.id_pro}>
                       <TableCell component="th" scope="row">
-                        {categoria.nom_cat}
+                        {productos.nom_pro}
                       </TableCell>
-                      <TableCell>{categoria.desc_cat}</TableCell>
+                      <TableCell>GS {productos.preven_pro.toLocaleString()}</TableCell>
+                      <TableCell>GS {productos.prec_pro.toLocaleString()}</TableCell>
+                      <TableCell>{productos.existencia}</TableCell>
+                      <TableCell>{productos.categoria}</TableCell>
                       <TableCell>
-                        <Tooltip title="Editar Categoría">
-                          <IconButton onClick={() => editarCategoria(categoria)} color="primary">
+                        <Tooltip title="Editar Producto">
+                          <IconButton onClick={() => editarProducto(productos)} color="primary">
                             <Edit />
                           </IconButton>
                         </Tooltip>
                         <Tooltip title="Eliminar">
-                          <IconButton onClick={() => deleteCategoria(categoria)} color="secondary">
+                          <IconButton onClick={() => deleteProducto(productos)} color="secondary">
                             <Delete />
                           </IconButton>
                         </Tooltip>
@@ -240,7 +265,7 @@ export default function TablaCategoria() {
                   <TablePagination
                     rowsPerPageOptions={[5, 10, 25, { label: 'Todas', value: -1 }]}
                     colSpan={3}
-                    count={categoriasLista.length}
+                    count={productosLista.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     SelectProps={{

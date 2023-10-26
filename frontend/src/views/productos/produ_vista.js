@@ -1,10 +1,8 @@
-import ProductosForm from "componentes/Productos/productosForm;"
-import { AraiProvider } from "context/arai.context";
-const ProductosVista = () => (
-  <AraiProvider>
-    <ProductosForm />
-  
-  </AraiProvider>
-);
+
+const ProductosVista = () => {
+  return (
+    <div>productos</div>
+  )
+}
 
 export default ProductosVista

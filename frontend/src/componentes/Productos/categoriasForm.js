@@ -184,9 +184,9 @@ function CategoriasForm() {
           <Form>
             <Paper style={{ padding: '20px', marginBottom: '20px' }}>
               <h3>{editar ? 'Actualizar Categoría' : 'Añadir Categoría'}</h3>
-              <Field as={TextField} name="nom_cat" label="Nombre de Categoría" fullWidth margin="normal" />
+              <Field as={TextField} name="nom_cat" label="Nombre de Categoría *" fullWidth margin="normal" />
               <ErrorMessage name="nom_cat">{(msg) => <FormHelperText error>{msg}</FormHelperText>}</ErrorMessage>
-              <Field as={TextField} name="desc_cat" label="Descripción de Categoría" fullWidth margin="normal" />
+              <Field as={TextField} name="desc_cat" label="Descripción de Categoría *" fullWidth margin="normal" />
               <ErrorMessage name="desc_cat">{(msg) => <FormHelperText error>{msg}</FormHelperText>}</ErrorMessage>
               <Button type="submit" variant="contained" color="primary" disabled={isSubmitting} style={{ marginTop: '20px' }}>
                 {editar ? 'Actualizar' : 'Agregar'}

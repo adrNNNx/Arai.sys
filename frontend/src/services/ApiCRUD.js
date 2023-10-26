@@ -1,12 +1,13 @@
 import Axios from 'axios';
 import Swal from "sweetalert2";
 import 'animate.css';
-import { apiUrlGetProv } from './Apirest';
 
-export const getProveedores = () => {
-  return Axios.get(apiUrlGetProv);
+
+export const getRequest = (url) => {
+  return Axios.get(url);
 };
 
+//Funcion para agregar datos 
 export const sendPostRequest = (url, data, successMessage, successCallback) => {
     Axios.post(url, data)
       .then(() => {
@@ -28,6 +29,7 @@ export const sendPostRequest = (url, data, successMessage, successCallback) => {
         });
       })
       .catch((error) => {
+        console.log(error);
         Swal.fire({
           icon: 'error',
           title: 'Oops...ocurrió un error inesperado',

@@ -1,141 +1,123 @@
-import React, { useState, useEffect } from 'react';
-import Axios from 'axios';
-import { apiUrlCreaPro, apiUrlUpdatePro, apiUrlDeletePro } from '../../services/Apirest';
-import Swal from 'sweetalert2';
-import { Button, TextField, Paper, FormHelperText } from '@mui/material';
+//React
+import { useState, useEffect } from 'react';
+
+//Importaciones de MUI y formularios
+import { Button, TextField, Paper, FormHelperText, Grid, MenuItem, Select, InputLabel, InputAdornment } from '@mui/material';
+import { Box } from '@mui/system';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
+import Swal from 'sweetalert2';
 
+//Importaciones del proyecto junto con apis
+import { apiUrlCreaProdu, apiUrlUpdateProdu, apiUrlDeleteProdu } from '../../services/Apirest';
+import { useAraiContext } from 'context/arai.context';
+import { sendDeleteRequest, sendPostRequest, sendPutRequest} from 'services/ApiCRUD';
+import { getCategorias } from 'services';
+
+//Valores Iniciales del Formulario
 const initialValues = {
-  //id_pro: '', 
-  existencia: '',
   nom_pro: '',
+  preven_pro: '',
   prec_pro: '',
-  fec_pro: '',
-  categoria_id_cat: '',
-  estado: ''
+  existencia: '',
+  categoria_id_cat: ''
 };
 
 const validationSchema = Yup.object({
   preven_pro: Yup.number().required('El precio de venta es requerido'),
   existencia: Yup.number().required('La cantidad del producto es requerida'),
   nom_pro: Yup.string().required('El nombre del producto es requerido'),
-  prec_pro: Yup.number().required('El precio es requerido'),
-  fec_pro: Yup.date().required('La fecha es requerida'),
-  categoria_id_cat: Yup.number().required('La categoría es requerida'),
-  estado: Yup.string().required('El estado es requerido')
+  prec_pro: Yup.number().required('El precio de compra es requerido'),
+  categoria_id_cat: Yup.number().required('La categoría para el producto es requerida')
 });
 
 function ProductosForm() {
   const [id_pro, setId_pro] = useState('');
   const [editar, setEditar] = useState(false);
-  const { setAraiContextValue, araiContextValue, setDataUpdateContext, dataupdatecontext } = useAraiContext();
+
+  const [categoriasLista, setCategorias] = useState([]);
+
+  const { setAraiContextValue, araiContextValue, setDataUpdateContext} = useAraiContext();
   const [initialFormValues, setInitialFormValues] = useState(initialValues);
 
-  useEffect(() => { if (araiContextValue.action === 'editar') {
-    setId_cat(araiContextValue.id_cat);
-    setInitialFormValues({ nom_cat: araiContextValue.nom_cat, desc_cat: araiContextValue.desc_cat });
-    setEditar(true);
-    console.log('valores del contexto desde cateogirasForm: ', araiContextValue.nom_cat, 'valor del usetate de editar: ', editar);
-  } else if (araiContextValue.action === 'eliminar') {
-    deleteCategoria(araiContextValue);
-  }
-}, [araiContextValue]);
+  // El useEffect para cuando el contexto cambie entonces los valores se actualizan de los useState (Funciona como editarProducto)
+  //(El contexto es intercomunicacion entre componentes en este caso la tabla le pasa los datos al FORM)
+  useEffect(() => {
+    if (araiContextValue.action === 'editar') {
+      setId_pro(araiContextValue.id_pro);
+      setInitialFormValues({
+        nom_pro: araiContextValue.nom_pro,
+        preven_pro: araiContextValue.preven_pro,
+        prec_pro: araiContextValue.prec_pro,
+        existencia: araiContextValue.existencia,
+        categoria_id_cat: araiContextValue.categoria_id_cat
+      });
+      setEditar(true);
+    } else if (araiContextValue.action === 'eliminar') {
+      deleteProducto(araiContextValue);
+    }
+  }, [araiContextValue]);
+
+  //Para cargar las categorias en mi field de Select
+  useEffect(() => {
+    getCategorias()
+      .then((response) => {
+        setCategorias(response.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, []);
 
   const limpiarCampos = () => {
     setId_pro('');
     setEditar(false);
     setInitialFormValues(initialValues);
     setAraiContextValue('');
-    console.log('Limpieza de los campos valores actuales: ', id_pro, 'editar: ', editar, 'valores iniciales: ', initialFormValues);
   };
 
-  const addProducto = (values) => {
-    Axios.post(apiUrlCreaPro, {
-      preven_pro: values.preven_pro,
-      existencia: values.existencia,
+  const addProdu = (values, resetForm) => {
+    const data = {
       nom_pro: values.nom_pro,
+      preven_pro: values.preven_pro,
       prec_pro: values.prec_pro,
-      fec_pro: values.fec_pro,
-      categoria_id_cat: values.categoria_id_cat,
-      estado: values.estado
-    })
-      .then(() => {
-        limpiarCampos();
-        setDataUpdateContext(true);
-        console.log('Desde categoria: ', dataupdatecontext);
-        Swal.fire({
-          position: 'bottom',
-          toast: true,
-          title: '<strong>Registro exitoso</strong>',
-          html: `<i>El producto <strong>${values.nom_cat}</strong> fue registrada con éxito</i>`,
-          icon: 'success',
-          showConfirmButton: false,
-          showClass: {
-            popup: 'animate__animated animate__fadeInLeft animate__faster'
-          },
-          hideClass: {
-            popup: 'animate__animated animate__fadeOutUp animate__faster'
-          },
-          timer: 2500
-        });
-      })
-      .catch(function (error) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Oops...ocurrio un error inesperado',
-            text:
-              JSON.parse(JSON.stringify(error)).message === 'Network Error' ? 'Intente más tarde' : JSON.parse(JSON.stringify(error)).message
-          });
-      });
+      existencia: values.existencia,
+      categoria_id_cat: values.categoria_id_cat
+    };
+
+    sendPostRequest(apiUrlCreaProdu, data, `<i>El producto <strong>${values.nom_pro}</strong> fue registrado con éxito</i>`, () => {
+      limpiarCampos();
+      setDataUpdateContext(true);
+      resetForm();
+    });
   };
 
-  const updateProducto = (values) => {
-    Axios.put(apiUrlUpdatePro, {
+  const updateProducto = (values, resetForm) => {
+    const data = {
       id_pro: id_pro,
-      preven_pro: values.preven_pro,
-      existencia: values.existencia,
       nom_pro: values.nom_pro,
+      preven_pro: values.preven_pro,
       prec_pro: values.prec_pro,
-      fec_pro: values.fec_pro,
-      categoria_id_cat: values.categoria_id_cat,
-      estado: values.estado
-    })
-      .then(() => {
+      existencia: values.existencia,
+      categoria_id_cat: values.categoria_id_cat
+    };
+  
+    sendPutRequest(
+      apiUrlUpdateProdu,
+      data,
+      `<i>El Producto <strong>${values.nom_pro}</strong> fue actualizado con éxito</i>`,
+      () => {
         limpiarCampos();
         setDataUpdateContext(true);
         resetForm();
-        console.log('Desde update: ', dataupdatecontext);
-        Swal.fire({
-          position: 'bottom',
-          toast: true,
-          title: '<strong>Actualización exitosa</strong>',
-          html: `<i>El producto <strong>${values.nom_cat}</strong> fue actualizada con éxito</i>`,
-          icon: 'success',
-          showConfirmButton: false,
-          showClass: {
-            popup: 'animate__animated animate__fadeInLeft animate__faster'
-          },
-          hideClass: {
-            popup: 'animate__animated animate__fadeOutUp animate__faster'
-          },
-          timer: 2500,
-        });
-      })
-      .catch(function (error) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Oops...',
-            text:
-              JSON.parse(JSON.stringify(error)).message === 'Network Error' ? 'Intente más tarde' : JSON.parse(JSON.stringify(error)).message
-          });
-      });
+      }
+    );
   };
 
-  const deleteProducto = () => {
+  const deleteProducto = (val) => {
     Swal.fire({
       title: '¿Confirmar eliminación?',
-      html: '<i>¿Realmente desea eliminar este producto?</i>',
+      html: `<i>¿Realmente desea eliminar el producto <strong>${val.nom_pro}</strong>?</i>`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
@@ -144,99 +126,139 @@ function ProductosForm() {
       cancelButtonText: 'Cancelar'
     }).then((result) => {
       if (result.isConfirmed) {
-        Axios.delete(apiUrlDeletePro, {
-          data: { id_pro: id_pro } // Asegúrate de pasar el ID del producto que deseas eliminar
-        })
-          .then(() => {
+        const data = {
+          id_pro: val.id_pro
+        };
+  
+        sendDeleteRequest(
+          apiUrlDeleteProdu,
+          data,
+          `<i>El producto <strong>${val.nom_pro}</strong> fue eliminado.</i>`,
+          () => {
             limpiarCampos();
             setDataUpdateContext(true);
-            console.log('Desde delete: ', dataupdatecontext);
-            Swal.fire({
-              position: 'bottom',
-              toast: true,
-              icon: 'success',
-              title: `El producto ${val.nom_cat} fue eliminado.`,
-              showConfirmButton: false,
-              showClass: {
-                popup: 'animate__animated animate__fadeInLeft animate__faster'
-              },
-              hideClass: {
-                popup: 'animate__animated animate__fadeOutUp animate__faster'
-              },
-              timer: 2500
-            });
-          })
-          .catch(function (error) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'No se logró eliminar la categoría.',
-                footer:
-                  JSON.parse(JSON.stringify(error)).message === 'Network Error'
-                    ? 'Intente más tarde'
-                    : JSON.parse(JSON.stringify(error)).message
-              });
-          });
+          }
+        );
       }
     });
   };
 
-   //Cuerpo del Formulario
+  //Cuerpo del Formulario
   return (
-    <div>
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column'
+      }}
+    >
       <Formik
-        initialValues={initialFormValues}
-        enableReinitialize={true}
+        initialValues={initialFormValues} //Valores iniciales predefinidos
+        enableReinitialize={true} // Permite reinicializar los valores
         validationSchema={validationSchema}
-        onSubmit={(values, { setSubmitting }) => {
+        onSubmit={(values, { setSubmitting, resetForm }) => {
           if (editar) {
-            updateProducto(values);
+            updateProducto(values, resetForm);
           } else {
-            addProducto(values);
+            addProdu(values, resetForm);
           }
           setSubmitting(false);
         }}
       >
         {({ isSubmitting }) => (
-         <Form>
-         <Paper style={{ padding: '20px', marginBottom: '20px' }}>
-           <h3>{editar ? 'Editar Producto' : 'Agregar Producto'}</h3>
-           <Field as={TextField} name="preven_pro" label="Precio de Venta" fullWidth margin="normal" />
-           <ErrorMessage name="preven_pro">{(msg) => <FormHelperText error>{msg}</FormHelperText>}</ErrorMessage>
-       
-           {/* Agrega los campos restantes aquí */}
-           <Field as={TextField} name="existencia" label="Existencia" fullWidth margin="normal" />
-           <ErrorMessage name="existencia">{(msg) => <FormHelperText error>{msg}</FormHelperText>}</ErrorMessage>
-       
-           <Field as={TextField} name="nom_pro" label="Nombre del Producto" fullWidth margin="normal" />
-           <ErrorMessage name="nom_pro">{(msg) => <FormHelperText error>{msg}</FormHelperText>}</ErrorMessage>
-       
-           <Field as={TextField} name="prec_pro" label="Precio" fullWidth margin="normal" />
-           <ErrorMessage name="prec_pro">{(msg) => <FormHelperText error>{msg}</FormHelperText>}</ErrorMessage>
-       
-           <Field as={TextField} name="fec_pro" label="Fecha" fullWidth margin="normal" />
-           <ErrorMessage name="fec_pro">{(msg) => <FormHelperText error>{msg}</FormHelperText>}</ErrorMessage>
-       
-           <Field as={TextField} name="categoria_id_cat" label="Categoría" fullWidth margin="normal" />
-           <ErrorMessage name="categoria_id_cat">{(msg) => <FormHelperText error>{msg}</FormHelperText>}</ErrorMessage>
-       
-           <Field as={TextField} name="estado" label="Estado" fullWidth margin="normal" />
-           <ErrorMessage name="estado">{(msg) => <FormHelperText error>{msg}</FormHelperText>}</ErrorMessage>
-       
-           <Button type="submit" variant="contained" color="primary" disabled={isSubmitting} style={{ marginTop: '20px' }}>
-             {editar ? 'Actualizar' : 'Agregar'}
-           </Button>
-           {editar && (
-             <Button variant="outlined" onClick={deleteProducto} style={{ marginTop: '20px', marginLeft: '20px' }}>
-               Eliminar
-             </Button>
-           )}
-         </Paper>
-       </Form>
-       
+          <Form>
+            <Paper style={{ padding: '20px', marginBottom: '20px' }}>
+              <h3>{editar ? 'Editar Producto' : 'Agregar Producto'}</h3>
+              <Grid container spacing={2}>
+                <Grid item xs={12}>
+                  <Field as={TextField} name="nom_pro" label="Nombre del Producto *" fullWidth margin="normal" />
+                  <ErrorMessage name="nom_pro">{(msg) => <FormHelperText error>{msg}</FormHelperText>}</ErrorMessage>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <Field
+                    as={TextField}
+                    name="preven_pro"
+                    label="Precio de Venta *"
+                    fullWidth
+                    margin="normal"
+                    onKeyPress={(event) => {
+                      if (!/[0-9]/.test(event.key)) {
+                        event.preventDefault();
+                      }
+                    }}
+                    InputProps={{
+                      startAdornment: <InputAdornment position="start">GS</InputAdornment>
+                    }}
+                  />
+                  <ErrorMessage name="preven_pro">{(msg) => <FormHelperText error>{msg}</FormHelperText>}</ErrorMessage>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <Field
+                    as={TextField}
+                    name="prec_pro"
+                    label="Precio de Compra *"
+                    fullWidth
+                    margin="normal"
+                    onKeyPress={(event) => {
+                      if (!/[0-9]/.test(event.key)) {
+                        event.preventDefault();
+                      }
+                    }}
+                    InputProps={{
+                      startAdornment: <InputAdornment position="start">GS</InputAdornment>
+                    }}
+                  />
+                  <ErrorMessage name="prec_pro">{(msg) => <FormHelperText error>{msg}</FormHelperText>}</ErrorMessage>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <Field
+                    as={TextField}
+                    name="existencia"
+                    label="Existencia *"
+                    fullWidth
+                    margin="normal"
+                    onKeyPress={(event) => {
+                      if (!/[0-9]/.test(event.key)) {
+                        event.preventDefault();
+                      }
+                    }}
+                  />
+                  <ErrorMessage name="existencia">{(msg) => <FormHelperText error>{msg}</FormHelperText>}</ErrorMessage>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <InputLabel id="categoria_label">Categoría *</InputLabel>
+                  <Field
+                    as={Select}
+                    name="categoria_id_cat"
+                    labelId="categoria_label"
+                    id="categoria_select"
+                    label="Categoría"
+                    sx={{
+                      width: '100%'
+                    }}
+                  >
+                    {categoriasLista.map((categoria) => (
+                      <MenuItem key={categoria.id_cat} value={categoria.id_cat}>
+                        {categoria.nom_cat}
+                      </MenuItem>
+                    ))}
+                  </Field>
+                  <ErrorMessage name="categoria_id_cat">{(msg) => <FormHelperText error>{msg}</FormHelperText>}</ErrorMessage>
+                </Grid>
+              </Grid>
+
+              <Button type="submit" variant="contained" color="primary" disabled={isSubmitting} style={{ marginTop: '20px' }}>
+                {editar ? 'Actualizar' : 'Agregar'}
+              </Button>
+              {editar && (
+                <Button variant="outlined" onClick={limpiarCampos} style={{ marginTop: '20px', marginLeft: '20px' }}>
+                  Cancelar
+                </Button>
+              )}
+            </Paper>
+          </Form>
         )}
       </Formik>
-    </div>
+    </Box>
   );
 }
 
