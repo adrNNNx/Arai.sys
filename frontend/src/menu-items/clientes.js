@@ -1,26 +1,26 @@
 // assets
-import { IconTruckDelivery } from '@tabler/icons';
+import { IconUser } from '@tabler/icons';
 import { PrivatesRoutes } from '../rutas/routes';
 
 
 // constant
-const icons = { IconTruckDelivery };
+const icons = { IconUser };
 
 // ==============================|| SAMPLE PAGE & DOCUMENTATION MENU ITEMS ||============================== //
 
-const proveedor = {
-  id: 'proveedores',
+const cliente = {
+  id: 'clientes',
   type: 'group',
   children: [
     {
-      id: 'proveedor',
-      title: 'Proveedores',
+      id: 'cliente',
+      title: 'Clientes',
       type: 'item',
-      url: PrivatesRoutes.PROVEEDORES,
-      icon: icons.IconTruckDelivery,
+      url: PrivatesRoutes.CLIENT,
+      icon: icons.IconUser,
       breadcrumbs: false
     },
   ]
 };
 
-export default proveedor;
+export default cliente;

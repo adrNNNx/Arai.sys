@@ -1,15 +1,16 @@
 
-import pages from './pages';
+
 import utilities from './utilities';
-import other from './other';
 import inicio from './inicio';
 import productos from './productos';
 import proveedor from './proveedor';
+import cliente from './clientes';
+import cotizacion from './cotizacion';
 
 // ==============================|| MENU ITEMS ||============================== //
 
 const menuItems = {
-  items: [inicio, productos, proveedor, pages, utilities, other]
+  items: [inicio, productos, proveedor, cliente,cotizacion, utilities]
 };
 
 export default menuItems;

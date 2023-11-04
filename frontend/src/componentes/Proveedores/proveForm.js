@@ -2,11 +2,11 @@
 import { useState, useEffect } from 'react';
 
 //Importaciones de MUI y formularios
-import { Button, TextField, Paper, FormHelperText, Grid } from '@mui/material';
+import { Button, TextField, Paper, FormHelperText, Grid, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import Swal from "sweetalert2";
+import Swal from 'sweetalert2';
 
 //Importaciones del proyecto junto con apis
 import { sendDeleteRequest, sendPostRequest, sendPutRequest } from 'services/ApiCRUD';
@@ -21,13 +21,13 @@ const validationSchema = Yup.object({
   nom_per: Yup.string().required('El nombre del proveedor es requerido'),
   ruc: Yup.string().required('El RUC para el proveedor es requerido'),
   tel_per: Yup.string().required('El teléfono para el proveedor es requerido'),
-  correo_per: Yup.string().email("Ingrese un email válido"),
+  correo_per: Yup.string().email('Ingrese un email válido')
 });
 
 const ProveedorForm = () => {
   const [id_per, setId_per] = useState(); // ID de la persona
   const [editar, setEditar] = useState(false);
-  const { setAraiContextValue, araiContextValue, setDataUpdateContext} = useAraiContext();
+  const { setAraiContextValue, araiContextValue, setDataUpdateContext } = useAraiContext();
   const [initialFormValues, setInitialFormValues] = useState(initialValues);
   // El useEffect para cuando el contexto cambie entonces los valores se actualizan de los useState (Funciona como editarPersona)
   //(El contexto es intercomunicacion entre componentes en este caso la tabla le pasa los datos al FORM)
@@ -68,7 +68,7 @@ const ProveedorForm = () => {
     sendPostRequest(apiUrlCreaProv, data, `<i>El proveedor <strong>${values.nom_per}</strong> fue registrado con éxito</i>`, () => {
       limpiarCampos();
       setDataUpdateContext(true);
-      resetForm(); 
+      resetForm();
     });
   };
 
@@ -81,17 +81,12 @@ const ProveedorForm = () => {
       correo_per: values.correo_per,
       ruc: values.ruc
     };
-  
-    sendPutRequest(
-      apiUrlUpdateProv,
-      data,
-      `<i>El Proveedor <strong>${values.nom_per}</strong> fue actualizado con éxito</i>`,
-      () => {
-        limpiarCampos();
-        setDataUpdateContext(true);
-        resetForm();
-      }
-    );
+
+    sendPutRequest(apiUrlUpdateProv, data, `<i>El Proveedor <strong>${values.nom_per}</strong> fue actualizado con éxito</i>`, () => {
+      limpiarCampos();
+      setDataUpdateContext(true);
+      resetForm();
+    });
   };
 
   const deleteProveedor = (val) => {
@@ -109,16 +104,11 @@ const ProveedorForm = () => {
         const data = {
           id_per: val.id_per
         };
-  
-        sendDeleteRequest(
-          apiUrlDeleteProv,
-          data,
-          `<i>El proveedor <strong>${val.nom_per}</strong> fue eliminado.</i>`,
-          () => {
-            limpiarCampos();
-            setDataUpdateContext(true);
-          }
-        );
+
+        sendDeleteRequest(apiUrlDeleteProv, data, `<i>El proveedor <strong>${val.nom_per}</strong> fue eliminado.</i>`, () => {
+          limpiarCampos();
+          setDataUpdateContext(true);
+        });
       }
     });
   };
@@ -146,18 +136,42 @@ const ProveedorForm = () => {
         {({ isSubmitting }) => (
           <Form>
             <Paper style={{ padding: '20px', marginBottom: '20px' }}>
-              <h3>{editar ? 'Actualizar Proveedor' : 'Añadir Proveedor'}</h3>
+              <Typography sx={{ mt: 2 }} variant="h3" id="formTitle" component="div">
+                {editar ? 'Actualizar Proveedor' : 'Añadir Proveedor'}
+              </Typography>
               <Grid container spacing={2}>
                 <Grid item xs={12} sm={6}>
                   <Field as={TextField} name="nom_per" label="Nombre del Proveedor *" fullWidth margin="normal" />
                   <ErrorMessage name="nom_per">{(msg) => <FormHelperText error>{msg}</FormHelperText>}</ErrorMessage>
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                  <Field as={TextField} name="ruc" label="RUC *" fullWidth margin="normal" />
+                  <Field
+                    as={TextField}
+                    name="ruc"
+                    label="RUC *"
+                    fullWidth
+                    margin="normal"
+                    onKeyPress={(event) => {
+                      if (!/[0-9-/]/.test(event.key)) {
+                        event.preventDefault();
+                      }
+                    }}
+                  />
                   <ErrorMessage name="ruc">{(msg) => <FormHelperText error>{msg}</FormHelperText>}</ErrorMessage>
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                  <Field as={TextField} name="tel_per" label="Teléfono *" fullWidth margin="normal" />
+                  <Field
+                    as={TextField}
+                    name="tel_per"
+                    label="Teléfono *"
+                    fullWidth
+                    margin="normal"
+                    onKeyPress={(event) => {
+                      if (!/[0-9-]/.test(event.key)) {
+                        event.preventDefault();
+                      }
+                    }}
+                  />
                   <ErrorMessage name="tel_per">{(msg) => <FormHelperText error>{msg}</FormHelperText>}</ErrorMessage>
                 </Grid>
                 <Grid item xs={12} sm={6}>

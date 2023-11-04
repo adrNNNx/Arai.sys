@@ -56,8 +56,13 @@ app.post("/api/create_produ", crudBD.crear_producto );
 app.put("/api/update_produ",crudBD.update_producto);
 app.put("/api/delete_produ", crudBD.delete_producto);
 
-app.post("/api/create_prov", crudBD.crear_prov);
 app.get("/api/get_prov",crudBD.get_prov );
+app.post("/api/create_prov", crudBD.crear_prov);
 app.put("/api/update_prov",crudBD.update_prov);
 app.put("/api/delete_prov", crudBD.delete_prov);
+
+app.get("/api/get_client",crudBD.get_client );
+app.post("/api/create_client", crudBD.crear_client);
+app.put("/api/update_client",crudBD.update_client);
+app.put("/api/delete_client", crudBD.delete_client);
 

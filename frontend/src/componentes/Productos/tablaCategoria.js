@@ -172,7 +172,7 @@ export default function TablaCategoria() {
           <Grid container direction="row" spacing={2} sx={{ p: 2, alignItems: 'flex-start' }}>
             <Grid item>
               <Typography sx={{ mt: 2 }} variant="h3" id="tableTitle" component="div">
-                Tabla Categoria
+                Categoria de Productos Registrados
               </Typography>
             </Grid>
             <Grid item sx={{ flexGrow: 1, display: 'flex', justifyContent: 'flex-end' }}>
@@ -204,7 +204,7 @@ export default function TablaCategoria() {
                 <TableRow>
                   <TableCell>Nombre de Categoría</TableCell>
                   <TableCell>Descripción</TableCell>
-                  <TableCell>Acciones</TableCell>
+                  <TableCell align='center'>Acciones</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -215,7 +215,7 @@ export default function TablaCategoria() {
                         {categoria.nom_cat}
                       </TableCell>
                       <TableCell>{categoria.desc_cat}</TableCell>
-                      <TableCell>
+                      <TableCell align='center'>
                         <Tooltip title="Editar Categoría">
                           <IconButton onClick={() => editarCategoria(categoria)} color="primary">
                             <Edit />

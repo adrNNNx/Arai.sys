@@ -315,6 +315,118 @@ async function delete_prov(req, res) {
   );
 }
 
+//Funcion de Clientes
+async function crear_client(req, res) {
+  const nom_per = req.body.nom_per;
+  const ci_cli = req.body.ci_cli;
+  const tel_per = req.body.tel_per;
+  const dire_per = req.body.dire_per;
+  const correo_per = req.body.correo_per;
+
+  const connection = await database.getConnection();
+  connection.query(
+    "INSERT INTO persona(nom_per, tel_per, dire_per, correo_per) VALUES (?, ?, ?, ?)",
+    [nom_per, tel_per, dire_per, correo_per],
+    function (error, results) {
+      if (error) {
+        console.error("Error al insertar datos en persona:", error);
+      } else {
+        const personaId = results.insertId; // Obtenemos el ID de persona recién insertada
+        connection.query(
+          // Luego, insertamos el CI y la clave foránea en la tabla "clientes"
+          "INSERT INTO cli(ci_cli, persona_id_per) VALUES (?, ?)",
+          [ci_cli, personaId],
+          function (error, results) {
+            if (error) {
+              console.error("Error al insertar datos en proveedor:", error);
+            } else {
+              res.send(results);
+            }
+          }
+        );
+      }
+    }
+  );
+}
+
+async function get_client(req, res) {
+  const connection = await database.getConnection();
+  try {
+    const query = `
+      SELECT
+        p.id_per,
+        p.nom_per,
+        p.tel_per,
+        p.correo_per,
+        p.dire_per,
+        cl.ci_cli
+      FROM
+        persona AS p
+      INNER JOIN
+        cli AS cl
+      ON
+        p.id_per = cl.persona_id_per
+      WHERE
+        cl.estado_cli = 1;
+    `;
+
+    const result = await connection.query(query);
+    return res.send(result);
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+async function update_client(req, res) {
+  const personaId = req.body.id_per;
+  const nom_per = req.body.nom_per;
+  const ci_cli = req.body.ci_cli;
+  const tel_per = req.body.tel_per;
+  const dire_per = req.body.dire_per;
+  const correo_per = req.body.correo_per;
+
+  const connection = await database.getConnection();
+
+  try {
+    await connection.beginTransaction(); // Inicia la transacción
+
+    // Actualiza los datos en la tabla "persona"
+    await connection.query(
+      "UPDATE persona SET nom_per = ?, tel_per = ?, dire_per = ?, correo_per = ? WHERE id_per = ?",
+      [nom_per, tel_per, dire_per, correo_per, personaId]
+    );
+
+    // Actualiza los datos en la tabla "cliente"
+    await connection.query(
+      "UPDATE cli SET ci_cli = ? WHERE persona_id_per = ?",
+      [ci_cli, personaId]
+    );
+
+    await connection.commit(); // Confirma la transacción
+    res.send("Actualización exitosa");
+  } catch (err) {
+    await connection.rollback(); // En caso de error, realiza un rollback para deshacer los cambios
+    console.log(err);
+    res.status(500).send("Error en la actualización");
+  }
+}
+
+async function delete_client(req, res) {
+  const id_per = req.body.id_per;
+  const connection = await database.getConnection();
+  connection.query(
+    "UPDATE cli SET estado_cli=0 WHERE persona_id_per=?",
+    [id_per],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
+    }
+  );
+}
+
 module.exports = {
   crear_categoria,
   get_categ,
@@ -334,4 +446,9 @@ module.exports = {
   get_prov,
   update_prov,
   delete_prov,
+
+  crear_client,
+  get_client,
+  update_client,
+  delete_client,
 };

@@ -1,5 +1,7 @@
 // material-ui
 //import { Typography } from '@mui/material';
+import DataGridProductos from 'componentes/Productos/datagridProductos';
+import ProductosForm from 'componentes/Productos/productosForm';
 import { AraiProvider } from 'context/arai.context';
 
 // project imports
@@ -9,7 +11,8 @@ import { AraiProvider } from 'context/arai.context';
 
 const SamplePage = () => (
   <AraiProvider>
-    <div >SamplePage</div>
+    <ProductosForm />
+    <DataGridProductos />
   </AraiProvider>
 );
 
