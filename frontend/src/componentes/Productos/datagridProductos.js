@@ -7,6 +7,7 @@ import { Edit, Delete} from '@mui/icons-material';
 import { apiUrlGetProdu, getRequest } from 'services';
 import { useAraiContext } from 'context/arai.context';
 import ToolBar from 'componentes/Toolbar/toolbar';
+import Loader from 'ui-component/Loader';
 
 
 const DataGridProductos = (props) => {
@@ -108,7 +109,7 @@ const DataGridProductos = (props) => {
   };
 
  
-  return (
+  return productosLista ? (
     <div style={{ width: '100%' }}>
       <Grid container component={Paper}>
         <Grid container direction="row" spacing={2} sx={{ p: 2, alignItems: 'flex-start' }}>
@@ -141,6 +142,8 @@ const DataGridProductos = (props) => {
         />
       </Grid>
     </div>
+  ): (
+    <Loader />
   );
 };
 

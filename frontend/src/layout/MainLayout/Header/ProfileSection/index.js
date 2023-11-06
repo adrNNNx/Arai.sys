@@ -45,6 +45,7 @@ const ProfileSection = () => {
   const customization = useSelector((state) => state.customization);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const userState = useSelector((state)=> state.user);
 
   //const [sdm, setSdm] = useState(true);
   //const [value, setValue] = useState('');
@@ -165,7 +166,7 @@ const ProfileSection = () => {
                       <Stack direction="row" spacing={0.5} alignItems="center">
                         <Typography variant="h4">Bienvenido de vuelta,</Typography>
                         <Typography component="span" variant="h4" sx={{ fontWeight: 400 }}>
-                          Admin
+                          {userState.nom_usu}
                         </Typography>
                       </Stack>
                       <Typography variant="subtitle2">Panaderia 5 Estrellas</Typography>

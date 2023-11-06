@@ -24,6 +24,7 @@ import { useAraiContext } from 'context/arai.context';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import logo_arai from '../../assets/images/sysarai.png';
+import Loader from 'ui-component/Loader';
 
 //const logo = '../../assets/images/AraySys.png';
 
@@ -165,7 +166,7 @@ export default function TablaCategoria() {
     setPage(0);
   };
 
-  return (
+  return categoriasLista ? (
     <>
       <Grid container component={Paper}>
         <Grid item xs={false} sm={12}>
@@ -260,5 +261,7 @@ export default function TablaCategoria() {
         </Grid>
       </Grid>
     </>
+  ): (
+    <Loader />
   );
 }

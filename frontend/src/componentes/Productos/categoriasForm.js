@@ -7,6 +7,7 @@ import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { useAraiContext } from 'context/arai.context';
 import 'animate.css';
+import { sendPostRequest } from 'services';
 //Valores iniciales del formulario
 const initialValues = { nom_cat: '', desc_cat: '' };
 
@@ -45,39 +46,16 @@ function CategoriasForm() {
 
   //Acá comienzan las funciones de CRUD para el formulario
   const addCategoria = (values, resetForm) => {
-    Axios.post(apiUrlCreaCat, {
+    const data = {
       nom_cat: values.nom_cat,
-      desc_cat: values.desc_cat
-    })
-      .then(() => {
-        limpiarCampos();
-        setDataUpdateContext(true);
-        resetForm();
-        console.log('Desde categoria: ', dataupdatecontext);
-        Swal.fire({
-          position: 'bottom',
-          toast: true,
-          title: '<strong>Registro exitoso</strong>',
-          html: `<i>La categoría <strong>${values.nom_cat}</strong> fue registrada con éxito</i>`,
-          icon: 'success',
-          showConfirmButton: false,
-          showClass: {
-            popup: 'animate__animated animate__fadeInLeft animate__faster'
-          },
-          hideClass: {
-            popup: 'animate__animated animate__fadeOutUp animate__faster'
-          },
-          timer: 2500
-        });
-      })
-      .catch(function (error) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Oops...ocurrio un error inesperado',
-          text:
-            JSON.parse(JSON.stringify(error)).message === 'Network Error' ? 'Intente más tarde' : JSON.parse(JSON.stringify(error)).message
-        });
-      });
+      desc_cat: values.desc_cat,
+    };
+
+    sendPostRequest(apiUrlCreaCat, data, `<i>La categoría <strong>${values.nom_cat}</strong> fue registrada con éxito</i>`, () => {
+      limpiarCampos();
+      setDataUpdateContext(true);
+      resetForm();
+    });
   };
 
   const updateCategoria = (values, resetForm) => {

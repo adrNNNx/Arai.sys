@@ -53,21 +53,6 @@ const ToolBar = () => {
           </Button>
         </Tooltip>
       </Grid>
-{/*       <Grid item sx={{ flexGrow: 1, display: 'flex', justifyContent: 'flex-end', p: 2 }}>
-        <TextField
-          type="search"
-          variant="outlined"
-          placeholder="Buscar Producto..."
-          onChange={(e) => setQuery(e.target.value)} //establecemos el valor de la busqueda
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <IconSearch stroke={1.5} size="1rem" color={theme.palette.grey[500]} />
-              </InputAdornment>
-            )
-          }}
-        />
-      </Grid> */}
       <GridToolbarQuickFilter />
     </GridToolbarContainer>
   );

@@ -4,19 +4,22 @@ import { useState } from 'react';
 // material-ui
 import { useTheme, styled } from '@mui/material/styles';
 import { Avatar, Box, Grid, Typography } from '@mui/material';
-import WidgetsOutlinedIcon from '@mui/icons-material/WidgetsOutlined';
+import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined';
 
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
 import SkeletonTotalOrderCard from 'ui-component/cards/Skeleton/EarningCard';
 
+// assets
+//import LocalMallOutlinedIcon from '@mui/icons-material/LocalMallOutlined';
+
 import { useEffect } from 'react';
-import { apiUrlGetCat, getRequest } from 'services';
+import { apiUrlGetProdu, getRequest } from 'services';
 import { Link } from 'react-router-dom';
 import { PrivatesRoutes} from 'rutas';
 
 const CardWrapper = styled(MainCard)(({ theme }) => ({
-  backgroundColor: theme.palette.primary.dark,
+  backgroundColor: theme.palette.secondary.dark,
   color: '#fff',
   overflow: 'hidden',
   position: 'relative',
@@ -29,7 +32,7 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
     position: 'absolute',
     width: 210,
     height: 210,
-    background: theme.palette.primary[800],
+    background: theme.palette.secondary[800],
     borderRadius: '50%',
     zIndex: 1,
     top: -85,
@@ -45,7 +48,7 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
     zIndex: 1,
     width: 210,
     height: 210,
-    background: theme.palette.primary[800],
+    background: theme.palette.secondary[800],
     borderRadius: '50%',
     top: -125,
     right: -15,
@@ -59,19 +62,19 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
 
 // ==============================|| DASHBOARD - TOTAL ORDER LINE CHART CARD ||============================== //
 
-const TotalCategoriaCard = ({ isLoading }) => {
-  const [categoriasLista, setCategorias] = useState([]);
+const TotalProductosCard = ({ isLoading }) => {
+  const [productosLista, setProductos] = useState([]);
   useEffect(() => {
-    getRequest(apiUrlGetCat)
+    getRequest(apiUrlGetProdu)
       .then((response) => {
-        setCategorias(response.data);
+        setProductos(response.data);
       })
       .catch((error) => {
         console.error(error);
       });
   }, []);
 
-  const totalCategorias = categoriasLista.length; //Contando la cantidad de categorias existentes
+  const totalProductos = productosLista.length; //Contando la cantidad de categorias existentes
 
   const theme = useTheme();
 
@@ -86,24 +89,24 @@ const TotalCategoriaCard = ({ isLoading }) => {
               <Grid item>
                 <Grid container direction="row" justifyContent="flex-start">
                   <Grid item>
-                    <Link to={PrivatesRoutes.CATEG}>
+                    <Link to={PrivatesRoutes.PROD_ALM}>
                       <Avatar
                         variant="rounded"
                         sx={{
                           ...theme.typography.commonAvatar,
                           ...theme.typography.largeAvatar,
-                          backgroundColor: theme.palette.primary[800],
+                          backgroundColor: theme.palette.secondary[800],
                           color: '#FFFFFF',
                           mt: 1,
                           mr: 1
                         }}
                       >
-                        <WidgetsOutlinedIcon />
+                        <Inventory2OutlinedIcon />
                       </Avatar>
                     </Link>
                   </Grid>
                   <Grid item>
-                    <Typography sx={{ fontSize: '2.125rem', fontWeight: 500, mr: 1, mt: 1, mb: 0.75 }}>{totalCategorias}</Typography>
+                    <Typography sx={{ fontSize: '2.125rem', fontWeight: 500, mr: 1, mt: 1, mb: 0.75 }}>{totalProductos}</Typography>
                   </Grid>
                 </Grid>
               </Grid>
@@ -120,7 +123,7 @@ const TotalCategoriaCard = ({ isLoading }) => {
                             mr: 1
                           }}
                         >
-                          Total de categorias existentes
+                          Total de productos en el almacén
                         </Typography>
                       </Grid>
                     </Grid>
@@ -135,8 +138,8 @@ const TotalCategoriaCard = ({ isLoading }) => {
   );
 };
 
-TotalCategoriaCard.propTypes = {
+TotalProductosCard.propTypes = {
   isLoading: PropTypes.bool
 };
 
-export default TotalCategoriaCard;
+export default TotalProductosCard;
