@@ -11,5 +11,6 @@ export const PrivatesRoutes = {
   DEFAULT: '/',
   PROVEEDORES: '/proveedores',
   CLIENT: '/clientes',
-  COTIZ: '/cotizaciones'
+  COTIZ: '/cotizaciones',
+  VENT: '/ventas',
 };

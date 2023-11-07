@@ -16,6 +16,8 @@ const ProduVista = Loadable(lazy(() => import('views/productos/produ_vista')));
 const ProveedoresVista = Loadable(lazy(() => import('views/proveedores/prov_vista')));
 const ClientesVista = Loadable(lazy(() => import('views/clientes/client_vista')));
 const CotizacionesVista = Loadable(lazy(() => import('views/cotizaciones/cotiz_vista')));
+const VentasVista = Loadable(lazy(() => import('views/ventas/venta_vista')));
+
 const UtilsTypography = Loadable(lazy(() => import('views/utilities/Typography')));
 const UtilsColor = Loadable(lazy(() => import('views/utilities/Color')));
 const UtilsShadow = Loadable(lazy(() => import('views/utilities/Shadow')));
@@ -34,6 +36,7 @@ function RutasPrivadas() {
         <Route path={PrivatesRoutes.PROD_ALM} element={<ProduVista />} />
         <Route path={PrivatesRoutes.CLIENT} element={<ClientesVista />} />
         <Route path={PrivatesRoutes.COTIZ} element={<CotizacionesVista />} />
+        <Route path={PrivatesRoutes.VENT} element={<VentasVista />} />
 
         <Route path="/utils/util-typography" element={<UtilsTypography />} />
         <Route path="/utils/util-color" element={<UtilsColor />} />
