@@ -37,6 +37,7 @@ import { useAraiContext } from 'context/arai.context';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import logo_arai from '../../assets/images/sysarai.png';
+import Loader from 'ui-component/Loader';
 
 //const logo = '../../assets/images/AraySys.png';
 
@@ -183,7 +184,7 @@ export default function TablaClientes() {
     setPage(0);
   };
 
-  return (
+  return clientesLista ?(
     <>
       <Grid container component={Paper}>
         <Grid item xs={false} sm={12}>
@@ -284,5 +285,7 @@ export default function TablaClientes() {
         </Grid>
       </Grid>
     </>
+  ) : (
+    <Loader />
   );
 }
