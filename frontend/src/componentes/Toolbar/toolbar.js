@@ -1,44 +1,19 @@
 import { DescriptionOutlined } from '@mui/icons-material';
 import { Button, Grid, Tooltip } from '@mui/material';
 import { GridToolbarContainer, GridToolbarColumnsButton, GridToolbarFilterButton, GridToolbarDensitySelector, GridToolbarQuickFilter } from '@mui/x-data-grid';
-import jsPDF from 'jspdf';
+import generarPDF from 'componentes/FuncionPDF/generarPDF';
 
 
-const ToolBar = () => {
-  const doc = new jsPDF(); //Con esto generamos nuestro pdf
+const ToolBar = ({datos, nombresCol, tablaNom}) => {
 
 
 
-  const generarPDF = () => {
-    doc.setDrawColor(0);
-    doc.setFillColor(193, 18, 31); //Color del rectangulo
-    doc.rect(14.3, 15, 181.1, 20, 'F'); //El rectangulo
-    doc.setTextColor(255); //Color del texto del encabezado
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(22);
-    doc.text('Tabla Productos', 87, 27); //Encabezado
-    doc.addImage(logo_arai, 'PNG', 175, 10, 20, 20); //Logo
+  const ejecutarPDF = ()=>{
+    const primerObjeto = datos[0]; // Obtenemos el primer objeto para poder descomponerlo y enviar sus nombres a la funcion
+    const columnas = Object.keys(primerObjeto); //Obtenemos los nombres de los campos del objeto
+    const nombresColumnas = nombresCol //Los nombres de las columnas para el pdf
 
-    //Acá estan las columnas de la tabla junto con los datos
-    const columns = ['Id', 'Proveedor', 'RUC', 'Teléfono', 'Correo', 'Dirección'];
-    const dataT = productosLista.map((productos) => [
-      productos.id_pro,
-      productos.nom_pro,
-      productos.prec_pro,
-      productos.preven_pro,
-      productos.existencia
-    ]);
-
-    //Acá se imprime la tabla
-    autoTable(doc, {
-      startY: 40,
-      headStyles: { fillColor: [193, 18, 31] },
-      head: [columns],
-      body: dataT,
-      bodyStyles: { minCellHeight: 15 }
-    });
-
-    doc.save('tableProveedores.pdf');
+    generarPDF(tablaNom, columnas, nombresColumnas, datos); //Lamamos a la funcion para generar nuestro pdf
   };
 
   return (
@@ -48,7 +23,7 @@ const ToolBar = () => {
       <GridToolbarDensitySelector />
       <Grid item sx={{ flexGrow: 1, display: 'flex', justifyContent: 'flex-start' }}>
         <Tooltip title="Genere un PDF de la tabla">
-          <Button variant="text" startIcon={<DescriptionOutlined />} sx={{ mx: 1 }} onClick={generarPDF}>
+          <Button variant="text" startIcon={<DescriptionOutlined />} sx={{ mx: 1 }} onClick={ejecutarPDF}>
             PDF
           </Button>
         </Tooltip>

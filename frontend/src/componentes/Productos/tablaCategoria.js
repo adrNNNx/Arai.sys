@@ -21,12 +21,9 @@ import { useEffect, useState } from 'react';
 import { Edit, Delete, DescriptionOutlined } from '@mui/icons-material';
 import { IconSearch } from '@tabler/icons';
 import { useAraiContext } from 'context/arai.context';
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
-import logo_arai from '../../assets/images/sysarai.png';
 import Loader from 'ui-component/Loader';
+import generarPDF from 'componentes/FuncionPDF/generarPDF';
 
-//const logo = '../../assets/images/AraySys.png';
 
 function TablePaginationActions(props) {
   const theme = useTheme();
@@ -78,7 +75,6 @@ export default function TablaCategoria() {
   const [query, setQuery] = useState('');
   const { araiContextValue, setAraiContextValue, dataupdatecontext, setDataUpdateContext } = useAraiContext();
   const filteredCategories = categoriasLista.filter((categoria) => categoria.nom_cat.toLowerCase().includes(query.toLowerCase())); // Funcion de filtrado de la categoria por nombre
-  const doc = new jsPDF(); //Con esto generamos nuestro pdf
   const theme = useTheme();
   // UseEffect que carga los primeros datos
   useEffect(() => {
@@ -125,31 +121,14 @@ export default function TablaCategoria() {
     console.log('desde tabla categoria valores eliminar: ', araiContextValue.nom_cat);
   };
 
-  const generarPDF = () => {
-    doc.setDrawColor(0);
-    doc.setFillColor(193, 18, 31); //Color del rectangulo
-    doc.rect(14.3, 15, 181.1, 20, 'F'); //El rectangulo
-    doc.setTextColor(255); //Color del texto del encabezado
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(22);
-    doc.text('Tabla Categoria', 87, 27); //Encabezado
-    doc.addImage(logo_arai, 'PNG', 175, 10, 20, 20); //Logo
-    
-    //Acá estan las columnas de la tabla junto con los datos
-    const columns = ['Id', 'Categoría', 'Descripción'];
-    const dataT = categoriasLista.map((categoria) => [categoria.id_cat, categoria.nom_cat, categoria.desc_cat]);
-    
-    //Acá se imprime la tabla
-    autoTable(doc, {
-      startY: 40,
-      headStyles: { fillColor: [193, 18, 31] },
-      head: [columns],
-      body: dataT,
-      bodyStyles: { minCellHeight: 15 }
-    });
+  const ejecutarPDF = ()=>{
+    const primerObjeto = categoriasLista[0]; // Obtenemos el primer objeto para poder descomponerlo y enviar sus nombres a la funcion
+    const columnasCategorias = Object.keys(primerObjeto); //Obtenemos los nombres de los campos del objeto
+    const nombresColumnas = ['Id', 'Categoría', 'Descripción']; //Los nombres de las columnas para el pdf
 
-    doc.save('table.pdf');
+    generarPDF('Categorias', columnasCategorias, nombresColumnas, categoriasLista); //Lamamos a la funcion para generar nuestro pdf
   };
+
 
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
@@ -192,7 +171,7 @@ export default function TablaCategoria() {
                 //sx={{ p: 2 }}
               />
               <Tooltip title="Genere un PDF de la tabla">
-                <Button variant="text" startIcon={<DescriptionOutlined />} sx={{ mx: 1 }} onClick={generarPDF}>
+                <Button variant="text" startIcon={<DescriptionOutlined />} sx={{ mx: 1 }} onClick={ejecutarPDF}>
                   PDF
                 </Button>
               </Tooltip>

@@ -205,7 +205,7 @@ function ProductosForm() {
                   <Field
                     as={TextField}
                     name="existencia"
-                    label="Existencia *"
+                    label="Existencia "
                     fullWidth
                     margin="normal"
                     onKeyPress={(event) => {
