@@ -111,7 +111,8 @@ async function delete_venta(req, res) {
 module.exports = {
   crear_venta,
   get_ventas,
-  update_venta
+  update_venta,
+  delete_venta
 
 
 }

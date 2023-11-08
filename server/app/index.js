@@ -4,8 +4,10 @@ const morgan = require("morgan");
 const cors = require("cors");
 const methods = require("../app/controllers/controlAutenticado");
 const crudBD = require("./controllers/crudBasedeDatos");
+const ventas = require("./controllers/ventas"); 
 const middlewares = require("../app/middleware/authorization");
 const cookieParser = require("cookie-parser");
+
 
 //Server
 const app = express();
@@ -65,4 +67,9 @@ app.get("/api/get_client",crudBD.get_client );
 app.post("/api/create_client", crudBD.crear_client);
 app.put("/api/update_client",crudBD.update_client);
 app.put("/api/delete_client", crudBD.delete_client);
+
+app.get("/api/ventas", ventas.get_ventas);
+app.post("/api/create_venta", ventas.crear_venta);
+app.put("/api/update_venta", ventas.update_venta);
+app.delete("/api/delete_venta", ventas.delete_venta);
 

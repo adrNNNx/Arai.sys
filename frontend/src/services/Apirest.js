@@ -26,3 +26,8 @@ export const apiUrlCreaClient = 'http://localhost:4000/api/create_client';
 export const apiUrlGetClient = 'http://localhost:4000/api/get_client';
 export const apiUrlUpdateClient = 'http://localhost:4000/api/update_client';
 export const apiUrlDeleteClient = 'http://localhost:4000/api/delete_client';
+
+export const apiUrlGetVentas = 'http://localhost:4000/api/ventas';
+export const apiUrlCreateVenta = 'http://localhost:4000/api/create_venta';
+export const apiUrlUpdateVenta = 'http://localhost:4000/api/update_venta';
+export const apiUrlDeleteVenta = 'http://localhost:4000/api/delete_venta';

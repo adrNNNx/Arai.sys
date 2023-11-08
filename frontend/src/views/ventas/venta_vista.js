@@ -1,9 +1,13 @@
-import VentasComponente from "componentes/Ventas/VentasComponente"
+import React from 'react';
+import VentasComponente from "componentes/Ventas/VentasComponente";
+import { AraiProvider } from 'context/arai.context';
 
 function VentasVista() {
   return (
-    <VentasComponente/>
-  )
+    <AraiProvider>
+      <VentasComponente />
+    </AraiProvider>
+  );
 }
 
-export default VentasVista
+export default VentasVista;
