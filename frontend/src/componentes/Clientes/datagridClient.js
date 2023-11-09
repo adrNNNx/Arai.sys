@@ -62,31 +62,36 @@ const DataGridCliente = (props) => {
 
   // UseEffect que carga los primeros datos
   useEffect(() => {
-    // Llama a la función getProveedores de api.js
-    getRequest(apiUrlGetClient)
-      .then((response) => {
+    // Llama a la función getCategorias de api.js
+    const fetchData = async () => {
+      try {
+        const response = await getRequest(apiUrlGetClient);
         setCliente(response.data);
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error(error);
-      });
+      }
+    };
+  
+    fetchData();
   }, []);
 
-  //UseEffect que comprueba que los datos fueron actualizados
   useEffect(() => {
     // Evitar que se ejecute al inicio si dataupdatecontext es false
     if (!dataupdatecontext) {
       return;
     }
-
-    getRequest(apiUrlGetClient)
-      .then((response) => {
+  
+    const fetchData = async () => {
+      try {
+        const response = await getRequest(apiUrlGetClient);
         setCliente(response.data);
         setDataUpdateContext(false);
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error(error);
-      });
+      }
+    };
+  
+    fetchData();
   }, [dataupdatecontext]);
 
   const editarCliente = (val) => {

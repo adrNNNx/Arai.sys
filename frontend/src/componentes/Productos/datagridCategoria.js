@@ -55,13 +55,16 @@ const DataGridCategoria = (props)=> {
   // UseEffect que carga los primeros datos
   useEffect(() => {
     // Llama a la función getCategorias de api.js
-    getRequest(apiUrlGetCat)
-      .then((response) => {
+    const fetchData = async () => {
+      try {
+        const response = await getRequest(apiUrlGetCat);
         setCategorias(response.data);
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error(error);
-      });
+      }
+    };
+  
+    fetchData();
   }, []);
 
   //UseEffect que comprueba que los datos fueron actualizados
@@ -70,15 +73,18 @@ const DataGridCategoria = (props)=> {
     if (!dataupdatecontext) {
       return;
     }
-
-    getRequest(apiUrlGetCat)
-      .then((response) => {
+  
+    const fetchData = async () => {
+      try {
+        const response = await getRequest(apiUrlGetCat);
         setCategorias(response.data);
         setDataUpdateContext(false);
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error(error);
-      });
+      }
+    };
+  
+    fetchData();
   }, [dataupdatecontext]);
 
   const editarCategoria = (val) => {
@@ -86,7 +92,6 @@ const DataGridCategoria = (props)=> {
       ...val,
       action: 'editar'
     });
-    console.log('desde tabla categoria valores editar: ', araiContextValue.nom_cat);
   };
 
   const deleteCategoria = (val) => {

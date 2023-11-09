@@ -67,14 +67,16 @@ const DataGridProductos = (props) => {
 
   // UseEffect que carga los primeros datos
   useEffect(() => {
-    // Llama a la función getProveedores de api.js
-    getRequest(apiUrlGetProdu)
-      .then((response) => {
+    const fetchData = async () => {
+      try {
+        const response = await getRequest(apiUrlGetProdu);
         setProductos(response.data);
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error(error);
-      });
+      }
+    };
+  
+    fetchData();
   }, []);
 
   //UseEffect que comprueba que los datos fueron actualizados
@@ -83,15 +85,18 @@ const DataGridProductos = (props) => {
     if (!dataupdatecontext) {
       return;
     }
-
-    getRequest(apiUrlGetProdu)
-      .then((response) => {
+  
+    const fetchData = async () => {
+      try {
+        const response = await getRequest(apiUrlGetProdu);
         setProductos(response.data);
         setDataUpdateContext(false);
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error(error);
-      });
+      }
+    };
+  
+    fetchData();
   }, [dataupdatecontext]);
 
   const editarProducto = (val) => {

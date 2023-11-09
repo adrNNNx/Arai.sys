@@ -62,14 +62,17 @@ const DataGridProveedor = (props) => {
 
   // UseEffect que carga los primeros datos
   useEffect(() => {
-    // Llama a la función getProveedores de api.js
-    getRequest(apiUrlGetProv)
-      .then((response) => {
+    // Llama a la función getCategorias de api.js
+    const fetchData = async () => {
+      try {
+        const response = await getRequest(apiUrlGetProv);
         setProveedor(response.data);
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error(error);
-      });
+      }
+    };
+
+    fetchData();
   }, []);
 
   //UseEffect que comprueba que los datos fueron actualizados
@@ -79,14 +82,17 @@ const DataGridProveedor = (props) => {
       return;
     }
 
-    getRequest(apiUrlGetProv)
-      .then((response) => {
+    const fetchData = async () => {
+      try {
+        const response = await getRequest(apiUrlGetProv);
         setProveedor(response.data);
         setDataUpdateContext(false);
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error(error);
-      });
+      }
+    };
+
+    fetchData();
   }, [dataupdatecontext]);
 
   const editarProveedor = (val) => {
@@ -131,7 +137,7 @@ const DataGridProveedor = (props) => {
           onPageChange={(params) => setPage(params.page)}
           onPageSizeChange={(params) => setRowsPerPage(params.pageSize)}
           pageSizeOptions={[5, 10, 25, 50]}
-          slots={{ toolbar: () => <ToolBar datos={proveedorLista} nombresCol={columnasNombres} tablaNom={'Tabla Proveedores'}/> }}
+          slots={{ toolbar: () => <ToolBar datos={proveedorLista} nombresCol={columnasNombres} tablaNom={'Tabla Proveedores'} /> }}
         />
       </Grid>
     </div>

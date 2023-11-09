@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import Axios from 'axios';
 import { apiUrlCreaCat, apiUrlUpdateCat, apiUrlDeleteCat } from '../../services/Apirest';
 import Swal from 'sweetalert2';
 import { Button, TextField, Paper, FormHelperText, Typography } from '@mui/material';
@@ -7,7 +6,7 @@ import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { useAraiContext } from 'context/arai.context';
 import 'animate.css';
-import { sendPostRequest } from 'services';
+import { sendDeleteRequest, sendPostRequest, sendPutRequest } from 'services';
 //Valores iniciales del formulario
 const initialValues = { nom_cat: '', desc_cat: '' };
 
@@ -20,7 +19,7 @@ const validationSchema = Yup.object({
 function CategoriasForm() {
   const [id_cat, setId_cat] = useState(); // ID de la categoría
   const [editar, setEditar] = useState(false);
-  const { setAraiContextValue, araiContextValue, setDataUpdateContext, dataupdatecontext } = useAraiContext();
+  const { setAraiContextValue, araiContextValue, setDataUpdateContext } = useAraiContext();
   const [initialFormValues, setInitialFormValues] = useState(initialValues);
 
   // El useEffect para cuando el contexto cambie entonces los valores se actualizan de los useState (Funciona como editarCategoria)
@@ -58,47 +57,24 @@ function CategoriasForm() {
     });
   };
 
-  const updateCategoria = (values, resetForm) => {
-    Axios.put(apiUrlUpdateCat, {
+  const updateCategoria = async (values, resetForm) => {
+    const data = {
       id_cat: id_cat,
       nom_cat: values.nom_cat,
-      desc_cat: values.desc_cat
-    })
-      .then(() => {
-        limpiarCampos();
-        setDataUpdateContext(true);
-        resetForm();
-        console.log('Desde update: ', dataupdatecontext);
-        Swal.fire({
-          position: 'bottom',
-          toast: true,
-          title: '<strong>Actualización exitosa</strong>',
-          html: `<i>La categoría <strong>${values.nom_cat}</strong> fue actualizada con éxito</i>`,
-          icon: 'success',
-          showConfirmButton: false,
-          showClass: {
-            popup: 'animate__animated animate__fadeInLeft animate__faster'
-          },
-          hideClass: {
-            popup: 'animate__animated animate__fadeOutUp animate__faster'
-          },
-          timer: 2500
-        });
-      })
-      .catch(function (error) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Oops...',
-          text:
-            JSON.parse(JSON.stringify(error)).message === 'Network Error' ? 'Intente más tarde' : JSON.parse(JSON.stringify(error)).message
-        });
-      });
+      desc_cat: values.desc_cat,
+    };
+
+    sendPutRequest(apiUrlUpdateCat, data, `<i>La categoría <strong>${values.nom_cat}</strong> fue actualizado con éxito</i>`, () => {
+      limpiarCampos();
+      setDataUpdateContext(true);
+      resetForm();
+    });
   };
 
   const deleteCategoria = (val) => {
     Swal.fire({
       title: '¿Confirmar eliminación?',
-      html: `<i>¿Realmente desea eliminar la categoría <strong>${val.nom_cat}</strong>?</i>`,
+      html: `<i>¿Realmente desea eliminar La categoria <strong>${val.nom_cat}</strong>?</i>`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
@@ -107,40 +83,18 @@ function CategoriasForm() {
       cancelButtonText: 'Cancelar'
     }).then((result) => {
       if (result.isConfirmed) {
-        Axios.put(apiUrlDeleteCat, { id_cat: val.id_cat })
-          .then(() => {
-            limpiarCampos();
-            setDataUpdateContext(true);
-            console.log('Desde delete: ', dataupdatecontext);
-            Swal.fire({
-              position: 'bottom',
-              toast: true,
-              icon: 'success',
-              title: `<i>La categoria <strong>${val.nom_cat}</strong> fue eliminada.</i>`,
-              showConfirmButton: false,
-              showClass: {
-                popup: 'animate__animated animate__fadeInLeft animate__faster'
-              },
-              hideClass: {
-                popup: 'animate__animated animate__fadeOutUp animate__faster'
-              },
-              timer: 2500
-            });
-          })
-          .catch(function (error) {
-            Swal.fire({
-              icon: 'error',
-              title: 'Oops...',
-              text: 'No se logró eliminar la categoría.',
-              footer:
-                JSON.parse(JSON.stringify(error)).message === 'Network Error'
-                  ? 'Intente más tarde'
-                  : JSON.parse(JSON.stringify(error)).message
-            });
-          });
+        const data = {
+          id_cat: val.id_cat
+        };
+
+        sendDeleteRequest(apiUrlDeleteCat, data, `<i>La categoría <strong>${val.nom_cat}</strong> fue eliminada.</i>`, () => {
+          limpiarCampos();
+          setDataUpdateContext(true);
+        });
       }
     });
   };
+
 
   //Cuerpo del Formulario
   return (

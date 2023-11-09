@@ -9,10 +9,9 @@ import * as Yup from 'yup';
 import Swal from 'sweetalert2';
 
 //Importaciones del proyecto junto con apis
-import { apiUrlCreaProdu, apiUrlUpdateProdu, apiUrlDeleteProdu } from '../../services/Apirest';
+import { apiUrlCreaProdu, apiUrlUpdateProdu, apiUrlDeleteProdu, apiUrlGetCat } from '../../services/Apirest';
 import { useAraiContext } from 'context/arai.context';
-import { sendDeleteRequest, sendPostRequest, sendPutRequest } from 'services/ApiCRUD';
-import { getCategorias } from 'services';
+import { getRequest, sendDeleteRequest, sendPostRequest, sendPutRequest } from 'services/ApiCRUD';
 
 //Valores Iniciales del Formulario
 const initialValues = {
@@ -60,13 +59,17 @@ function ProductosForm() {
 
   //Para cargar las categorias en mi field de Select
   useEffect(() => {
-    getCategorias()
-      .then((response) => {
+    // Llama a la función getCategorias de api.js
+    const fetchData = async () => {
+      try {
+        const response = await getRequest(apiUrlGetCat);
         setCategorias(response.data);
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error(error);
-      });
+      }
+    };
+  
+    fetchData();
   }, []);
 
   const limpiarCampos = () => {
