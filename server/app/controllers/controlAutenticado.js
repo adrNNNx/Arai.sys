@@ -125,7 +125,7 @@ async function register(req, res) {
       status: "ok",
       message:
         "Usuario: " + nuevoUsuario.nom_usu + " registrado en la base de datos",
-      redirect: "/",
+      redirect: "/dashboard",
     });
   } catch (error) {
     console.error("Error al obtener usuarios de la base de datos:", error);
