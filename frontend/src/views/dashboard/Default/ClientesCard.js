@@ -1,0 +1,115 @@
+import PropTypes from 'prop-types';
+
+// material-ui
+import { styled, useTheme } from '@mui/material/styles';
+import { Avatar, Box, List, ListItem, ListItemAvatar, ListItemText, Typography } from '@mui/material';
+
+// project imports
+import MainCard from 'ui-component/cards/MainCard';
+import TotalIncomeCard from 'ui-component/cards/Skeleton/TotalIncomeCard';
+
+// assets
+import PhotoCameraFrontOutlinedIcon from '@mui/icons-material/PhotoCameraFrontOutlined';
+import { apiUrlGetClient, getRequest } from 'services';
+import { Link } from 'react-router-dom';
+import { PrivatesRoutes } from 'rutas';
+import { useState, useEffect } from 'react';
+
+// styles
+const CardWrapper = styled(MainCard)(({ theme }) => ({
+  overflow: 'hidden',
+  position: 'relative',
+  '&:after': {
+    content: '""',
+    position: 'absolute',
+    width: 210,
+    height: 210,
+    background: `linear-gradient(210.04deg, ${theme.palette.primary.dark} -50.94%, rgba(144, 202, 249, 0) 83.49%)`,
+    borderRadius: '50%',
+    top: -30,
+    right: -180
+  },
+  '&:before': {
+    content: '""',
+    position: 'absolute',
+    width: 210,
+    height: 210,
+    background: `linear-gradient(140.9deg, ${theme.palette.primary.dark} -14.02%, rgba(144, 202, 249, 0) 70.50%)`,
+    borderRadius: '50%',
+    top: -160,
+    right: -130
+  }
+}));
+
+// ==============================|| DASHBOARD - TOTAL INCOME DARK CARD ||============================== //
+
+const ClientesCard = ({ isLoading }) => {
+  const [clientesLista, setClientes] = useState([]);
+  useEffect(() => {
+    getRequest(apiUrlGetClient)
+      .then((response) => {
+        setClientes(response.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, []);
+
+  const totalClientes = clientesLista.length;
+  const theme = useTheme();
+
+  return (
+    <>
+      {isLoading ? (
+        <TotalIncomeCard />
+      ) : (
+        <CardWrapper border={false} content={false}>
+          <Box sx={{ p: 2 }}>
+            <List sx={{ py: 0 }}>
+              <ListItem alignItems="center" disableGutters sx={{ py: 0 }}>
+                <ListItemAvatar>
+                  <Link to={PrivatesRoutes.CLIENT}>
+                    <Avatar
+                      variant="rounded"
+                      sx={{
+                        ...theme.typography.commonAvatar,
+                        ...theme.typography.largeAvatar,
+                        backgroundColor: theme.palette.primary.light,
+                        color: theme.palette.primary.dark
+                      }}
+                    >
+                      <PhotoCameraFrontOutlinedIcon />
+                    </Avatar>
+                  </Link>
+                </ListItemAvatar>
+                <ListItemText
+                  sx={{
+                    py: 0,
+                    mt: 0.45,
+                    mb: 0.45
+                  }}
+                  primary={
+                    <Typography variant="h4" sx={{ color: theme.palette.grey[500], mt: 0.5 }}>
+                      {totalClientes}
+                    </Typography>
+                  }
+                  secondary={
+                    <Typography variant="subtitle2" >
+                      Total de clientes registrados
+                    </Typography>
+                  }
+                />
+              </ListItem>
+            </List>
+          </Box>
+        </CardWrapper>
+      )}
+    </>
+  );
+};
+
+ClientesCard.propTypes = {
+  isLoading: PropTypes.bool
+};
+
+export default ClientesCard;
