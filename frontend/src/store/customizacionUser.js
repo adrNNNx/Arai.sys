@@ -4,7 +4,8 @@ import { ClearLocalStorage, PersitLocalStorage } from '../utils/localStorageUtil
 export const EmptyUserState = {
   id: 0,
   name: '',
-  password: ''
+  password: '',
+  rol_usu: '',
 };
 
 

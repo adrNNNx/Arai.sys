@@ -1,17 +1,20 @@
 
 
-import utilities from './utilities';
 import inicio from './inicio';
 import productos from './productos';
 import proveedor from './proveedor';
-import cliente from './clientes';
+import clientes from './clientes';
 import cotizacion from './cotizacion';
 import ventas from './ventas';
+
 
 // ==============================|| MENU ITEMS ||============================== //
 
 const menuItems = {
-  items: [inicio, productos, proveedor, cliente, ventas, cotizacion, utilities]
+  items: [inicio, productos, proveedor, clientes, ventas, cotizacion]
 };
 
-export default menuItems;
+const menuVentas = {
+  items: [inicio, clientes, ventas, cotizacion]
+};
+export default { menuItems, menuVentas };

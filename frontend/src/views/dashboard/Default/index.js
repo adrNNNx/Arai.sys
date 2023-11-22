@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { Grid } from '@mui/material';
 
 // project imports
-import TotalGrowthBarChart from './TotalGrowthBarChart';
+//import TotalGrowthBarChart from './TotalGrowthBarChart';
 import { gridSpacing } from 'store/constant';
 import TotalCategoriaCard from './categoriasCard';
 import TotalProductosCard from './productosCard';
@@ -12,6 +12,7 @@ import ClientesCard from './ClientesCard';
 import ProveedoresCard from './ProveedoresCard';
 //import CambiosCard from './CambiosCard';
 import CotizacionChaco from './CambiosChacoCard';
+import BarrasCategoriaProductos from './BarraCategoriaProductos';
 
 // ==============================|| DEFAULT DASHBOARD ||============================== //
 
@@ -49,7 +50,7 @@ const Dashboard = () => {
       <Grid item xs={12}>
         <Grid container spacing={gridSpacing} sx={{ minHeight:'600' }}>
           <Grid item xs={12} md={8}>
-            <TotalGrowthBarChart isLoading={isLoading} />
+            <BarrasCategoriaProductos isLoading={isLoading} />
           </Grid>
           <Grid item xs={12} md={4}  >
             {/* <CambiosCard isLoading={isLoading} /> */}

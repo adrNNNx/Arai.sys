@@ -3,12 +3,14 @@ import { IconUser } from '@tabler/icons';
 import { PrivatesRoutes } from '../rutas/routes';
 
 
+
 // constant
 const icons = { IconUser };
-
 // ==============================|| SAMPLE PAGE & DOCUMENTATION MENU ITEMS ||============================== //
 
-const cliente = {
+
+
+const clientes = {
   id: 'clientes',
   type: 'group',
   children: [
@@ -18,9 +20,9 @@ const cliente = {
       type: 'item',
       url: PrivatesRoutes.CLIENT,
       icon: icons.IconUser,
-      breadcrumbs: false
+      breadcrumbs: false,
     },
-  ]
+  ],
 };
 
-export default cliente;
+export default clientes;

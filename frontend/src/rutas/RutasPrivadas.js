@@ -26,6 +26,7 @@ const SamplePage = Loadable(lazy(() => import('views/sample-page')));
 
 
 function RutasPrivadas() {
+  console.log('Ejecutando RutasPrivadas...');
   return (
     <RoutesWithNotFound>
       <Route path="/" element={<Navigate to={PrivatesRoutes.DASHBOARD} />} />

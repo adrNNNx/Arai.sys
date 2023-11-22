@@ -68,7 +68,7 @@ function ProductosForm() {
         console.error(error);
       }
     };
-  
+
     fetchData();
   }, []);
 
@@ -85,7 +85,8 @@ function ProductosForm() {
       preven_pro: values.preven_pro,
       prec_pro: values.prec_pro,
       existencia: values.existencia,
-      categoria_id_cat: values.categoria_id_cat
+      categoria_id_cat: values.categoria_id_cat,
+      fec_pro: new Date(),
     };
 
     sendPostRequest(apiUrlCreaProdu, data, `<i>El producto <strong>${values.nom_pro}</strong> fue registrado con éxito</i>`, () => {

@@ -5,7 +5,7 @@ import Box from '@mui/material/Box';
 import { AiOutlineArrowRight, AiOutlineUser } from 'react-icons/ai';
 import { RxLockClosed } from 'react-icons/rx';
 import InputAdornment from '@mui/material/InputAdornment';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { apiUrlAuth } from '../services/Apirest';
 import { useFormik } from 'formik';
@@ -13,13 +13,25 @@ import * as Yup from 'yup';
 import AnimateButton from 'ui-component/extended/AnimateButton';
 import { useNavigate } from 'react-router-dom';
 import { Alert } from '@mui/material';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { createUser } from 'store/customizacionUser';
+import DeterminarUsuarioRuta from 'guards/RutasUrl';
+import { PrivatesRoutes } from 'rutas';
+
 
 export const LoginForm = () => {
   const [estadoerror, setEstadoError] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const urlRol = DeterminarUsuarioRuta();
+  const userState = useSelector((state) => state.user);
+
+//Navegacion una vez se actualice el usuario en redux
+  useEffect(() => {
+    if (userState.nom_usu) {
+      navigate(urlRol + PrivatesRoutes.DASHBOARD);
+    }
+  }, [userState]);
 
   const { handleSubmit, handleChange, values, errors, touched } = useFormik({
     initialValues: {
@@ -45,7 +57,6 @@ export const LoginForm = () => {
         .then((response) => {
           if (response.data.status === 'ok') {
             dispatch(createUser(response.data.user))
-            navigate(response.data.redirect);
             console.log(response);
           }
 

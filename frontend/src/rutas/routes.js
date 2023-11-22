@@ -4,11 +4,11 @@ export const PublicRoutes = {
 };
 
 export const PrivatesRoutes = {
-  PRIVATE: '/',
+  PRIVATE: '/admin',
   DASHBOARD: '/dashboard',
   CATEG: '/productos/categorias',
   PROD_ALM: '/productos/almacen',
-  DEFAULT: '/',
+  VENDEDOR: '/vend',
   PROVEEDORES: '/proveedores',
   CLIENT: '/clientes',
   COTIZ: '/cotizaciones',
