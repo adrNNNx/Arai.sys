@@ -1,4 +1,4 @@
-import { Navigate, Route } from 'react-router';
+import { Navigate, Route, useNavigate} from 'react-router';
 import { PrivatesRoutes, PublicRoutes } from './routes';
 import { lazy } from 'react';
 
@@ -8,6 +8,9 @@ import { RoutesWithNotFound } from 'utils';
 import { AuthGuard, RolesUsuario } from 'guards';
 //import RolGuard from 'guards/rol.guard';
 import { useSelector } from 'react-redux';
+import { apiCookieAuth } from '../services/Apirest';
+import { useEffect } from 'react';
+import axios from 'axios';
 
 //Rutas
 const Login = Loadable(lazy(() => import('views/pages/authentication/vista-formularios/Login')));
@@ -22,6 +25,23 @@ const VentasVista = Loadable(lazy(() => import('views/ventas/venta_vista'))); */
 function RutasPrincipales() {
   console.log('Renderizando componente principal...');
   const userState = useSelector((state) => state.user);
+  const navigate = useNavigate();
+
+  //Acá se verifica nuestro cookie caso contrario se deslogea al usuario
+  useEffect(() => {
+    const verifyAuth = async () => {
+      try {
+        const response = await axios.get(apiCookieAuth, { withCredentials: true, credentials: 'include' });
+        if (!response.data.isAuthenticated) {
+          navigate(PublicRoutes.LOGIN);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    
+    verifyAuth();
+  }, []);
   return (
     <RoutesWithNotFound>
       <Route path="/" element={<Navigate to={PrivatesRoutes.PRIVATE} />} />

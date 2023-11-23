@@ -29,7 +29,7 @@ const BarrasCategoriaProductos = ({ isLoading }) => {
                 <Grid item>
                   <Grid container direction="column" spacing={1}>
                     <Grid item>
-                      <Typography variant="subtitle2">Existencia total de productos:</Typography>
+                      <Typography variant="subtitle2">Stock total de productos:</Typography>
                     </Grid>
                     <Grid item>
                       <Typography variant="h3">{opcionesGrafico.totalStock}</Typography>

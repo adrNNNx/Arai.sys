@@ -121,7 +121,7 @@ const DolarPy = () => {
         <DolarpyCard nombreCasa="Bonanza" compra={dolarpyData.bonanza.compra} venta={dolarpyData.bonanza.venta} />
       </Grid>
       <Grid item lg={4} md={6} sm={6} xs={12}>
-        <DolarpyCard nombreCasa="Cambios Alberdi" compra={dolarpyData.cambiosalberdi.compra} venta={dolarpyData.cambiosalberdi.venta} />
+        <DolarpyCard nombreCasa="MyD Cambios" compra={dolarpyData.mydcambios.compra} venta={dolarpyData.mydcambios.venta} />
       </Grid>
       <Grid item lg={4} md={6} sm={6} xs={12}>
         <DolarpyCard nombreCasa="La moneda" compra={dolarpyData.lamoneda.compra} venta={dolarpyData.lamoneda.venta} />

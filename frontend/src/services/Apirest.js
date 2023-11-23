@@ -1,7 +1,8 @@
 
-//Apis para el login
+//Apis para el login y autentificadores
 export const apiUrlAuth = 'http://localhost:4000/api/login';
 export const apiUrlReg = 'http://localhost:4000/api/register';
+export const apiCookieAuth = 'http://localhost:4000/api/auth-cookie';
 
 //Api para la cotizacion
 export const apiDolarPy = 'https://dolar.melizeche.com/api/1.0/';

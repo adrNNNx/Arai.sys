@@ -38,7 +38,21 @@ const DatosGraficos = () => {
         zoom: {
           enabled: true
         },
+        animations: {
+          enabled: false,
+          easing: 'easein', // Tipo de animación
+          speed: 800, // Duración de la animación en milisegundos
+          animateGradually: {
+            enabled: true,
+            delay: 150 // Retraso de la animación en milisegundos
+          },
+          dynamicAnimation: {
+            enabled: true,
+            speed: 350 // Velocidad de la animación dinámica en milisegundos
+          }
+        },
       },
+      colors: ['#F44336'],
       responsive: [
         {
           breakpoint: 480,

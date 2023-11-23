@@ -123,7 +123,7 @@ const TotalProductosCard = ({ isLoading }) => {
                             mr: 1
                           }}
                         >
-                          Total de productos en el almacén
+                          Tipos de Productos Registrados
                         </Typography>
                       </Grid>
                     </Grid>
