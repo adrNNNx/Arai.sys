@@ -1,85 +1,131 @@
-// VentaPOS.js
-import React, { useState } from 'react';
-import BuscadorProductos from './BuscarProductos';
-import Carrito from './Carrito';
-import { Button } from '@mui/material';
-import axios from 'axios';
-import { apiUrlCrearVenta, apiUrlGenerarTicket } from '../../services/Apirest';
+import { useEffect, useState } from 'react';
+import { DataGrid, GridToolbar, esES } from '@mui/x-data-grid';
+import { Grid, IconButton, Paper, Tooltip } from '@mui/material';
+import { AddCircleOutlineOutlined } from '@mui/icons-material';
+import { apiUrlGetProdu, getRequest } from 'services';
+import { useAraiContext } from 'context/arai.context';
+import Loader from 'ui-component/Loader';
 
-const VentasComponete = () => {
-  const [carrito, setCarrito] = useState([]);
 
-  const agregarAlCarrito = (producto) => {
-    setCarrito((prevCarrito) => {
-      const existente = prevCarrito.find((item) => item.id_pro === producto.id_pro);
-      if (existente) {
-        return prevCarrito.map((item) =>
-          item.id_pro === producto.id_pro
-            ? { ...item, cant_item: item.cant_item + 1 }
-            : item
-        );
-      } else {
-        return [...prevCarrito, { ...producto, cant_item: 1 }];
+
+const DataGridVentas = (props) => {
+  const { page, setPage, setRowsPerPage } = props;
+  const columns = [
+    { field: 'id_pro', headerName: 'ID', flex: 1, headerAlign: 'center', align: 'center', disableColumnMenu: 'true' },
+    { field: 'nom_pro', headerName: 'Nombre', flex: 1.5, headerAlign: 'start', align: 'start', disableColumnMenu: 'true' },
+    {
+      field: 'preven_pro',
+      headerName: 'Precio',
+      flex: 1,
+      headerAlign: 'center',
+      align: 'center',
+      disableColumnMenu: 'true',
+      valueFormatter: ({ value }) => `GS ${value}`
+    },
+    { field: 'existencia', headerName: 'Existencia', flex: 1, headerAlign: 'center', align: 'center', disableColumnMenu: 'true' },
+    { field: 'categoria', headerName: 'Categoría', flex: 1, headerAlign: 'start', align: 'start', disableColumnMenu: 'true' },
+    {
+      field: 'acciones',
+      headerName: 'Acciones',
+      flex: 1,
+      renderCell: (params) => (
+        <div>
+          <Tooltip title="Agregar Producto">
+            <IconButton onClick={() => editarProducto(params.row)} color="primary">
+              <AddCircleOutlineOutlined />
+            </IconButton>
+          </Tooltip>
+        </div>
+      ),
+      headerAlign: 'center',
+      align: 'center',
+      disableColumnMenu: 'true',
+      sortable: false,
+      filterable: false
+    }
+  ];
+  const [productosLista, setProductos] = useState([]);
+  const { setAraiContextValue, dataupdatecontext, setDataUpdateContext } = useAraiContext();
+
+  // UseEffect que carga los primeros datos
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await getRequest(apiUrlGetProdu);
+        setProductos(response.data);
+      } catch (error) {
+        console.error(error);
       }
+    };
+  
+    fetchData();
+  }, []);
+
+  //UseEffect que comprueba que los datos fueron actualizados
+  useEffect(() => {
+    // Evitar que se ejecute al inicio si dataupdatecontext es false
+    if (!dataupdatecontext) {
+      return;
+    }
+  
+    const fetchData = async () => {
+      try {
+        const response = await getRequest(apiUrlGetProdu);
+        setProductos(response.data);
+        setDataUpdateContext(false);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+  
+    fetchData();
+  }, [dataupdatecontext]);
+
+  const editarProducto = (val) => {
+    setAraiContextValue({
+      ...val,
+      action: 'editar'
     });
   };
-  
 
-  const eliminarDelCarrito = (productoId) => {
-    setCarrito((prevCarrito) => prevCarrito.filter((item) => item.id_pro !== productoId));
-  };
-  
-
-  const actualizarCantidad = (productoId, cantidad) => {
-    setCarrito((prevCarrito) =>
-      prevCarrito.map((item) =>
-        item.id_pro === productoId ? { ...item, cant_item: Number(cantidad) } : item
-      )
-    );
-  };
-  
-  
-
-  const completarVenta = async () => {
-    try {
-      // Suponiendo que `clienteSeleccionado` y `tipoVenta` están definidos en el estado
-      const venta = {
-        cli_id_cli: clienteSeleccionado.id,
-        tipo_ven: tipoVenta,
-        total_ven: carrito.reduce((acc, item) => acc + item.cantidad * item.precio, 0),
-        estado_vent: 'COMPLETADA', // o el estado inicial de la venta
-        items: carrito.map(({ id_pro, cant_item }) => ({ prod_id_pro: id_pro, cant_item })),
-      };
-      
-      const response = await axios.post(apiUrlCrearVenta, venta);
-      
-      if (response.data) {
-        const ventaId = response.data.id_ven;
-        const ticketResponse = await axios.get(`${apiUrlGenerarTicket}/${ventaId}`);
-        
-        // Procesa el ticketResponse si es necesario
-        
-        setCarrito([]); // Limpiar carrito después de la venta
-      }
-    } catch (error) {
-      console.error('Error al completar la venta', error);
-    }
-  };
-  
-
-  return (
-    <div>
-      <BuscadorProductos onAgregarAlCarrito={agregarAlCarrito} />
-      <Carrito 
-        carrito={carrito} 
-        onActualizarCantidad={actualizarCantidad} 
-        onEliminarDelCarrito={eliminarDelCarrito} 
-      />
-      <Button variant="contained" color="primary" onClick={completarVenta}>
-        Finalizar Venta
-      </Button>
+  return productosLista ? (
+    <div style={{ width: '100%' }}>
+      <Grid container component={Paper}>
+        <DataGrid
+          initialState={{
+            pagination: { paginationModel: { pageSize: 5 } },
+            filter: {
+              filterModel: {
+                items: [],
+                quickFilterExcludeHiddenColumns: true
+              }
+            }
+          }}
+          disableColumnFilter
+          disableColumnSelector
+          disableDensitySelector
+          rows={productosLista}
+          getRowId={(row) => row.id_pro}
+          localeText={esES.components.MuiDataGrid.defaultProps.localeText}
+          columns={columns}
+          page={page}
+          onPageChange={(params) => setPage(params.page)}
+          onPageSizeChange={(params) => setRowsPerPage(params.pageSize)}
+          pageSizeOptions={[5, 10, 25, 50]}
+          slots={{ toolbar: GridToolbar }}
+          slotProps={{
+            toolbar: {
+              showQuickFilter: true,
+              csvOptions: { disableToolbarButton: true },  
+              printOptions: { disableToolbarButton: true }, 
+            },
+          }}
+        />
+      </Grid>
     </div>
+  ): (
+    <Loader />
   );
 };
 
-export default VentasComponete;
+export default DataGridVentas;

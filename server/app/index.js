@@ -4,9 +4,10 @@ const morgan = require("morgan");
 const cors = require("cors");
 const methods = require("../app/controllers/controlAutenticado");
 const crudBD = require("./controllers/crudBasedeDatos");
+const ventasControl = require("./controllers/ventasControl");
 const middlewares = require("../app/middleware/authorization");
 const cookieParser = require("cookie-parser");
-const ventasController = require('./controllers/ventasController');
+
 
 //Server
 const app = express();
@@ -67,7 +68,11 @@ app.post("/api/create_client", crudBD.crear_client);
 app.put("/api/update_client",crudBD.update_client);
 app.put("/api/delete_client", crudBD.delete_client);
 
-app.get('/api/ventas', ventasController.obtener_ventas);
-app.put('/api/ventas/:id_ven', ventasController.actualizar_venta);
-app.delete('/api/ventas/:id_ven', ventasController.eliminar_venta);
-app.get('/api/ventas/ticket/:id_ven', ventasController.generar_ticket);
+app.post("/api/iniciar_venta", ventasControl.iniciarVenta);
+app.post("/api/agregar_al_carrito", ventasControl.agregarAlCarrito);
+app.post("/api/confirmar_venta", ventasControl.confirmarVenta);
+app.post("/api/registrar_en_inventario", ventasControl.registrarEnInventario);
+app.post("/api/cambio_de_divisa", ventasControl.cambioDeDivisa);
+app.get("/api/comprobar_datos_cliente", ventasControl.comprobarDatosCliente);
+app.get("/api/emitir_ticket_pdf", ventasControl.emitirTicketPDF);
+app.put("/api/actualizar_venta", ventasControl.actualizarVenta);
