@@ -1,8 +1,11 @@
+
+import { useTheme } from '@mui/material/styles';
 import { useEffect, useState } from 'react';
 import { apiUrlExistenciaProd, getRequest } from 'services';
 
 const DatosGraficos = () => {
   const [existenciaLista, setExistencia] = useState([]);
+  const theme = useTheme();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -52,7 +55,7 @@ const DatosGraficos = () => {
           }
         },
       },
-      colors: ['#F44336'],
+      colors: theme.palette.secondary.main,
       responsive: [
         {
           breakpoint: 480,

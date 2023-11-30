@@ -29,7 +29,6 @@ function CategoriasForm() {
       setId_cat(araiContextValue.id_cat);
       setInitialFormValues({ nom_cat: araiContextValue.nom_cat, desc_cat: araiContextValue.desc_cat });
       setEditar(true);
-      console.log('valores del contexto desde cateogirasForm: ', araiContextValue.nom_cat, 'valor del usetate de editar: ', editar);
     } else if (araiContextValue.action === 'eliminar') {
       deleteCategoria(araiContextValue);
     }

@@ -1,9 +1,10 @@
-import VentasComponente from "componentes/Ventas/VentasComponente"
+import VentasComponente from 'componentes/Ventas/VentasComponente';
+
 
 function VentasVista() {
   return (
-    <VentasComponente/>
-  )
+      <VentasComponente/>
+  );
 }
 
-export default VentasVista
+export default VentasVista;

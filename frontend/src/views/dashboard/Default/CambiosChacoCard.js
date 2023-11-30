@@ -9,13 +9,15 @@ import { gridSpacing } from 'store/constant';
 import ChevronRightOutlinedIcon from '@mui/icons-material/ChevronRightOutlined';
 import { useNavigate } from 'react-router';
 import { PrivatesRoutes } from 'rutas';
+import DeterminarUsuarioRuta from 'guards/RutasUrl';
 
 // ==============================|| DASHBOARD DEFAULT - POPULAR CARD ||============================== //
 
 const CotizacionChaco = () => {
   const navigate = useNavigate();
+  const urlRol = DeterminarUsuarioRuta();
   const handleButtonClick = () => {
-   navigate(PrivatesRoutes.COTIZ); // Establece el estado en true al hacer clic en el botón
+   navigate(urlRol + PrivatesRoutes.COTIZ); // Establece el estado en true al hacer clic en el botón
   };
   return (
     <Card >

@@ -12,8 +12,6 @@ import SkeletonTotalOrderCard from 'ui-component/cards/Skeleton/EarningCard';
 
 import { useEffect } from 'react';
 import { apiUrlGetCat, getRequest } from 'services';
-import { Link } from 'react-router-dom';
-import { PrivatesRoutes} from 'rutas';
 
 const CardWrapper = styled(MainCard)(({ theme }) => ({
   backgroundColor: theme.palette.primary.dark,
@@ -86,7 +84,6 @@ const TotalCategoriaCard = ({ isLoading }) => {
               <Grid item>
                 <Grid container direction="row" justifyContent="flex-start">
                   <Grid item>
-                    <Link to={PrivatesRoutes.CATEG}>
                       <Avatar
                         variant="rounded"
                         sx={{
@@ -100,7 +97,6 @@ const TotalCategoriaCard = ({ isLoading }) => {
                       >
                         <WidgetsOutlinedIcon />
                       </Avatar>
-                    </Link>
                   </Grid>
                   <Grid item>
                     <Typography sx={{ fontSize: '2.125rem', fontWeight: 500, mr: 1, mt: 1, mb: 0.75 }}>{totalCategorias}</Typography>

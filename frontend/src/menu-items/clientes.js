@@ -2,8 +2,6 @@
 import { IconUser } from '@tabler/icons';
 import { PrivatesRoutes } from '../rutas/routes';
 
-
-
 // constant
 const icons = { IconUser };
 // ==============================|| SAMPLE PAGE & DOCUMENTATION MENU ITEMS ||============================== //

@@ -112,31 +112,6 @@ const DataGridProductos = (props) => {
     });
   };
 
-  if (productosLista.length>0){
-    Object.values(productosLista).forEach((producto) => {
-      // Asegurarse de que producto.fec_pro es una cadena no vacía
-      if (producto.fec_pro) {
-        const fechaActual = new Date(producto.fec_pro);
-        const opciones = {
-          timeZone: 'America/Asuncion',
-          hour12: false,
-          year: 'numeric',
-          month: '2-digit',
-          day: '2-digit',
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit'
-        };
-        const fechaFormateada = new Intl.DateTimeFormat('es-PY', opciones).format(fechaActual);
-        console.log('Nombre Producto: ',producto.nom_pro, 'Fecha Formateada: ',fechaFormateada);
-      } else {
-        console.log('Fecha inválida:', producto.fec_pro);
-      }
-    });
-    const fechaSistema = new Date();
-    console.log('Fecha del sistema recogida por la variable: ', fechaSistema);
-  }
-
   return productosLista ? (
     <div style={{ width: '100%' }}>
       <Grid container component={Paper}>

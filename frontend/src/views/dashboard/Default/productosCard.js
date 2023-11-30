@@ -15,8 +15,6 @@ import SkeletonTotalOrderCard from 'ui-component/cards/Skeleton/EarningCard';
 
 import { useEffect } from 'react';
 import { apiUrlGetProdu, getRequest } from 'services';
-import { Link } from 'react-router-dom';
-import { PrivatesRoutes} from 'rutas';
 
 const CardWrapper = styled(MainCard)(({ theme }) => ({
   backgroundColor: theme.palette.secondary.dark,
@@ -89,7 +87,6 @@ const TotalProductosCard = ({ isLoading }) => {
               <Grid item>
                 <Grid container direction="row" justifyContent="flex-start">
                   <Grid item>
-                    <Link to={PrivatesRoutes.PROD_ALM}>
                       <Avatar
                         variant="rounded"
                         sx={{
@@ -103,7 +100,6 @@ const TotalProductosCard = ({ isLoading }) => {
                       >
                         <Inventory2OutlinedIcon />
                       </Avatar>
-                    </Link>
                   </Grid>
                   <Grid item>
                     <Typography sx={{ fontSize: '2.125rem', fontWeight: 500, mr: 1, mt: 1, mb: 0.75 }}>{totalProductos}</Typography>

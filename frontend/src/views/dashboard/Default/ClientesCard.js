@@ -11,8 +11,6 @@ import TotalIncomeCard from 'ui-component/cards/Skeleton/TotalIncomeCard';
 // assets
 import PhotoCameraFrontOutlinedIcon from '@mui/icons-material/PhotoCameraFrontOutlined';
 import { apiUrlGetClient, getRequest } from 'services';
-import { Link } from 'react-router-dom';
-import { PrivatesRoutes } from 'rutas';
 import { useState, useEffect } from 'react';
 
 // styles
@@ -68,7 +66,6 @@ const ClientesCard = ({ isLoading }) => {
             <List sx={{ py: 0 }}>
               <ListItem alignItems="center" disableGutters sx={{ py: 0 }}>
                 <ListItemAvatar>
-                  <Link to={PrivatesRoutes.CLIENT}>
                     <Avatar
                       variant="rounded"
                       sx={{
@@ -80,7 +77,6 @@ const ClientesCard = ({ isLoading }) => {
                     >
                       <PhotoCameraFrontOutlinedIcon />
                     </Avatar>
-                  </Link>
                 </ListItemAvatar>
                 <ListItemText
                   sx={{

@@ -7,6 +7,10 @@ export const apiCookieAuth = 'http://localhost:4000/api/auth-cookie';
 //Api para la cotizacion
 export const apiDolarPy = 'https://dolar.melizeche.com/api/1.0/';
 
+//Apis de Venta
+export const apiUrlAggItemVent = 'http://localhost:4000/api/agregar-item-venta';
+export const apiUrlIniciarVent = 'http://localhost:4000/api/iniciar-venta';
+
 //Apis para CRUD
 export const apiUrlGetCat = 'http://localhost:4000/api/categorias';
 export const apiUrlCreaCat = 'http://localhost:4000/api/create_cat';

@@ -57,7 +57,6 @@ export const LoginForm = () => {
         .then((response) => {
           if (response.data.status === 'ok') {
             dispatch(createUser(response.data.user))
-            console.log(response);
           }
 
         })

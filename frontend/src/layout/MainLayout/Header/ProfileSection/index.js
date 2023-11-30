@@ -28,12 +28,13 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
 import Transitions from 'ui-component/extended/Transitions';
+import avatar from '../../../../assets/images/avatar panaderia.png';
 //import UpgradePlanCard from './UpgradePlanCard';
 //import User1 from 'assets/images/users/user-round.svg';
 
 // assets
 import { IconLogout, IconSettings } from '@tabler/icons';
-import PersonIcon from '@mui/icons-material/Person';
+//import PersonIcon from '@mui/icons-material/Person';
 import { ClearLocalStorage } from 'utils/localStorageUtilities';
 import { UserKey } from '../../../../store/customizacionUser';
 import { PublicRoutes } from 'rutas';
@@ -50,7 +51,7 @@ const ProfileSection = () => {
   //const [sdm, setSdm] = useState(true);
   //const [value, setValue] = useState('');
   //const [notification, setNotification] = useState(false);
-  const [selectedIndex, setSelectedIndex] = useState(-1);
+  const [selectedIndex] = useState(-1);
   const [open, setOpen] = useState(false);
   /**
    * anchorRef is used on different componets and specifying one type leads to other components throwing an error
@@ -72,14 +73,6 @@ const ProfileSection = () => {
     setOpen(false);
   };
 
-  const handleListItemClick = (event, index, route = '') => {
-    setSelectedIndex(index);
-    handleClose(event);
-
-    if (route && route !== '') {
-      navigate(route);
-    }
-  };
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
   };
@@ -118,7 +111,7 @@ const ProfileSection = () => {
         //Foto del Avatar 
         icon={
           <Avatar
-            src={PersonIcon}
+            src={avatar}
             sx={{
               ...theme.typography.mediumAvatar,
               margin: '8px 0 8px 8px !important',
@@ -191,18 +184,6 @@ const ProfileSection = () => {
                           }
                         }}
                       >
-                        <ListItemButton
-                          sx={{ borderRadius: `${customization.borderRadius}px` }}
-                          selected={selectedIndex === 0}
-                          onClick={(event) => handleListItemClick(event, 0, '#')}
-                        >
-                          <ListItemIcon>
-                            <IconSettings stroke={1.5} size="1.3rem" />
-                          </ListItemIcon>
-                          <ListItemText primary={<Typography variant="body2">Opciones</Typography>} />
-                        </ListItemButton>
-                        
-
                         <ListItemButton
                           sx={{ borderRadius: `${customization.borderRadius}px` }}
                           selected={selectedIndex === 4}

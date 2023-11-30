@@ -11,8 +11,6 @@ import TotalIncomeCard from 'ui-component/cards/Skeleton/TotalIncomeCard';
 // assets
 import { IconBox } from '@tabler/icons';
 import { apiUrlGetProv, getRequest } from 'services';
-import { Link } from 'react-router-dom';
-import { PrivatesRoutes } from 'rutas';
 import { useState, useEffect } from 'react';
 
 // styles
@@ -68,7 +66,6 @@ const ProveedoresCard = ({ isLoading }) => {
             <List sx={{ py: 0 }}>
               <ListItem alignItems="center" disableGutters sx={{ py: 0 }}>
                 <ListItemAvatar>
-                  <Link to={PrivatesRoutes.PROVEEDORES}>
                     <Avatar
                       variant="rounded"
                       sx={{
@@ -80,7 +77,6 @@ const ProveedoresCard = ({ isLoading }) => {
                     >
                       <IconBox />
                     </Avatar>
-                  </Link>
                 </ListItemAvatar>
                 <ListItemText
                   sx={{

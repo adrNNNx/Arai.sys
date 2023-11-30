@@ -10,14 +10,16 @@ import { PrivatesRoutes } from '../../../rutas/routes';
 import Logo from 'ui-component/Logo';
 //import { MENU_OPEN } from 'store/actions';
 import { menuOpen } from 'store/customizacionReducer';
+import DeterminarUsuarioRuta from 'guards/RutasUrl';
 
 // ==============================|| MAIN LOGO ||============================== //
 
 const LogoSection = () => {
   const defaultId = useSelector((state) => state.customization.defaultId);
   const dispatch = useDispatch();
+  const urlRol = DeterminarUsuarioRuta();
   return (
-    <ButtonBase disableRipple onClick={() => dispatch(menuOpen(defaultId)) /* dispatch({ type: MENU_OPEN, id: defaultId }) */  } component={Link} to={PrivatesRoutes.DASHBOARD}>
+    <ButtonBase disableRipple onClick={() => dispatch(menuOpen(defaultId)) /* dispatch({ type: MENU_OPEN, id: defaultId }) */  } component={Link} to={urlRol + PrivatesRoutes.DASHBOARD}>
       <Logo />
     </ButtonBase>
   );
