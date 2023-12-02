@@ -20,6 +20,7 @@ export const apiUrlUpdateCat = urlapi + '/api/update_cat';
 export const apiUrlDeleteCat = urlapi + '/api/delete_cat';
 
 export const apiUrlGetProdu = urlapi + '/api/productos';
+export const apiUrlGetProduExistencia = urlapi + '/api/productos_existencia';
 export const apiUrlCreaProdu = urlapi + '/api/create_produ';
 export const apiUrlUpdateProdu = urlapi + '/api/update_produ';
 export const apiUrlDeleteProdu = urlapi + '/api/delete_produ';

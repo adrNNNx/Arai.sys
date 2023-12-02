@@ -18,6 +18,8 @@ import {
 } from '@mui/material';
 import { useAraiContext } from 'context/arai.context';
 import { useState, useEffect } from 'react';
+import Swal from 'sweetalert2';
+import 'animate.css';
 
 //Imports del formulario
 import { Formik, Form, Field, ErrorMessage } from 'formik';
@@ -47,6 +49,7 @@ const InformacionVenta = () => {
   const [ventaID, setVentaID] = useState();
   const { araiContextValue, setVentaIniciadaContext } = useAraiContext();
   const [ventaEstado, setVentaIniciada] = useState(false);
+  const [confirmacionVenta, setConfirmacionVenta] = useState(false);
   const [initialFormValues, setInitialFormValues] = useState(initialValues);
   const [clienteLista, setCliente] = useState([]);
   const [tipoVentaSeleccionada, setTipoVentaSeleccionada] = useState('');
@@ -111,7 +114,6 @@ const InformacionVenta = () => {
 
   const addItemVenta = async (values) => {
     try {
-      console.log('Funcion Agregar items iniciado.');
       const data = {
         ...values,
         id_ven: ventaID,
@@ -157,6 +159,69 @@ const InformacionVenta = () => {
       return { ...prevValues, productosEnCarrito: nuevosProductosEnCarrito };
     });
   };
+  //Elimina los items del carrito
+  const eliminarItem = (producto) => {
+    setInitialFormValues((prevValues) => {
+      const nuevosProductosEnCarrito = prevValues.productosEnCarrito.filter((p) => {
+        return !(p.nom_pro === producto.nom_pro && p.preven_pro === producto.preven_pro);
+      });
+
+      return { ...prevValues, productosEnCarrito: nuevosProductosEnCarrito };
+    });
+  };
+
+  //Funcion que verifica si se envia datos en el carrito antes de realizar la venta
+  const handleRealizarVenta = async (values) => {
+    if (values.productosEnCarrito.length === 0) {
+      Swal.fire({
+        position: 'bottom',
+        toast: true,
+        title: '<strong>Error al realizar venta</strong>',
+        text: 'No existe productos en el carrito',
+        icon: 'error',
+        showConfirmButton: false,
+        showClass: {
+          popup: 'animate__animated animate__fadeInLeft animate__faster'
+        },
+        hideClass: {
+          popup: 'animate__animated animate__fadeOutUp animate__faster'
+        },
+        timer: 3000
+      });
+      return;
+    }
+  };
+  //Funcion para confirmar la venta
+  const confirmarVenta = async (values) => {
+    //mensaje para la alerta:
+    let mensaje = '<p><h3>Detalles del carrito:</h3></p><ul style="text-align: center; margin: 10px 0;">';
+    let total = 0;
+
+    values.productosEnCarrito.forEach((producto) => {
+      //Si la cantidad del producto pasada es igual a 0 no se muestra en el mensaje de confirmacion
+      if (producto.cantidad > 0) {
+        const subtotal = producto.preven_pro * producto.cantidad;
+        total += subtotal;
+        mensaje += `<li style="margin: 3px 0;text-align: left;">${producto.nom_pro} - Cantidad: <b>${producto.cantidad}</b> - <b>Subtotal: GS ${subtotal}</b></li>`;
+      }
+    });
+
+    mensaje += `</ul><p><h3>Total a Pagar: GS ${total}</h3></p>`;
+
+    // Mostrar el mensaje de confirmación con SweetAlert2
+    const confirmacion = await Swal.fire({
+      title: 'Confirmar Venta',
+      html: mensaje, // Usa 'html' en lugar de 'text'
+      icon: 'info',
+      showCancelButton: true,
+      confirmButtonText: 'Confirmar',
+      cancelButtonText: 'Cancelar',
+      width: '670px'
+    });
+
+    // Almacenar el resultado de la confirmación en la variable externa
+    setConfirmacionVenta(confirmacion.isConfirmed);
+  };
 
   return (
     <div>
@@ -165,15 +230,17 @@ const InformacionVenta = () => {
         validationSchema={validationSchema}
         enableReinitialize={true} // Permite reinicializar los valores
         onSubmit={async (values, { setSubmitting }) => {
-          console.log('onSubmit iniciado.');
           try {
-            if (ventaID) {
-              for (const producto of values.productosEnCarrito) {
-                console.log('Agregar items iniciado.');
-                await addItemVenta(producto);
+            handleRealizarVenta(values);
+            await confirmarVenta(values);
+            if (confirmacionVenta) {
+              if (ventaID) {
+                for (const producto of values.productosEnCarrito) {
+                  await addItemVenta(producto);
+                }
+              } else {
+                await iniciarVenta(values);
               }
-            } else {
-              await iniciarVenta(values);
             }
           } catch (error) {
             console.error('Error al realizar la venta', error);
@@ -182,7 +249,7 @@ const InformacionVenta = () => {
           }
         }}
       >
-        {({ isSubmitting, values, handleChange, validateForm,setFieldTouched }) => (
+        {({ isSubmitting, values, handleChange, validateForm, setFieldTouched }) => (
           <Form>
             <Grid container direction="column" sx={{ alignItems: 'flex-start', mb: 2 }}>
               <Grid item>
@@ -206,7 +273,7 @@ const InformacionVenta = () => {
                           iniciarVenta(values);
                         } else {
                           setFieldTouched('tipo_ven', true, false); // Marca el campo como tocado para mostrar el error
-                          setFieldTouched('id_per', true, false); 
+                          setFieldTouched('id_per', true, false);
                         }
                       });
                     }}
@@ -306,9 +373,11 @@ const InformacionVenta = () => {
                             </ListItemIcon>
                           </ListItem>
                           <ListItem disablePadding>
-                            <ListItemText> SubTotal: GS {producto.cantidad * producto.preven_pro || 0}</ListItemText>
+                            <ListItemText>
+                              <span style={{ fontWeight: 'bold' }}>Subtotal: GS {producto.cantidad * producto.preven_pro || 0}</span>
+                            </ListItemText>
                             <ListItemIcon>
-                              <IconButton>
+                              <IconButton onClick={() => eliminarItem(producto)}>
                                 <DeleteOutlineOutlined color="error" />
                               </IconButton>
                             </ListItemIcon>

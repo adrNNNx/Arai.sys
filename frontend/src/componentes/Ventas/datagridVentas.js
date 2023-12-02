@@ -3,7 +3,7 @@ import { DataGrid, GridToolbar, esES } from '@mui/x-data-grid';
 import { IconButton, Tooltip } from '@mui/material';
 import { AddShoppingCartOutlined } from '@mui/icons-material';
 
-import { apiUrlGetProdu, getRequest } from 'services';
+import { apiUrlGetProduExistencia, getRequest } from 'services';
 import { useAraiContext } from 'context/arai.context';
 import Loader from 'ui-component/Loader';
 
@@ -51,7 +51,7 @@ const DataGridVentas = (props) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await getRequest(apiUrlGetProdu);
+        const response = await getRequest(apiUrlGetProduExistencia);
         setProductos(response.data);
       } catch (error) {
         console.error(error);
