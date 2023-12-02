@@ -4,6 +4,7 @@ import {
   Button,
   Divider,
   FormControl,
+  FormHelperText,
   Grid,
   IconButton,
   InputLabel,
@@ -19,7 +20,7 @@ import { useAraiContext } from 'context/arai.context';
 import { useState, useEffect } from 'react';
 
 //Imports del formulario
-import { Formik, Form, Field } from 'formik';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { apiUrlAggItemVent, apiUrlGetClient, apiUrlIniciarVent, getRequest } from 'services';
 import axios from 'axios';
@@ -30,14 +31,16 @@ const initialValues = {
   preven_pro: '',
   total: 0,
   id_per: '',
+  tipo_ven: '',
   productosEnCarrito: []
 };
 
-const TiposDeVenta = ['boleta', 'ticket'];
+const TiposDeVenta = ['Boleta', 'Ticket'];
 
 //Valores Obligatorios
-const validationSchema = Yup.object({
-  cantidad_venta: Yup.number().required('La cantidad del producto es requerida')
+const validationSchema = Yup.object().shape({
+  tipo_ven: Yup.string().required('Seleccione un tipo de venta...'),
+  id_per: Yup.number().required('Seleccione un cliente...')
 });
 
 const InformacionVenta = () => {
@@ -46,18 +49,31 @@ const InformacionVenta = () => {
   const [ventaEstado, setVentaIniciada] = useState(false);
   const [initialFormValues, setInitialFormValues] = useState(initialValues);
   const [clienteLista, setCliente] = useState([]);
+  const [tipoVentaSeleccionada, setTipoVentaSeleccionada] = useState('');
+  const [tipoClienteSeleccionado, setTipoClienteSeleccionado] = useState('');
 
   //useEffect del carrito de compras donde se agregan varios productos.
   useEffect(() => {
     if (araiContextValue.action === 'venta') {
-      setInitialFormValues((prevValues) => ({
-        ...prevValues,
-        nom_pro: araiContextValue.nom_pro,
-        preven_pro: araiContextValue.preven_pro,
-        productosEnCarrito: [...prevValues.productosEnCarrito, araiContextValue]
-      }));
+      setInitialFormValues((prevValues) => {
+        // Verificar si el producto ya está en el carrito
+        const productoExistente = prevValues.productosEnCarrito.find((producto) => producto.id_pro === araiContextValue.id_pro);
+        // Si el producto no está en el carrito, entonces se lo agrega
+        if (!productoExistente) {
+          return {
+            ...prevValues,
+            nom_pro: araiContextValue.nom_pro,
+            preven_pro: araiContextValue.preven_pro,
+            productosEnCarrito: [...prevValues.productosEnCarrito, araiContextValue],
+            tipo_ven: tipoVentaSeleccionada,
+            id_per: tipoClienteSeleccionado
+          };
+        }
+        // Si el producto ya está en el carrito, devuelve el estado actual sin cambios
+        return prevValues;
+      });
     }
-  }, [araiContextValue]);
+  }, [araiContextValue, tipoVentaSeleccionada, tipoClienteSeleccionado]);
 
   //Para cargar los clientes en mi field de Select
   useEffect(() => {
@@ -77,10 +93,15 @@ const InformacionVenta = () => {
   const iniciarVenta = async (values) => {
     try {
       if (!ventaID) {
-        const response = await axios.post(apiUrlIniciarVent, values);
+        // Obtén los valores adicionales que deseas pasar
+        const data = {
+          tipo_ven: values.tipo_ven,
+          fec_ven: new Date()
+        };
+
+        const response = await axios.post(apiUrlIniciarVent, data);
         setVentaID(response.data.id_ven);
         setVentaIniciada(true);
-        //este es para el datagrid entonces si le da a iniciar podra agregar los productos al carrito
         setVentaIniciadaContext(true);
       }
     } catch (error) {
@@ -90,7 +111,13 @@ const InformacionVenta = () => {
 
   const addItemVenta = async (values) => {
     try {
-      await axios.post(apiUrlAggItemVent, { ...values, id_ven: ventaID });
+      console.log('Funcion Agregar items iniciado.');
+      const data = {
+        ...values,
+        id_ven: ventaID,
+        id_per: tipoClienteSeleccionado
+      };
+      await axios.post(apiUrlAggItemVent, data);
     } catch (error) {
       console.error('Error al agregar el ítem a la venta', error);
     }
@@ -110,8 +137,6 @@ const InformacionVenta = () => {
           return p;
         }
       });
-      // Llama a addItemVenta después de actualizar la cantidad
-      addItemVenta({ ...prevValues, productosEnCarrito: nuevosProductosEnCarrito });
       return { ...prevValues, productosEnCarrito: nuevosProductosEnCarrito };
     });
   };
@@ -124,8 +149,6 @@ const InformacionVenta = () => {
           if (nuevaCantidad < 0) {
             nuevaCantidad = 0;
           }
-          // Llama a addItemVenta después de actualizar la cantidad
-          addItemVenta({ ...prevValues, productosEnCarrito: nuevosProductosEnCarrito });
           return { ...p, cantidad: nuevaCantidad };
         } else {
           return p;
@@ -141,16 +164,25 @@ const InformacionVenta = () => {
         initialValues={initialFormValues}
         validationSchema={validationSchema}
         enableReinitialize={true} // Permite reinicializar los valores
-        onSubmit={(values, { setSubmitting, resetForm }) => {
-          if (ventaID) {
-            addItemVenta(values, resetForm);
-          } else {
-            iniciarVenta(values, resetForm);
+        onSubmit={async (values, { setSubmitting }) => {
+          console.log('onSubmit iniciado.');
+          try {
+            if (ventaID) {
+              for (const producto of values.productosEnCarrito) {
+                console.log('Agregar items iniciado.');
+                await addItemVenta(producto);
+              }
+            } else {
+              await iniciarVenta(values);
+            }
+          } catch (error) {
+            console.error('Error al realizar la venta', error);
+          } finally {
+            setSubmitting(false);
           }
-          setSubmitting(false);
         }}
       >
-        {({ isSubmitting, values }) => (
+        {({ isSubmitting, values, handleChange, validateForm,setFieldTouched }) => (
           <Form>
             <Grid container direction="column" sx={{ alignItems: 'flex-start', mb: 2 }}>
               <Grid item>
@@ -166,7 +198,18 @@ const InformacionVenta = () => {
                     size="small"
                     variant="contained"
                     color="secondary"
-                    onClick={() => iniciarVenta(values)}
+                    onClick={() => {
+                      console.log('Botón Iniciar Venta clickeado');
+                      validateForm().then((errors) => {
+                        console.log('Errores de validación:', errors);
+                        if (Object.keys(errors).length === 0) {
+                          iniciarVenta(values);
+                        } else {
+                          setFieldTouched('tipo_ven', true, false); // Marca el campo como tocado para mostrar el error
+                          setFieldTouched('id_per', true, false); 
+                        }
+                      });
+                    }}
                     disabled={isSubmitting || ventaID}
                   >
                     Iniciar Venta
@@ -179,7 +222,7 @@ const InformacionVenta = () => {
                     size="small"
                     variant="contained"
                     color="primary"
-                    disabled={isSubmitting || !ventaEstado}
+                    disabled={isSubmitting || !ventaEstado || !ventaID}
                   >
                     Realizar venta
                   </Button>
@@ -187,25 +230,49 @@ const InformacionVenta = () => {
                 <Grid item sx={{ width: '25%' }}>
                   <FormControl fullWidth variant="standard" size="small">
                     <InputLabel>Tipo de Venta...</InputLabel>
-                    <Field as={Select} name="tipo_ven" labelId="tipo_ven_label" id="id_tipo_ven" label="Tipo de Venta" defaultValue="">
+                    <Field
+                      as={Select}
+                      name="tipo_ven"
+                      labelId="tipo_ven_label"
+                      id="id_tipo_ven"
+                      label="Tipo de Venta"
+                      onChange={(e) => {
+                        handleChange(e);
+                        setTipoVentaSeleccionada(e.target.value);
+                      }}
+                      disabled={ventaID}
+                    >
                       {TiposDeVenta.map((venta_tipo, index) => (
                         <MenuItem key={index} value={venta_tipo}>
                           {venta_tipo}
                         </MenuItem>
                       ))}
                     </Field>
+                    <ErrorMessage name="tipo_ven">{(msg) => <FormHelperText error>{msg}</FormHelperText>}</ErrorMessage>
                   </FormControl>
                 </Grid>
                 <Grid item sx={{ width: '25%' }}>
                   <FormControl fullWidth variant="standard" size="small">
                     <InputLabel>Cliente...</InputLabel>
-                    <Field as={Select} name="id_per" labelId="id_cli_label" id="id_cli_select" label="Cliente" defaultValue="">
+                    <Field
+                      as={Select}
+                      name="id_per"
+                      labelId="id_cli_label"
+                      id="id_cli_select"
+                      label="Cliente"
+                      onChange={(e) => {
+                        handleChange(e);
+                        setTipoClienteSeleccionado(e.target.value);
+                      }}
+                      disabled={ventaID}
+                    >
                       {clienteLista.map((cliente) => (
                         <MenuItem key={cliente.id_per} value={cliente.id_per}>
                           {cliente.nom_per}
                         </MenuItem>
                       ))}
                     </Field>
+                    <ErrorMessage name="id_per">{(msg) => <FormHelperText error>{msg}</FormHelperText>}</ErrorMessage>
                   </FormControl>
                 </Grid>
               </Grid>
