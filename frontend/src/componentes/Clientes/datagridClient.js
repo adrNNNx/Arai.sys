@@ -114,7 +114,7 @@ const DataGridCliente = (props) => {
         <Grid container direction="row" spacing={2} sx={{ p: 2, alignItems: 'flex-start' }}>
           <Grid item>
             <Typography sx={{ mt: 2 }} variant="h3" id="tableTitle" component="div">
-              Proveedores Registrados
+              Clientes Registrados
             </Typography>
           </Grid>
         </Grid>
