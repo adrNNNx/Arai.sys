@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
-import { Box, Chip, Drawer, Stack, useMediaQuery } from '@mui/material';
+import { Box, Button, Chip, Divider, Drawer, Stack, useMediaQuery } from '@mui/material';
 
 // third-party
 import PerfectScrollbar from 'react-perfect-scrollbar';
@@ -12,12 +12,28 @@ import { BrowserView, MobileView } from 'react-device-detect';
 import MenuList from './MenuList';
 import LogoSection from '../LogoSection';
 import { drawerWidth } from 'store/constant';
+import { IconLogout } from '@tabler/icons';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router';
+import { ClearLocalStorage } from 'utils/localStorageUtilities';
+import { UserKey } from '../../../store/customizacionUser';
+import { resetUser } from 'redux/state/user';
+import { PublicRoutes } from 'rutas';
 
 // ==============================|| SIDEBAR DRAWER ||============================== //
 
 const Sidebar = ({ drawerOpen, drawerToggle, window }) => {
   const theme = useTheme();
   const matchUpMd = useMediaQuery(theme.breakpoints.up('md'));
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  //Funcion para cerrar sesión borrando los cookies y el localstorage del navegador
+  const handleLogout = async () => {
+    document.cookie = 'jwt=; Path=/; Expires= Thu, 01 Jan 1970 00:00:01 GMT;';
+    ClearLocalStorage(UserKey);
+    dispatch(resetUser());
+    navigate(PublicRoutes.LOGIN);
+  };
 
   const drawer = (
     <>
@@ -36,7 +52,33 @@ const Sidebar = ({ drawerOpen, drawerToggle, window }) => {
           }}
         >
           <MenuList />
-          <Stack direction="row" justifyContent="center" sx={{ mb: 2 }}>
+          <Stack direction="row" alignItems="center" justifyContent="flex-start" sx={{ mb: 1 }}>
+            <Button
+              fullWidth
+              onClick={handleLogout}
+              sx={{
+                pl: 4,
+                mt: 1,
+                mb: 1,
+                justifyContent: 'flex-start',
+                fontWeight: '300',
+                alignItems: 'center',
+                '&:hover': {
+                  backgroundColor: theme.palette.secondary.light
+                }
+              }}
+              color="inherit"
+              startIcon={
+                <Box sx={{ pr: '6px', display: 'flex', alignItems: 'center' }}>
+                  <IconLogout stroke={1.5} size="1.3rem" />
+                </Box>
+              }
+            >
+              Cerrar Sesión
+            </Button>
+          </Stack>
+          <Divider />
+          <Stack direction="row" justifyContent="center" sx={{ mt: 2, mb: 2 }}>
             <Chip label={process.env.REACT_APP_VERSION} disabled chipcolor="secondary" size="small" sx={{ cursor: 'pointer' }} />
           </Stack>
         </PerfectScrollbar>

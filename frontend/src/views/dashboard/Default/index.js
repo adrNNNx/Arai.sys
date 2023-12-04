@@ -13,6 +13,7 @@ import ProveedoresCard from './ProveedoresCard';
 //import CambiosCard from './CambiosCard';
 import CotizacionChaco from './CambiosChacoCard';
 import BarrasCategoriaProductos from './BarraCategoriaProductos';
+import LineasVentasGrafico from './LineasVentasGrafico';
 
 // ==============================|| DEFAULT DASHBOARD ||============================== //
 
@@ -53,8 +54,10 @@ const Dashboard = () => {
             <BarrasCategoriaProductos isLoading={isLoading} />
           </Grid>
           <Grid item xs={12} md={4}  >
-            {/* <CambiosCard isLoading={isLoading} /> */}
             <CotizacionChaco/>
+          </Grid>
+          <Grid item xs={12} md={4}  >
+            <LineasVentasGrafico/>
           </Grid>
         </Grid>
       </Grid>

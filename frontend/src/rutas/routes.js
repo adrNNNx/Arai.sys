@@ -13,4 +13,5 @@ export const PrivatesRoutes = {
   CLIENT: '/clientes',
   COTIZ: '/cotizaciones',
   VENT: '/ventas',
+  CERRARSES: '/'
 };

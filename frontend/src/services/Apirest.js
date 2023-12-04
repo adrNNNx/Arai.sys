@@ -10,6 +10,7 @@ export const apiCookieAuth = urlapi + '/api/auth-cookie';
 export const apiDolarPy = 'https://dolar.melizeche.com/api/1.0/';
 
 //Apis de Venta
+export const apiUrlGetVent = urlapi + '/api/ventas'; 
 export const apiUrlAggItemVent = urlapi + '/api/agregar-item-venta';
 export const apiUrlIniciarVent = urlapi + '/api/iniciar-venta';
 export const apiUrlCancelarVent = urlapi + '/api/cancelar-venta';
