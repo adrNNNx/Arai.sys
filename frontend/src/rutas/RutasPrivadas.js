@@ -24,9 +24,7 @@ const UtilsShadow = Loadable(lazy(() => import('views/utilities/Shadow')));
 const UtilsTablerIcons = Loadable(lazy(() => import('views/utilities/TablerIcons')));
 const SamplePage = Loadable(lazy(() => import('views/sample-page')));
 
-
 function RutasPrivadas() {
-  console.log('Ejecutando RutasPrivadas...');
   return (
     <RoutesWithNotFound>
       <Route path="/" element={<Navigate to={PrivatesRoutes.DASHBOARD} />} />
@@ -44,7 +42,6 @@ function RutasPrivadas() {
         <Route path="/utils/util-shadow" element={<UtilsShadow />} />
         <Route path="icons/tabler-icons" element={<UtilsTablerIcons />} />
         <Route path="/sample-page" element={<SamplePage />} />
-        
       </Route>
     </RoutesWithNotFound>
   );

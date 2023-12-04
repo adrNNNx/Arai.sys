@@ -25,11 +25,11 @@ const DataGridVentas = (props) => {
     { field: 'categoria', headerName: 'Categoría', flex: 1, headerAlign: 'start', align: 'start', disableColumnMenu: 'true' },
     {
       field: 'agregarventa',
-      headerName: 'Agregar a Venta',
+      headerName: 'Agregar al Carrito',
       flex: 1,
       renderCell: (params) => (
         <div>
-          <Tooltip title="Agregar Producto">
+          <Tooltip title="Agregar Producto" placement="right">
             <IconButton onClick={() => agregarCarrito(params.row)} color="primary">
               <AddShoppingCartOutlined />
             </IconButton>
@@ -63,28 +63,26 @@ const DataGridVentas = (props) => {
 
   //UseEffect que comprueba que los datos fueron actualizados
   useEffect(() => {
-    // Evitar que se ejecute al inicio si dataupdatecontext es false
-    if (!dataupdatecontext) {
-      return;
+    if (dataupdatecontext) {
+      const fetchData = async () => {
+        try {
+          const response = await getRequest(apiUrlGetProduExistencia);
+          setProductos(response.data);
+          setDataUpdateContext(false);
+        } catch (error) {
+          console.error(error);
+        }
+      };
+  
+      fetchData();
     }
-
-    const fetchData = async () => {
-      try {
-        const response = await getRequest(apiUrlGetProdu);
-        setProductos(response.data);
-        setDataUpdateContext(false);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchData();
   }, [dataupdatecontext]);
 
     //UseEffect para poder agregar los productos al carrito
   useEffect(() => {
     // Evitar que se ejecute al inicio si el contexto de la venta es false
     if (!ventaIniciadaContext) {
+      setEstadoVenta(false);
       return;
     }
     setEstadoVenta(true);

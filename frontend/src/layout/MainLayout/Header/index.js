@@ -6,7 +6,7 @@ import { Avatar, Box, ButtonBase } from '@mui/material';
 
 // project imports
 import LogoSection from '../LogoSection';
-import SearchSection from './SearchSection';
+//import SearchSection from './SearchSection';
 import ProfileSection from './ProfileSection';
 //import NotificationSection from './NotificationSection';
 
@@ -14,6 +14,7 @@ import ProfileSection from './ProfileSection';
 import { IconMenu2 } from '@tabler/icons';
 import { useDispatch } from 'react-redux';
 import { toggleMenu } from 'store/customizacionReducer';
+import Breadcrumb from 'componentes/Breadcrumb/Breadcrumb';
 
 // ==============================|| MAIN NAVBAR / HEADER ||============================== //
 
@@ -63,7 +64,8 @@ const Header = () => {
       </Box>
 
       {/* header search */}
-      <SearchSection />
+      {/* <SearchSection /> */}
+      <Breadcrumb/>
       <Box sx={{ flexGrow: 1 }} />
       <Box sx={{ flexGrow: 1 }} />
 

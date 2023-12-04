@@ -23,7 +23,6 @@ const CotizacionesVista = Loadable(lazy(() => import('views/cotizaciones/cotiz_v
 const VentasVista = Loadable(lazy(() => import('views/ventas/venta_vista'))); */
 
 function RutasPrincipales() {
-  console.log('Renderizando componente principal...');
   const userState = useSelector((state) => state.user);
   const navigate = useNavigate();
 
@@ -42,6 +41,7 @@ function RutasPrincipales() {
     
     verifyAuth();
   }, []);
+
   return (
     <RoutesWithNotFound>
       <Route path="/" element={<Navigate to={PrivatesRoutes.PRIVATE} />} />

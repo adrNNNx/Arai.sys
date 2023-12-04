@@ -24,7 +24,7 @@ import 'animate.css';
 //Imports del formulario
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { apiUrlAggItemVent, apiUrlGetClient, apiUrlIniciarVent, getRequest } from 'services';
+import { apiUrlAggItemVent, apiUrlCancelarVent, apiUrlGetClient, apiUrlIniciarVent, getRequest } from 'services';
 import axios from 'axios';
 
 //Valores iniciales
@@ -45,10 +45,11 @@ const validationSchema = Yup.object().shape({
 
 const InformacionVenta = () => {
   const [ventaID, setVentaID] = useState();
-  const { araiContextValue, setVentaIniciadaContext } = useAraiContext();
+  const { araiContextValue, setAraiContextValue, setDataUpdateContext, setVentaIniciadaContext } = useAraiContext();
   const [clienteLista, setCliente] = useState([]);
   const [campoClienteDesactivado, setCampoClienteDesactivado] = useState(false);
   const [formValues, setFormValues] = useState(initialValues);
+  const [total, setTotal] = useState(0);
 
   //useEffect del carrito de compras donde se agregan varios productos.
   useEffect(() => {
@@ -112,6 +113,15 @@ const InformacionVenta = () => {
     }
   };
 
+  const cancelarVenta = async (id_vent_cancelar) => {
+    try {
+      const data = { id_venta: id_vent_cancelar };
+      await axios.post(apiUrlCancelarVent, data);
+    } catch (error) {
+      console.error('Error al cancelar la venta', error);
+    }
+  };
+
   //Incrementar y decrementar la cantidad del producto
   const incrementarCantidad = (producto) => {
     setFormValues((prevValues) => {
@@ -121,6 +131,8 @@ const InformacionVenta = () => {
           if (nuevaCantidad > producto.existencia) {
             nuevaCantidad = producto.existencia;
           }
+          const nuevoSubtotal = nuevaCantidad * producto.preven_pro;
+          setTotal((prevTotal) => prevTotal + (nuevoSubtotal - (p.cantidad * producto.preven_pro || 0)));
           return { ...p, cantidad: nuevaCantidad };
         } else {
           return p;
@@ -138,6 +150,8 @@ const InformacionVenta = () => {
           if (nuevaCantidad < 0) {
             nuevaCantidad = 0;
           }
+          const nuevoSubtotal = nuevaCantidad * producto.preven_pro;
+          setTotal((prevTotal) => prevTotal + (nuevoSubtotal - (p.cantidad * producto.preven_pro || 0)));
           return { ...p, cantidad: nuevaCantidad };
         } else {
           return p;
@@ -198,7 +212,7 @@ const InformacionVenta = () => {
   };
 
   //Funcion para confirmar la venta
-  const confirmarVenta = async (values) => {
+  const confirmarVenta = async (values, resetForm) => {
     // mensaje para la alerta:
     let mensaje = '<p><h3>Detalles del carrito:</h3></p><ul style="text-align: center; margin: 10px 0;">';
     let total = 0;
@@ -237,6 +251,14 @@ const InformacionVenta = () => {
       } else {
         await iniciarVenta(values);
       }
+      //Limpiamos los valores del form una vez la venta fue concretada:
+      setVentaID('');
+      setTotal(0);
+      setFormValues(initialValues);
+      setAraiContextValue('');
+      setDataUpdateContext(true);
+      setVentaIniciadaContext(false);
+      resetForm();
     } else {
       // Realizar acciones si se canceló la confirmación
       console.log('La venta ha sido cancelada');
@@ -249,12 +271,10 @@ const InformacionVenta = () => {
         initialValues={formValues}
         validationSchema={validationSchema}
         enableReinitialize={true} // Permite reinicializar los valores
-        onSubmit={async (values, { setSubmitting }) => {
+        onSubmit={async (values, { setSubmitting, resetForm }) => {
           try {
-            console.log('Submit realizado');
-            console.log('Valores del submit: ', values);
             handleRealizarVenta(values);
-            await confirmarVenta(values);
+            await confirmarVenta(values, resetForm);
           } catch (error) {
             console.error('Error al realizar la venta', error);
           } finally {
@@ -313,8 +333,14 @@ const InformacionVenta = () => {
                     variant="contained"
                     color="error"
                     onClick={() => {
+                      cancelarVenta(ventaID);
+                      setTotal(0);
+                      setVentaID('');
                       resetForm();
                       setValues(initialValues);
+                      setFormValues(initialValues);
+                      setAraiContextValue('');
+                      setVentaIniciadaContext(false);
                     }}
                     disabled={isSubmitting || !ventaID || values.productosEnCarrito.length === 0}
                   >
@@ -414,7 +440,9 @@ const InformacionVenta = () => {
                       </div>
                     ))}
                 </List>
-                {/* <Typography variant="h6">Total: GS {total}</Typography> */}
+                <Typography variant="h4" color="green">
+                  Total: GS {total}
+                </Typography>
               </Grid>
             </Grid>
           </Form>
