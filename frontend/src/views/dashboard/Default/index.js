@@ -49,15 +49,19 @@ const Dashboard = () => {
         </Grid>
       </Grid>
       <Grid item xs={12}>
-        <Grid container spacing={gridSpacing} sx={{ minHeight:'600' }}>
+        <Grid container spacing={gridSpacing} sx={{ minHeight: '600' }}>
           <Grid item xs={12} md={8}>
             <BarrasCategoriaProductos isLoading={isLoading} />
           </Grid>
-          <Grid item xs={12} md={4}  >
-            <CotizacionChaco/>
-          </Grid>
-          <Grid item xs={12} md={4}  >
-            <LineasVentasGrafico/>
+          <Grid item xs={12} md={4}>
+            <Grid container direction="column" spacing={1}>
+              <Grid item>
+                <CotizacionChaco />
+              </Grid>
+              <Grid item sx={{ flexGrow: 1 }} >
+                <LineasVentasGrafico />
+              </Grid>
+            </Grid>
           </Grid>
         </Grid>
       </Grid>

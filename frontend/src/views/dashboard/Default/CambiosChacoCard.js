@@ -23,7 +23,7 @@ const CotizacionChaco = () => {
     <Card >
       <CardContent >
         <Grid container spacing={gridSpacing} >
-          <Grid container alignItems="center" direction="rows">
+          <Grid container alignItems="center" direction="rows" sx={{mb:2}}>
             <Grid item xs={12} >
               <iframe
                 width="100%"

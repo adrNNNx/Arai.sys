@@ -1,10 +1,10 @@
 //import { useTheme } from '@mui/material/styles';
 import { useEffect, useState } from 'react';
 import { apiUrlGetVent, getRequest } from 'services';
+//import { startOfWeek, differenceInCalendarWeeks } from 'date-fns';
 import Chart from 'react-apexcharts';
 
 const GraficoLineaVentas = () => {
-  //const theme = useTheme();
   const [chartData, setChartData] = useState({
     series: [],
     options: {
@@ -20,10 +20,10 @@ const GraficoLineaVentas = () => {
         width: [1, 2, 3]
       },
       title: {
-        text: 'Cantidad Vendida por Semana'
+        text: 'Ventas realizadas'
       },
       xaxis: {
-        categories: [] // Aquí se colocarán los nombres de las semanas
+        categories: [] // Aquí se colocarán los nombres de los días
       },
       yaxis: {
         title: {
@@ -34,37 +34,45 @@ const GraficoLineaVentas = () => {
   });
 
   // Función para obtener el número de semana de una fecha
-  const getWeek = (date) => {
-    const d = new Date(date);
-    d.setHours(0, 0, 0, 0);
-    d.setDate(d.getDate() + 4 - (d.getDay() || 7));
-    const yearStart = new Date(d.getFullYear(), 0, 1);
-    return Math.ceil(((d - yearStart) / 86400000 + 1) / 7);
-  };
+/*   const getWeek = (date) => {
+    const startOfISOWeek = startOfWeek(new Date(date), { weekStartsOn: 1 }); // 1 for Monday
+    const currentDate = new Date(date);
+    const weekNumber = differenceInCalendarWeeks(currentDate, startOfISOWeek);
+    return weekNumber + 1; // Ajustamos el número de semana para comenzar desde 1
+  }; */
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await getRequest(apiUrlGetVent);
         const chartDataSeries = {};
-        // Agrupamos la cantidad vendida por semana
+        // Agrupamos la cantidad vendida por día
         response.data.forEach((item) => {
-          const week = getWeek(new Date(item.fech_ven));
-          chartDataSeries[week] = (chartDataSeries[week] || 0) + parseInt(item.cantidad_items);
+          const date = new Date(item.fech_ven);
+          const day = date.toISOString().split('T')[0]; // Obtenemos la fecha en formato YYYY-MM-DD
+          const formattedDay = day.split('-').reverse().join('-'); // Cambiamos el formato a DD-MM-YY
+          chartDataSeries[formattedDay] = (chartDataSeries[formattedDay] || 0) + parseInt(item.cantidad_items);
         });
-
+  
+        const series = [];
+        const categories = [];
+        Object.keys(chartDataSeries).sort().forEach((day) => {
+          series.push(chartDataSeries[day]);
+          categories.push(day);
+        });
+  
         setChartData({
           ...chartData,
           series: [
             {
               name: 'Cantidad Vendida',
-              data: Object.values(chartDataSeries)
+              data: series
             }
           ],
           options: {
             ...chartData.options,
             xaxis: {
-              categories: Object.keys(chartDataSeries).map((week) => `Semana ${week}`)
+              categories: categories
             }
           }
         });
@@ -72,7 +80,7 @@ const GraficoLineaVentas = () => {
         console.error(error);
       }
     };
-
+  
     fetchData();
   }, []);
 
