@@ -62,7 +62,7 @@ const DataGridProductos = (props) => {
   ];
   const [productosLista, setProductos] = useState([]);
   const { setAraiContextValue, dataupdatecontext, setDataUpdateContext } = useAraiContext();
-  const columnasNombres = ['Id', 'Nombre', 'Precio Venta', 'Precio Compra', 'Stock', 'idCategoria', 'Categoria'];
+  const columnasNombres = ['Id', 'Nombre', 'Precio Venta', 'Precio Compra', 'Stock', 'IDCategoria','Fecha Registro', 'Categoria'];
 
   // UseEffect que carga los primeros datos
   useEffect(() => {
