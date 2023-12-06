@@ -14,6 +14,7 @@ export const apiUrlGetVent = urlapi + '/api/ventas';
 export const apiUrlAggItemVent = urlapi + '/api/agregar-item-venta';
 export const apiUrlIniciarVent = urlapi + '/api/iniciar-venta';
 export const apiUrlCancelarVent = urlapi + '/api/cancelar-venta';
+export const apiUrlTicketVent = urlapi + '/api/datos-ticket';
 
 //Apis para CRUD
 export const apiUrlGetCat = urlapi + '/api/categorias';

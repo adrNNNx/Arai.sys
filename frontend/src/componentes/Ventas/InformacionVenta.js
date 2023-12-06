@@ -26,6 +26,7 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { apiUrlAggItemVent, apiUrlCancelarVent, apiUrlGetClient, apiUrlIniciarVent, getRequest } from 'services';
 import axios from 'axios';
+import TicketBoletaPDF from 'componentes/FuncionPDF/ticket-boletaPDF';
 
 //Valores iniciales
 const initialValues = {
@@ -251,6 +252,7 @@ const InformacionVenta = () => {
       } else {
         await iniciarVenta(values);
       }
+      TicketBoletaPDF(ventaID);
       //Limpiamos los valores del form una vez la venta fue concretada:
       setVentaID('');
       setTotal(0);

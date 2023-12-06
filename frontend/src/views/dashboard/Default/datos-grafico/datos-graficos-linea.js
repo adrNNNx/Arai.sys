@@ -1,10 +1,11 @@
-//import { useTheme } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles';
 import { useEffect, useState } from 'react';
 import { apiUrlGetVent, getRequest } from 'services';
-//import { startOfWeek, differenceInCalendarWeeks } from 'date-fns';
+import { format } from 'date-fns';
 import Chart from 'react-apexcharts';
 
 const GraficoLineaVentas = () => {
+  const theme = useTheme();
   const [chartData, setChartData] = useState({
     series: [],
     options: {
@@ -29,12 +30,13 @@ const GraficoLineaVentas = () => {
         title: {
           text: 'Cantidad Vendida'
         }
-      }
+      },
+      colors: [theme.palette.primary.main],
     }
   });
 
   // Función para obtener el número de semana de una fecha
-/*   const getWeek = (date) => {
+  /*   const getWeek = (date) => {
     const startOfISOWeek = startOfWeek(new Date(date), { weekStartsOn: 1 }); // 1 for Monday
     const currentDate = new Date(date);
     const weekNumber = differenceInCalendarWeeks(currentDate, startOfISOWeek);
@@ -49,18 +51,19 @@ const GraficoLineaVentas = () => {
         // Agrupamos la cantidad vendida por día
         response.data.forEach((item) => {
           const date = new Date(item.fech_ven);
-          const day = date.toISOString().split('T')[0]; // Obtenemos la fecha en formato YYYY-MM-DD
-          const formattedDay = day.split('-').reverse().join('-'); // Cambiamos el formato a DD-MM-YY
+          const formattedDay = format(date, 'dd-MM-yy', { timeZone: 'America/Asuncion' });
           chartDataSeries[formattedDay] = (chartDataSeries[formattedDay] || 0) + parseInt(item.cantidad_items);
         });
-  
+
         const series = [];
         const categories = [];
-        Object.keys(chartDataSeries).sort().forEach((day) => {
-          series.push(chartDataSeries[day]);
-          categories.push(day);
-        });
-  
+        Object.keys(chartDataSeries)
+          .sort()
+          .forEach((day) => {
+            series.push(chartDataSeries[day]);
+            categories.push(day);
+          });
+
         setChartData({
           ...chartData,
           series: [
@@ -80,7 +83,7 @@ const GraficoLineaVentas = () => {
         console.error(error);
       }
     };
-  
+
     fetchData();
   }, []);
 
